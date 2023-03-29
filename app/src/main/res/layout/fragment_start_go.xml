@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_light_1"
+    tools:context=".StartServiceFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp">
+
+        <LinearLayout
+            android:id="@+id/linear1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:orientation="vertical">
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_logo"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="@string/app_name"
+            android:textColor="@color/color_blue_1"
+            android:textSize="@dimen/H1"
+            android:textStyle="bold|italic"
+            android:fontFamily="sans-serif-smallcaps" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:layout_marginTop="30dp"
+                android:text="Be our"
+                android:textColor="@color/color_blue_1"
+                android:textSize="@dimen/H2"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnPartnership"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_round"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:text="Partnership"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCustomer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_round"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:text="Customer"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_marginBottom="50dp"
+        android:orientation="horizontal"
+        android:weightSum="12"
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Already a User?"
+            android:layout_weight="6"
+            android:textAlignment="textEnd"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnLogin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:background="@android:color/transparent"
+            android:layout_marginStart="5dp"
+            android:textSize="@dimen/H5"
+            android:text="Login here Now!"
+            android:textColor="@color/color_blue_1"
+            android:textAlignment="textStart"/>
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnBack"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:background="@android:color/transparent"
+        android:drawableStart="@drawable/vector_left"
+        android:textColor="@color/color_light_3"
+        android:text="Back"/>
+
+
+</FrameLayout>

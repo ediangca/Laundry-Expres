@@ -1,0 +1,12 @@
+<resources>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="H1">24sp</dimen>
+    <dimen name="H2">20sp</dimen>
+    <dimen name="H3">18sp</dimen>
+    <dimen name="H4">16sp</dimen>
+    <dimen name="H5">14sp</dimen>
+
+    <dimen name="p">12sp</dimen>
+    <dimen name="span">10sp</dimen>
+</resources>
