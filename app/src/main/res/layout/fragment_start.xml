@@ -147,7 +147,8 @@
                     android:layout_weight="9"
                     android:justificationMode="inter_word"
                     android:textSize="@dimen/H4"
-                    android:text="@string/text_two_lines" />
+                    android:text="@string/step_1"/>
+
 
             </LinearLayout>
 
@@ -166,7 +167,7 @@
                     android:layout_weight="9"
                     android:justificationMode="inter_word"
                     android:textSize="@dimen/H4"
-                    android:text="@string/text_two_lines" />
+                    android:text="@string/step_2" />
 
                 <com.google.android.material.divider.MaterialDivider
                     android:layout_width="2dp"
@@ -213,7 +214,7 @@
                     android:layout_weight="9"
                     android:textSize="@dimen/H4"
                     android:justificationMode="inter_word"
-                    android:text="@string/text_two_lines" />
+                    android:text="@string/step_3" />
 
 
             </LinearLayout>
