@@ -7,6 +7,17 @@
     android:padding="20dp"
     tools:context=".LoginFragment">
 
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btnHome"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/vector_home"
+        android:tint="@color/color_blue_1"
+        android:textColor="@color/color_light_3"/>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linear1"

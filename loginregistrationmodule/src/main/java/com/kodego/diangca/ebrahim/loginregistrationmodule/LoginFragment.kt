@@ -1,12 +1,10 @@
 package com.kodego.diangca.ebrahim.loginregistrationmodule
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.kodego.diangca.ebrahim.loginregistrationmodule.R
+import androidx.fragment.app.Fragment
 import com.kodego.diangca.ebrahim.loginregistrationmodule.databinding.FragmentLoginBinding
 
 class LoginFragment : Fragment() {
@@ -40,6 +38,8 @@ class LoginFragment : Fragment() {
     }
 
     private fun initComponent() {
+        binding.btnHome.setOnClickListener {
+        }
     }
 
 }
