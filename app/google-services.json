@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "367025051327",
+    "project_id": "laundry-express-382503",
+    "storage_bucket": "laundry-express-382503.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:367025051327:android:43e82565e8c6a2df1b980a",
+        "android_client_info": {
+          "package_name": "com.kodego.diangca.ebrahim.laundryexpres"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "367025051327-ipvv4otktdqa9uduuvu5hnhq7i6b863f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kodego.diangca.ebrahim.laundryexpres",
+            "certificate_hash": "013ef3f8d4fef78c267a317656ad341d548adf06"
+          }
+        },
+        {
+          "client_id": "367025051327-60l7qreeq0hho161nervkhmealdeie07.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHB0gqB_bycFTHRvql7dncz1rY2t4NrSI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "367025051327-60l7qreeq0hho161nervkhmealdeie07.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -4,307 +4,328 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_light_1"
+    android:background="@drawable/background"
     tools:context=".StartServiceFragment">
 
-
-    <ScrollView
-        android:id="@+id/mainScroll"
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:background="@color/color_light_3"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_logo"
+
+            />
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp">
+            android:fontFamily="sans-serif-smallcaps"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textColor="@color/color_blue_1"
+            android:textSize="@dimen/H1"
+            android:textStyle="bold|italic" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:justificationMode="inter_word"
+            android:textAlignment="center"
+            android:textSize="@dimen/H4"
+            android:text="@string/text_two_lines" />
+
+    </LinearLayout>
+
+        <ScrollView
+            android:id="@+id/mainScroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:nestedScrollingEnabled="true"
+                android:scrollbars="vertical"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:paddingBottom="30dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:weightSum="12"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:src="@drawable/vector_check" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="10"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Pick Up and Deliver"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/H4"
+                        android:textStyle="italic" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:weightSum="12"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:src="@drawable/vector_check" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="10"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Affordable Services"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/H4"
+                        android:textStyle="italic" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:weightSum="12"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:src="@drawable/vector_check" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="10"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Customer Reviews"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/H4"
+                        android:textStyle="italic" />
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-smallcaps"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="5dp"
+                    android:fontFamily="sans-serif-medium"
                     android:gravity="center"
-                    android:text="@string/app_name"
-                    android:textColor="@color/color_blue_1"
-                    android:textSize="@dimen/H1"
-                    android:textStyle="bold|italic" />
+                    android:text="What our partnership could Offer you?"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/H3"
+                    android:textStyle="bold" />
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:justificationMode="inter_word"
-                    android:textSize="@dimen/H4"
-                    android:text="@string/text_two_lines" />
+                    android:orientation="horizontal"
+                    android:weightSum="12">
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:weightSum="12"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:src="@drawable/vector_check" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_weight="10"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="Pick Up and Deliver"
-                    android:textSize="@dimen/H4"
-                    android:textStyle="italic" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:weightSum="12"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:src="@drawable/vector_check" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_weight="10"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="Minimum Order"
-                    android:textSize="@dimen/H4"
-                    android:textStyle="italic" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:weightSum="12"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:src="@drawable/vector_check" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_weight="10"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="Services Starts from $1 only"
-                    android:textSize="@dimen/H4"
-                    android:textStyle="italic" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="5dp"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:text="What our partnership could Offer you?"
-                android:textColor="@color/color_blue_1"
-                android:textSize="@dimen/H3"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="12">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/box_style"
-                    android:layout_margin="5dp"
-                    android:padding="10dp"
-                    android:layout_weight="6"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="100dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/icon_logo" />
-                    <TextView
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/H4"
-                        android:textStyle="bold"
-                        android:text="Services" />
+                        android:background="@drawable/box_style"
+                        android:layout_margin="5dp"
+                        android:padding="10dp"
+                        android:layout_weight="6"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="100dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/icon_logo" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/H4"
+                            android:textStyle="bold"
+                            android:text="Services" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/box_style"
+                        android:layout_margin="5dp"
+                        android:padding="10dp"
+                        android:layout_weight="6"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="100dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/icon_logo" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/H4"
+                            android:textStyle="bold"
+                            android:text="Services" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/box_style"
-                    android:layout_margin="5dp"
-                    android:padding="10dp"
-                    android:layout_weight="6"
-                    android:orientation="vertical">
+                    android:orientation="horizontal"
+                    android:weightSum="12">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="100dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/icon_logo" />
-                    <TextView
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/H4"
-                        android:textStyle="bold"
-                        android:text="Services" />
+                        android:background="@drawable/box_style"
+                        android:layout_margin="5dp"
+                        android:padding="10dp"
+                        android:layout_weight="6"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="100dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/icon_logo" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/H4"
+                            android:textStyle="bold"
+                            android:text="Services" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/box_style"
+                        android:layout_margin="5dp"
+                        android:padding="10dp"
+                        android:layout_weight="6"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="100dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/icon_logo" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/H4"
+                            android:textStyle="bold"
+                            android:text="Services" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="12">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/box_style"
+                        android:layout_margin="5dp"
+                        android:padding="10dp"
+                        android:layout_weight="6"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="100dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/icon_logo" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/H4"
+                            android:textStyle="bold"
+                            android:text="Services" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/box_style"
+                        android:layout_margin="5dp"
+                        android:padding="10dp"
+                        android:layout_weight="6"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="100dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/icon_logo" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="center"
+                            android:textSize="@dimen/H4"
+                            android:textStyle="bold"
+                            android:text="Services" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="12">
+        </ScrollView>
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/box_style"
-                    android:layout_margin="5dp"
-                    android:padding="10dp"
-                    android:layout_weight="6"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="100dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/icon_logo" />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/H4"
-                        android:textStyle="bold"
-                        android:text="Services" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/box_style"
-                    android:layout_margin="5dp"
-                    android:padding="10dp"
-                    android:layout_weight="6"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="100dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/icon_logo" />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/H4"
-                        android:textStyle="bold"
-                        android:text="Services" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="12">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/box_style"
-                    android:layout_margin="5dp"
-                    android:padding="10dp"
-                    android:layout_weight="6"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="100dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/icon_logo" />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/H4"
-                        android:textStyle="bold"
-                        android:text="Services" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/box_style"
-                    android:layout_margin="5dp"
-                    android:padding="10dp"
-                    android:layout_weight="6"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="100dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/icon_logo" />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textSize="@dimen/H4"
-                        android:textStyle="bold"
-                        android:text="Services" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-
-
-
-        </LinearLayout>
-    </ScrollView>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnBack"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center|start"
+        android:layout_gravity="top|start"
         android:background="@android:color/transparent"
         android:drawableEnd="@drawable/vector_left"
         android:textColor="@color/color_light_3" />
@@ -313,7 +334,7 @@
         android:id="@+id/btnNext"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center|end"
+        android:layout_gravity="top|end"
         android:background="@android:color/transparent"
         android:drawableStart="@drawable/vector_right"
         android:textColor="@color/color_light_3" />

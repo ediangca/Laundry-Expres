@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_light_1"
+    android:background="@drawable/background"
     tools:context=".StartServiceFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:text="@string/app_name"
-            android:textColor="@color/color_blue_1"
+            android:textColor="@color/color_light_3"
             android:textSize="@dimen/H1"
             android:textStyle="bold|italic"
             android:fontFamily="sans-serif-smallcaps" />
@@ -44,8 +44,8 @@
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:layout_marginTop="30dp"
-                android:text="Be our"
-                android:textColor="@color/color_blue_1"
+                android:text="Register as"
+                android:textColor="@color/white"
                 android:textSize="@dimen/H2"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif" />
@@ -55,20 +55,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@drawable/button_round"
-            android:textColor="@color/white"
+            android:background="@drawable/button_secondary"
+            android:textColor="@color/color_blue_1"
             android:textSize="18sp"
-            android:text="Partnership"/>
+            android:text="Partner"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnCustomer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@drawable/button_round"
-            android:textColor="@color/white"
+            android:background="@drawable/button_secondary"
+            android:textColor="@color/color_blue_1"
             android:textSize="18sp"
             android:text="Customer"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnRider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button_secondary"
+                android:textColor="@color/color_blue_1"
+                android:textSize="18sp"
+                android:text="Rider"/>
 
         </LinearLayout>
 
@@ -86,6 +96,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Already a User?"
+            android:textColor="@color/white"
             android:layout_weight="6"
             android:textAlignment="textEnd"/>
 
@@ -98,7 +109,8 @@
             android:layout_marginStart="5dp"
             android:textSize="@dimen/H5"
             android:text="Login here Now!"
-            android:textColor="@color/color_blue_1"
+            android:textStyle="italic"
+            android:textColor="@color/color_light_3"
             android:textAlignment="textStart"/>
 
 
@@ -111,7 +123,7 @@
         android:layout_gravity="top|start"
         android:background="@android:color/transparent"
         android:drawableStart="@drawable/vector_left"
-        android:textColor="@color/color_light_3"
+        android:drawableTint="@color/color_light_3"
         android:text="Back"/>
 
 

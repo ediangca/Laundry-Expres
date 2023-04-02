@@ -1,7 +1,9 @@
 package com.kodego.diangca.ebrahim.laundryexpres
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentTransaction
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityIndexBinding
 
@@ -14,6 +16,7 @@ class IndexActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityIndexBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         initComponent()
     }

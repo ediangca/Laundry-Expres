@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_customer"
+    app:startDestination="@id/dashboardHomeFragment">
+
+    <fragment
+        android:id="@+id/dashboardHomeFragment"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardHomeFragment"
+        android:label="fragment_dashboard_home"
+        tools:layout="@layout/fragment_dashboard_home" >
+        <action
+            android:id="@+id/action_dashboardHomeFragment_to_dashboardOrdersFragment"
+            app:destination="@id/dashboardOrdersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/dashboardOrdersFragment"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardOrdersFragment"
+        android:label="fragment_dashboard_orders"
+        tools:layout="@layout/fragment_dashboard_orders" >
+        <action
+            android:id="@+id/action_dashboardOrdersFragment_to_dashboardNotificationFragment"
+            app:destination="@id/dashboardNotificationFragment" />
+        <action
+            android:id="@+id/action_dashboardOrdersFragment_to_dashboardHomeFragment"
+            app:destination="@id/dashboardHomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/dashboardNotificationFragment"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardNotificationFragment"
+        android:label="fragment_dashboard_notification"
+        tools:layout="@layout/fragment_dashboard_notification" >
+        <action
+            android:id="@+id/action_dashboardNotificationFragment_to_dashboardInboxFragment"
+            app:destination="@id/dashboardInboxFragment" />
+        <action
+            android:id="@+id/action_dashboardNotificationFragment_to_dashboardOrdersFragment"
+            app:destination="@id/dashboardOrdersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/dashboardInboxFragment"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardInboxFragment"
+        android:label="fragment_dashboard_inbox"
+        tools:layout="@layout/fragment_dashboard_inbox" >
+        <action
+            android:id="@+id/action_dashboardInboxFragment_to_dashboardAccountFragment"
+            app:destination="@id/dashboardAccountFragment" />
+        <action
+            android:id="@+id/action_dashboardInboxFragment_to_dashboardNotificationFragment"
+            app:destination="@id/dashboardNotificationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/dashboardAccountFragment"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardAccountFragment"
+        android:label="fragment_dashboard_account"
+        tools:layout="@layout/fragment_dashboard_account" >
+        <action
+            android:id="@+id/action_dashboardAccountFragment_to_dashboardInboxFragment"
+            app:destination="@id/dashboardInboxFragment" />
+    </fragment>
+</navigation>

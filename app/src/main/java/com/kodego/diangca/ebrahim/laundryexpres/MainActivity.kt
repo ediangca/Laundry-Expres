@@ -38,8 +38,8 @@ class MainActivity : AppCompatActivity() {
         }
         with(binding.tabLayout) {
             getTabAt(0)!!.setIcon(R.drawable.vector_home).text = "HOME"
-            getTabAt(1)!!.setIcon(R.drawable.vector_services).text = "ORDERS"
-            getTabAt(2)!!.setIcon(R.drawable.vector_register_login).text = "REGISTER NOW"
+            getTabAt(1)!!.setIcon(R.drawable.vector_services).text = "SERVICES"
+            getTabAt(2)!!.setIcon(R.drawable.vector_register_login).text = "START"
         }
     }
 

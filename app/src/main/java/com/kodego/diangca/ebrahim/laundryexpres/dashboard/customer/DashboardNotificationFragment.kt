@@ -1,20 +1,19 @@
-package com.kodego.diangca.ebrahim.loginregistrationmodule
+package com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.kodego.diangca.ebrahim.loginregistrationmodule.databinding.FragmentLoginBinding
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardNotificationBinding
 
-class LoginFragment() : Fragment() {
+class DashboardNotificationFragment(var dashboardCustomerFragment: DashboardCustomerFragment) : Fragment() {
 
-    private var _binding: FragmentLoginBinding? = null
+    private var _binding: FragmentDashboardNotificationBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -22,7 +21,7 @@ class LoginFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentLoginBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentDashboardNotificationBinding.inflate(layoutInflater, container, false)
         return binding.root
 
     }
@@ -38,6 +37,6 @@ class LoginFragment() : Fragment() {
     }
 
     private fun initComponent() {
-    }
 
+    }
 }
