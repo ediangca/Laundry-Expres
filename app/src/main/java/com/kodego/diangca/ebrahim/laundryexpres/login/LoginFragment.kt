@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
@@ -17,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
@@ -96,8 +98,8 @@ class LoginFragment(var mainFragment: MainFragment) : Fragment() {
         client = GoogleSignIn.getClient(mainFragment.indexActivity, options)
         binding.btnGoogle.setOnClickListener {
             val googleSignInIntent = client.signInIntent
-//            startActivityForResult(intent, 10001)
-            launcher.launch(googleSignInIntent)
+            startActivityForResult(googleSignInIntent, 10001)
+//            launcher.launch(googleSignInIntent)
         }
 
         binding.btnHome.setOnClickListener {
@@ -325,30 +327,41 @@ class LoginFragment(var mainFragment: MainFragment) : Fragment() {
     }
 
 
-    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == 10001){
             try {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                if(task.isSuccessful) {
+                if (task.isSuccessful) {
                     val account = task.getResult(ApiException::class.java)
-                    if(account != null) {
+                    if (account!=null) {
                         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                         firebaseAuth.signInWithCredential(credential)
                             .addOnCompleteListener {
                                 if (it.isSuccessful) {
 
-                                    //
+                                    if (userType=="UNKNOWN") {
 
+                                        Log.d("UPDATE_UI", userType)
+                                        userTypeDialog().show()
+
+                                    } else {
+                                        Log.d("UPDATE_UI_CHECK_USER", userType)
+
+                                        checkUserAccount()
+
+                                    }
                                 }
                             }
                     }
+                }else{
+                    Log.d("GOOGLE_SIGN_IN", "${task.exception!!.message}")
                 }
             }catch (e: Exception){
                 Log.d("GOOGLE_SIGN_IN", "${e.message}")
             }
         }
-    }*/
+    }
     private fun btnRegisterOnClickListener() {
 
     }
