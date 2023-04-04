@@ -54,7 +54,6 @@ class StartGoFragment(private var mainActivity: MainFragment) : Fragment() {
         }
 
 
-
     }
 
     private fun btnCustomerOnClickListener() {

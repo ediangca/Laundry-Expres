@@ -67,4 +67,8 @@ class MainFragment(var indexActivity: IndexActivity) : Fragment() {
 
     private fun btnNextOnClickListener() {
     }
+
+    fun setSelectedTab(i: Int) {
+        fragmentAdapter.notifyItemChanged(i)
+    }
 }

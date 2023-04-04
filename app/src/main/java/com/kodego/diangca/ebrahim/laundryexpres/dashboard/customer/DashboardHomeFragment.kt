@@ -1,5 +1,6 @@
 package com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +13,12 @@ class DashboardHomeFragment(var dashboardCustomerFragment: DashboardCustomerFrag
     private var _binding: FragmentDashboardHomeBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var userName : String
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userName = dashboardCustomerFragment.getUserName()
     }
 
     override fun onCreateView(
@@ -36,8 +41,9 @@ class DashboardHomeFragment(var dashboardCustomerFragment: DashboardCustomerFrag
         super.onDestroyView()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initComponent() {
-
+        binding.Title.text = "Hi $userName, Good Day!"
     }
 
 }

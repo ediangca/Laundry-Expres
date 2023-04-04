@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.model.LatLng
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentCheckAvailabilityBinding
+import com.kodego.diangca.ebrahim.laundryexpres.login.LoginFragment
 import com.kodego.diangca.ebrahim.laundryexpres.login.RegisterUserFragment
 import java.util.*
 
@@ -63,14 +64,29 @@ class CheckAvailabilityFragment(var mainActivity: MainFragment): Fragment() {
             btnCheckAvailabilityOnClickListener()
         }
 
+        binding.btnLogin.setOnClickListener {
+            btnLoginOnClickListener()
+        }
+
         binding.btnRegister.setOnClickListener {
             btnRegisterOnClickListener()
         }
     }
 
-    private fun btnRegisterOnClickListener() {
+    private fun btnLoginOnClickListener() {
+
+        var loginFragment = LoginFragment(mainActivity)
         mainActivity.indexActivity.mainFrame = mainActivity.indexActivity.supportFragmentManager.beginTransaction()
-        mainActivity.indexActivity.mainFrame.replace(R.id.mainFrame, RegisterUserFragment(mainActivity));
+        mainActivity.indexActivity.mainFrame.replace(R.id.mainFrame, loginFragment);
+        mainActivity.indexActivity.mainFrame.addToBackStack(null);
+        mainActivity.indexActivity.mainFrame.commit();
+    }
+
+    private fun btnRegisterOnClickListener() {
+        var registerUserFragment = RegisterUserFragment(mainActivity)
+        registerUserFragment.setUserType("Customer")
+        mainActivity.indexActivity.mainFrame = mainActivity.indexActivity.supportFragmentManager.beginTransaction()
+        mainActivity.indexActivity.mainFrame.replace(R.id.mainFrame, registerUserFragment);
         mainActivity.indexActivity.mainFrame.addToBackStack(null);
         mainActivity.indexActivity.mainFrame.commit();
     }

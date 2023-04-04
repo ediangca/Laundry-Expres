@@ -2,23 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navHome"
+        android:id="@+id/navCustomerHome"
         android:icon="@drawable/vector_home"
         android:title="Home" />
     <item
-        android:id="@+id/navOrder"
+        android:id="@+id/navCustomerOrder"
         android:icon="@drawable/vector_order"
         android:title="Orders" />
     <item
-        android:id="@+id/navUpdates"
+        android:id="@+id/navCustomerUpdates"
         android:icon="@drawable/vector_updates"
         android:title="Updates" />
     <item
-        android:id="@+id/navInbox"
+        android:id="@+id/navCustomerInbox"
         android:icon="@drawable/vector_inbox"
         android:title="Inbox" />
     <item
-        android:id="@+id/navAccount"
+        android:id="@+id/navCustomerAccount"
         android:icon="@drawable/vector_account"
         android:title="Account" />
 </menu>
