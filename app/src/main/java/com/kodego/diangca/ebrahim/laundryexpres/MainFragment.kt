@@ -9,6 +9,9 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.kodego.diangca.ebrahim.laundryexpres.adater.FragmentAdapter
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentMainBinding
+import com.kodego.diangca.ebrahim.laundryexpres.start.StartFragment
+import com.kodego.diangca.ebrahim.laundryexpres.start.StartGoFragment
+import com.kodego.diangca.ebrahim.laundryexpres.start.StartServiceFragment
 
 class MainFragment(var indexActivity: IndexActivity) : Fragment() {
 
@@ -69,6 +72,6 @@ class MainFragment(var indexActivity: IndexActivity) : Fragment() {
     }
 
     fun setSelectedTab(i: Int) {
-        fragmentAdapter.notifyItemChanged(i)
+        binding.viewPager2.currentItem = 2
     }
 }

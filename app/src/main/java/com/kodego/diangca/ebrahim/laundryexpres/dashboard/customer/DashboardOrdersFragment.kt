@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardOrdersBinding
 
-class DashboardOrdersFragment(var dashboardCustomerFragment: DashboardCustomerFragment) : Fragment() {
+class DashboardOrdersFragment(var dashboardCustomer: DashboardCustomerActivity) : Fragment() {
 
     private var _binding: FragmentDashboardOrdersBinding? = null
     private val binding get() = _binding!!

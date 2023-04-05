@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context=".login.RegisterUserFragment">
+    tools:context=".registration.RegisterCustomerActivity">
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnBack"

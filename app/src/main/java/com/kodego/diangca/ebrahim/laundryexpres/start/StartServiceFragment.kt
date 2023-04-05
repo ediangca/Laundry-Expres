@@ -1,4 +1,4 @@
-package com.kodego.diangca.ebrahim.laundryexpres
+package com.kodego.diangca.ebrahim.laundryexpres.start
 
 import android.os.Bundle
 import android.view.LayoutInflater

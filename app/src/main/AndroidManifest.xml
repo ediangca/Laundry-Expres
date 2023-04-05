@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.kodego.diangca.ebrahim.laundryexpres">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -16,9 +16,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LaundryExpress"
         tools:targetApi="31">
+        <activity
+            android:name=".registration.RegisterRiderActivity"
+            android:exported="false"
+            android:theme="@style/Theme.LaundryExpress.NoActionBar"/>
+        <activity
+            android:name=".registration.RegisterPartnerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.LaundryExpress.NoActionBar" />
+        <activity
+            android:name=".registration.RegisterCustomerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.LaundryExpress.NoActionBar" />
+        <activity
+            android:name=".dashboard.customer.DashboardCustomerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.LaundryExpress.NoActionBar" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false"
+            android:theme="@style/Theme.LaundryExpress.NoActionBar" />
 
-        <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAzofW3ZdxI6l6Jz7C16Z_iHHLH_KMmIWY"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAzofW3ZdxI6l6Jz7C16Z_iHHLH_KMmIWY" />
 
         <activity
             android:name=".IndexActivity"

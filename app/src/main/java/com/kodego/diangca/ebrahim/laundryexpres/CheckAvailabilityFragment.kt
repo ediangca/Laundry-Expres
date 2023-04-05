@@ -11,8 +11,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.model.LatLng
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentCheckAvailabilityBinding
-import com.kodego.diangca.ebrahim.laundryexpres.login.LoginFragment
-import com.kodego.diangca.ebrahim.laundryexpres.login.RegisterUserFragment
 import java.util.*
 
 class CheckAvailabilityFragment(var mainActivity: MainFragment): Fragment() {
@@ -74,21 +72,11 @@ class CheckAvailabilityFragment(var mainActivity: MainFragment): Fragment() {
     }
 
     private fun btnLoginOnClickListener() {
-
-        var loginFragment = LoginFragment(mainActivity)
-        mainActivity.indexActivity.mainFrame = mainActivity.indexActivity.supportFragmentManager.beginTransaction()
-        mainActivity.indexActivity.mainFrame.replace(R.id.mainFrame, loginFragment);
-        mainActivity.indexActivity.mainFrame.addToBackStack(null);
-        mainActivity.indexActivity.mainFrame.commit();
+        mainActivity.indexActivity.showLogin()
     }
 
     private fun btnRegisterOnClickListener() {
-        var registerUserFragment = RegisterUserFragment(mainActivity)
-        registerUserFragment.setUserType("Customer")
-        mainActivity.indexActivity.mainFrame = mainActivity.indexActivity.supportFragmentManager.beginTransaction()
-        mainActivity.indexActivity.mainFrame.replace(R.id.mainFrame, registerUserFragment);
-        mainActivity.indexActivity.mainFrame.addToBackStack(null);
-        mainActivity.indexActivity.mainFrame.commit();
+        mainActivity.indexActivity.showRegister()
     }
 
     private fun btnCheckAvailabilityOnClickListener() {
@@ -102,7 +90,8 @@ class CheckAvailabilityFragment(var mainActivity: MainFragment): Fragment() {
                 Log.d("SEARCH_GEO_LOCATION", "${e.message}")
             }
 
-            if(addresses!=null && addresses.isEmpty()) {
+
+            if(addresses!=null && !addresses.isEmpty()) {
                 val address = addresses!![0]
                 val searchLocation = LatLng(address.latitude, address.longitude)
                 getAddressDetails(searchLocation)

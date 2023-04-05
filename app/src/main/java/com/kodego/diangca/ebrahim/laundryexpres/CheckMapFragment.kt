@@ -120,7 +120,7 @@ class CheckMapFragment(var mainActivity: MainFragment) : Fragment() {
             }catch (e: Exception){
                 Log.d("SEARCH_GEO_LOCATION", "${e.message}")
             }
-            if(addresses!=null && addresses.isEmpty()) {
+            if(addresses!=null && !addresses.isEmpty()) {
                 val address = addresses!![0]
                 val searchLocation = LatLng(address.latitude, address.longitude)
                 placeMarkerOnMap(searchLocation)

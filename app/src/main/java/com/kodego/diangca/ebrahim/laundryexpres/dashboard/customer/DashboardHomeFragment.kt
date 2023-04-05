@@ -1,24 +1,30 @@
 package com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardHomeBinding
 
-class DashboardHomeFragment(var dashboardCustomerFragment: DashboardCustomerFragment) : Fragment() {
+class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : Fragment() {
 
     private var _binding: FragmentDashboardHomeBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var userName : String
+    private var firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance()
+    private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
+        .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
+    private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        userName = dashboardCustomerFragment.getUserName()
     }
 
     override fun onCreateView(
@@ -41,9 +47,15 @@ class DashboardHomeFragment(var dashboardCustomerFragment: DashboardCustomerFrag
         super.onDestroyView()
     }
 
-    @SuppressLint("SetTextI18n")
     private fun initComponent() {
-        binding.Title.text = "Hi $userName, Good Day!"
+
+        firebaseAuth.currentUser?.let {
+            for (profile in it.providerData){
+                binding.titleView.text = it.displayName
+            }
+        }
+
+
     }
 
 }

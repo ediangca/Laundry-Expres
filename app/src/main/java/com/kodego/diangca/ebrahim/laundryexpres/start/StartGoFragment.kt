@@ -1,16 +1,18 @@
-package com.kodego.diangca.ebrahim.laundryexpres
+package com.kodego.diangca.ebrahim.laundryexpres.start
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.kodego.diangca.ebrahim.laundryexpres.CheckAvailabilityFragment
+import com.kodego.diangca.ebrahim.laundryexpres.MainFragment
+import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityMainBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentStartGoBinding
-import com.kodego.diangca.ebrahim.laundryexpres.login.LoginFragment
 
 
-class StartGoFragment(private var mainActivity: MainFragment) : Fragment() {
+class StartGoFragment(private var mainFragment: MainFragment) : Fragment() {
 
     private var _binding: FragmentStartGoBinding? = null
     private val binding get() = _binding!!
@@ -57,18 +59,14 @@ class StartGoFragment(private var mainActivity: MainFragment) : Fragment() {
     }
 
     private fun btnCustomerOnClickListener() {
-        mainActivity.indexActivity.mainFrame = mainActivity.indexActivity.supportFragmentManager.beginTransaction()
-        mainActivity.indexActivity.mainFrame.replace(R.id.mainFrame, CheckAvailabilityFragment(mainActivity));
-        mainActivity.indexActivity.mainFrame.addToBackStack(null);
-        mainActivity.indexActivity.mainFrame.commit();
+        mainFragment.indexActivity.mainFrame = mainFragment.indexActivity.supportFragmentManager.beginTransaction()
+        mainFragment.indexActivity.mainFrame.replace(R.id.mainFrame, CheckAvailabilityFragment(mainFragment));
+        mainFragment.indexActivity.mainFrame.addToBackStack(null);
+        mainFragment.indexActivity.mainFrame.commit();
     }
 
     private fun btnLoginOnClickListener() {
-
-        mainActivity.indexActivity.mainFrame = mainActivity.indexActivity.supportFragmentManager.beginTransaction()
-        mainActivity.indexActivity.mainFrame.replace(R.id.mainFrame, LoginFragment(mainActivity));
-        mainActivity.indexActivity.mainFrame.addToBackStack(null);
-        mainActivity.indexActivity.mainFrame.commit();
+        mainFragment.indexActivity.showLogin()
     }
 
     fun View?.removeSelf() {
@@ -78,7 +76,7 @@ class StartGoFragment(private var mainActivity: MainFragment) : Fragment() {
     }
 
     private fun btnBackOnClickListener() {
-        mainActivity.binding.viewPager2.currentItem = 1
+        mainFragment.binding.viewPager2.currentItem = 1
     }
 
 }

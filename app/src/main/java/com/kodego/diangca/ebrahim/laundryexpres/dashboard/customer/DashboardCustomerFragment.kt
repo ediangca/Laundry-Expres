@@ -61,7 +61,7 @@ class DashboardCustomerFragment(var indexActivity: IndexActivity) : Fragment() {
 
         firebaseDatabaseRecord()
 
-        openFragment(DashboardHomeFragment(this))
+//        openFragment(DashboardHomeFragment(this))
 
         binding.dashboardNav.setOnItemSelectedListener {
             navMenuOnItemSelectedListener(it)
@@ -73,23 +73,23 @@ class DashboardCustomerFragment(var indexActivity: IndexActivity) : Fragment() {
         Log.d("MENU ITEM", "ID: ${it.itemId}")
         when (it.itemId) {
             R.id.navCustomerHome -> {
-                openFragment(DashboardHomeFragment(this))
+//                openFragment(DashboardHomeFragment(this))
                 return true
             }
             R.id.navCustomerOrder -> {
-                openFragment(DashboardOrdersFragment(this))
+//                openFragment(DashboardOrdersFragment(this))
                 return true
             }
             R.id.navCustomerUpdates -> {
-                openFragment(DashboardNotificationFragment(this))
+//                openFragment(DashboardNotificationFragment(this))
                 return true
             }
             R.id.navCustomerInbox -> {
-                openFragment(DashboardInboxFragment(this))
+//                openFragment(DashboardInboxFragment(this))
                 return true
             }
             R.id.navCustomerAccount -> {
-                openFragment(DashboardAccountFragment(this))
+//                openFragment(DashboardAccountFragment(this))
                 return true
             }
 

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background"
     android:padding="20dp"
-    tools:context=".login.LoginFragment">
+    tools:context=".LoginActivity">
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btnHome"
