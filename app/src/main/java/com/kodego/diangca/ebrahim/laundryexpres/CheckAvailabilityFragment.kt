@@ -13,10 +13,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentCheckAvailabilityBinding
 import java.util.*
 
-class CheckAvailabilityFragment(var mainActivity: MainFragment): Fragment() {
+class CheckAvailabilityFragment(var mainFragment: MainFragment): Fragment() {
 
     private var _binding: FragmentCheckAvailabilityBinding? = null
     private val binding get() = _binding!!
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,16 +47,12 @@ class CheckAvailabilityFragment(var mainActivity: MainFragment): Fragment() {
 
     private fun initComponent() {
         binding.btnBack.setOnClickListener {
-            mainActivity.indexActivity.mainFrame = mainActivity.indexActivity.supportFragmentManager.beginTransaction()
-            mainActivity.indexActivity.mainFrame.replace(R.id.mainFrame, MainFragment(mainActivity.indexActivity));
-            mainActivity.indexActivity.mainFrame.addToBackStack(null);
-            mainActivity.indexActivity.mainFrame.commit();
+            val mainFragment = MainFragment(mainFragment.indexActivity)
+            mainFragment.setSelectedTab(2)
+            mainFragment.indexActivity.replaceFragment(mainFragment)
         }
         binding.btnUseMap.setOnClickListener {
-            mainActivity.indexActivity.mainFrame = mainActivity.indexActivity.supportFragmentManager.beginTransaction()
-            mainActivity.indexActivity.mainFrame.replace(R.id.mainFrame, CheckMapFragment(mainActivity));
-            mainActivity.indexActivity.mainFrame.addToBackStack(null);
-            mainActivity.indexActivity.mainFrame.commit();
+            mainFragment.indexActivity.replaceFragment(CheckMapFragment(mainFragment))
         }
 
         binding.btnCheckAvailability.setOnClickListener {
@@ -72,11 +69,11 @@ class CheckAvailabilityFragment(var mainActivity: MainFragment): Fragment() {
     }
 
     private fun btnLoginOnClickListener() {
-        mainActivity.indexActivity.showLogin()
+        mainFragment.indexActivity.showLogin()
     }
 
     private fun btnRegisterOnClickListener() {
-        mainActivity.indexActivity.showRegister()
+        mainFragment.indexActivity.showCustomerRegister()
     }
 
     private fun btnCheckAvailabilityOnClickListener() {
@@ -92,7 +89,7 @@ class CheckAvailabilityFragment(var mainActivity: MainFragment): Fragment() {
 
 
             if(addresses!=null && !addresses.isEmpty()) {
-                val address = addresses!![0]
+                val address = addresses[0]
                 val searchLocation = LatLng(address.latitude, address.longitude)
                 getAddressDetails(searchLocation)
             }else{
@@ -103,16 +100,22 @@ class CheckAvailabilityFragment(var mainActivity: MainFragment): Fragment() {
 
     private fun getAddressDetails(currentLatLong: LatLng) {
 
-        var geocoder = Geocoder(mainActivity.indexActivity, Locale.getDefault())
+        var geocoder = Geocoder(mainFragment.indexActivity, Locale.getDefault())
         val addresses: List<Address>? = geocoder.getFromLocation(currentLatLong.latitude, currentLatLong.longitude, 1)
 
 
-        val address: String = addresses!![0].getAddressLine(0)?:""
-        val city: String = addresses!![0].locality?:""
-        val state: String = addresses!![0].adminArea?:""
-        val zip: String = addresses!![0].postalCode?:""
-        val country: String = addresses!![0].countryName?:""
+        if(addresses!=null && !addresses.isEmpty()) {
+            val address: String = addresses[0].getAddressLine(0) ?: ""
+            val city: String = addresses[0].locality ?: ""
+            val state: String = addresses[0].adminArea ?: ""
+            val zip: String = addresses[0].postalCode ?: ""
+            val country: String = addresses[0].countryName ?: ""
 
-        Toast.makeText(context, "Address: $address, $city, $state, $zip, $country", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                context,
+                "Address: $address, $city, $state, $zip, $country",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 }

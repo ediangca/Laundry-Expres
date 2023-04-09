@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.kodego.diangca.ebrahim.laundryexpres.CheckAvailabilityFragment
 import com.kodego.diangca.ebrahim.laundryexpres.MainFragment
-import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityMainBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentStartGoBinding
 
@@ -55,14 +54,27 @@ class StartGoFragment(private var mainFragment: MainFragment) : Fragment() {
             btnCustomerOnClickListener()
         }
 
+        binding.btnPartnership.setOnClickListener {
+            btnPartnershipOnClickListener()
+        }
+
+        binding.btnRider.setOnClickListener {
+            btnRiderOnClickListener()
+        }
+
 
     }
 
+    private fun btnRiderOnClickListener() {
+        mainFragment.indexActivity.showRiderRegister()
+    }
+
+    private fun btnPartnershipOnClickListener() {
+        mainFragment.indexActivity.showPartnershipRegister()
+    }
+
     private fun btnCustomerOnClickListener() {
-        mainFragment.indexActivity.mainFrame = mainFragment.indexActivity.supportFragmentManager.beginTransaction()
-        mainFragment.indexActivity.mainFrame.replace(R.id.mainFrame, CheckAvailabilityFragment(mainFragment));
-        mainFragment.indexActivity.mainFrame.addToBackStack(null);
-        mainFragment.indexActivity.mainFrame.commit();
+        mainFragment.indexActivity.replaceFragment(CheckAvailabilityFragment(mainFragment))
     }
 
     private fun btnLoginOnClickListener() {

@@ -147,7 +147,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:background="@drawable/button_secondary"
-        android:text="No Account yet? Register Now!"
+        android:text="Register as Customer Now!"
         android:textColor="@color/color_blue_1"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent" />

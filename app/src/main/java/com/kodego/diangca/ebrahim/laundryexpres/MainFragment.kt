@@ -1,6 +1,7 @@
 package com.kodego.diangca.ebrahim.laundryexpres
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ class MainFragment(var indexActivity: IndexActivity) : Fragment() {
     val binding get() = _binding!!
     var fragmentAdapter = FragmentAdapter(indexActivity.supportFragmentManager, lifecycle)
 
+    private var currentItem = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -54,11 +56,11 @@ class MainFragment(var indexActivity: IndexActivity) : Fragment() {
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = fragmentAdapter
 
-
             TabLayoutMediator(binding.tabLayout, binding.viewPager2) { tab, position ->
             }.attach()
 
         }
+
         with(binding.tabLayout) {
             getTabAt(0)!!.setIcon(R.drawable.vector_home).text = "HOME"
             getTabAt(1)!!.setIcon(R.drawable.vector_services).text = "SERVICES"
@@ -66,12 +68,25 @@ class MainFragment(var indexActivity: IndexActivity) : Fragment() {
         }
 
 
+
     }
 
     private fun btnNextOnClickListener() {
     }
 
-    fun setSelectedTab(i: Int) {
-        binding.viewPager2.currentItem = 2
+    fun setSelectedTab(item: Int) {
+        this.currentItem = item
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("ON_START", "START HOME FRAGMENT $currentItem")
+        binding.viewPager2.post {
+            binding.viewPager2.setCurrentItem(currentItem, true)
+        }
+//        Handler().postDelayed({
+//            binding.viewPager2.setCurrentItem(currentItem, true)
+//        }, 50)
+
     }
 }

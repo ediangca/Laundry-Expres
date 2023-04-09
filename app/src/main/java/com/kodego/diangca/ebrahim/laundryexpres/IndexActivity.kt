@@ -14,6 +14,8 @@ import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityIndexBinding
 import com.kodego.diangca.ebrahim.laundryexpres.registration.RegisterCustomerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.registration.partner.RegisterPartnerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.registration.rider.RegisterRiderActivity
 
 class IndexActivity : AppCompatActivity() {
 
@@ -28,12 +30,6 @@ class IndexActivity : AppCompatActivity() {
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    fun getMainFragment(): MainFragment {
-        return mainFragment
-    }
-    fun getFirebaseDatabase(): FirebaseDatabase {
-        return firebaseDatabase;
-    }
 
     fun getDatabaseReference(): DatabaseReference {
         return firebaseDatabaseReference
@@ -53,16 +49,18 @@ class IndexActivity : AppCompatActivity() {
 
     private fun initComponent() {
 
-        mainFragment = MainFragment(this)
-        mainFrame = supportFragmentManager.beginTransaction()
-        mainFrame.replace(R.id.mainFrame, mainFragment)
-        mainFrame.commit()
+        if (firebaseAuth.currentUser==null) {
+            mainFragment = MainFragment(this)
+            mainFrame = supportFragmentManager.beginTransaction()
+            mainFrame.replace(R.id.mainFrame, mainFragment)
+            mainFrame.commit()
+        } else {
+            showProgressBar(true)
+        }
     }
-
     override fun onStart() {
         super.onStart()
         if (FirebaseAuth.getInstance().currentUser!=null) {
-            showProgressBar(true)
             firebaseDatabaseReference.child("users").addListenerForSingleValueEvent(object :
                 ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -73,12 +71,12 @@ class IndexActivity : AppCompatActivity() {
                         goToDashboard(userType)
                     } else {
                         showProgressBar(false)
-                        Toast.makeText(
-                            applicationContext,
-                            "Either your username or password is Invalid! Please try again!",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
+                        Log.d("SIGN_OUT_USER", "WITH_AUTH_BUT_NOT_REGISTERED")
+                        firebaseAuth.signOut()
+                        mainFragment = MainFragment(this@IndexActivity)
+                        mainFrame = supportFragmentManager.beginTransaction()
+                        mainFrame.replace(R.id.mainFrame, mainFragment)
+                        mainFrame.commit()
                     }
                 }
 
@@ -91,6 +89,7 @@ class IndexActivity : AppCompatActivity() {
             })
         }
     }
+
 
     private fun goToDashboard(userType: String) {
         when (userType) {
@@ -122,8 +121,7 @@ class IndexActivity : AppCompatActivity() {
         }
     }
 
-    fun replaceFragment( fragment: Fragment) {
-
+    fun replaceFragment(fragment: Fragment) {
         mainFrame = supportFragmentManager.beginTransaction()
         mainFrame.replace(R.id.mainFrame, fragment);
         mainFrame.addToBackStack(null);
@@ -131,15 +129,28 @@ class IndexActivity : AppCompatActivity() {
     }
 
     fun showLogin() {
-        Log.d("SHOW_LOGIN", "LOGIN ACTIVITY")
+        Log.d("SHOW_LOGIN_ACTIVITY", "LOGIN ACTIVITY")
         startActivity(Intent(Intent(Intent(this, LoginActivity::class.java))))
         finish()
     }
 
-    fun showRegister() {
-        Log.d("SHOW_REGISTER", "REGISTER ACTIVITY")
+    fun showCustomerRegister() {
+        Log.d("SHOW_REGISTER_ACTIVITY", "REGISTER CUSTOMER ACTIVITY")
         startActivity(Intent(Intent(this, RegisterCustomerActivity::class.java)))
         finish()
     }
+
+    fun showPartnershipRegister() {
+        Log.d("SHOW_REGISTER_ACTIVITY", "REGISTER PARTNERSHIP ACTIVITY")
+        startActivity(Intent(Intent(this, RegisterPartnerActivity::class.java)))
+        finish()
+    }
+
+    fun showRiderRegister() {
+        Log.d("SHOW_REGISTER_ACTIVITY", "REGISTER RIDER ACTIVITY")
+        startActivity(Intent(Intent(this, RegisterRiderActivity::class.java)))
+        finish()
+    }
+
 
 }

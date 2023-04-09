@@ -17,11 +17,14 @@
         android:theme="@style/Theme.LaundryExpress"
         tools:targetApi="31">
         <activity
-            android:name=".registration.RegisterRiderActivity"
-            android:exported="false"
-            android:theme="@style/Theme.LaundryExpress.NoActionBar"/>
+            android:name=".RegisterPartnerActivity"
+            android:exported="false" />
         <activity
-            android:name=".registration.RegisterPartnerActivity"
+            android:name=".registration.rider.RegisterRiderActivity"
+            android:exported="false"
+            android:theme="@style/Theme.LaundryExpress.NoActionBar" />
+        <activity
+            android:name=".registration.partner.RegisterPartnerActivity"
             android:exported="false"
             android:theme="@style/Theme.LaundryExpress.NoActionBar" />
         <activity

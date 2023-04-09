@@ -10,14 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:weightSum="12"
-        android:orientation="vertical"
-        tools:context=".MainActivity">
+        android:orientation="vertical">
 
-        <FrameLayout
-            android:id="@+id/mainFrameCustomerDashboard"
+        <fragment
+            android:id="@+id/fragmentCustomerDashboard"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="11"/>
+            android:layout_weight="11"
+            app:navGraph = "@navigation/navigation_customer"/>
+
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/dashboardNav"

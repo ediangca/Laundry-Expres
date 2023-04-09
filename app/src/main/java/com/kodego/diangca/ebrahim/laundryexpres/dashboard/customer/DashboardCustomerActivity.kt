@@ -35,11 +35,6 @@ class DashboardCustomerActivity : AppCompatActivity() {
     }
     private fun initComponent() {
 
-        mainFrame = supportFragmentManager.beginTransaction()
-        mainFrame.replace(R.id.mainFrameCustomerDashboard, DashboardHomeFragment(this));
-        mainFrame.addToBackStack(null);
-        mainFrame.commit();
-
         binding.dashboardNav.setOnItemSelectedListener {
             navMenuOnItemSelectedListener(it)
         }
@@ -51,35 +46,35 @@ class DashboardCustomerActivity : AppCompatActivity() {
         when (it.itemId) {
             R.id.navCustomerHome -> {
                 mainFrame = supportFragmentManager.beginTransaction()
-                mainFrame.replace(R.id.mainFrameCustomerDashboard, DashboardHomeFragment(this));
+                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardHomeFragment(this));
                 mainFrame.addToBackStack(null);
                 mainFrame.commit();
                 return true
             }
             R.id.navCustomerOrder -> {
                 mainFrame = supportFragmentManager.beginTransaction()
-                mainFrame.replace(R.id.mainFrameCustomerDashboard, DashboardOrdersFragment(this));
+                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardOrdersFragment(this));
                 mainFrame.addToBackStack(null);
                 mainFrame.commit();
                 return true
             }
             R.id.navCustomerUpdates -> {
                 mainFrame = supportFragmentManager.beginTransaction()
-                mainFrame.replace(R.id.mainFrameCustomerDashboard, DashboardNotificationFragment(this));
+                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardNotificationFragment(this));
                 mainFrame.addToBackStack(null);
                 mainFrame.commit();
                 return true
             }
             R.id.navCustomerInbox -> {
                 mainFrame = supportFragmentManager.beginTransaction()
-                mainFrame.replace(R.id.mainFrameCustomerDashboard, DashboardInboxFragment(this));
+                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardInboxFragment(this));
                 mainFrame.addToBackStack(null);
                 mainFrame.commit();
                 return true
             }
             R.id.navCustomerAccount -> {
                 mainFrame = supportFragmentManager.beginTransaction()
-                mainFrame.replace(R.id.mainFrameCustomerDashboard, DashboardAccountFragment(this));
+                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardAccountFragment(this));
                 mainFrame.addToBackStack(null);
                 mainFrame.commit();
                 return true

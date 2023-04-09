@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardHomeBinding
 
@@ -22,6 +22,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
+    private lateinit var displayName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,13 +50,39 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
     private fun initComponent() {
 
+        displayUserName()
+
+
+    }
+
+    private fun displayUserName() {
         firebaseAuth.currentUser?.let {
             for (profile in it.providerData){
-                binding.titleView.text = it.displayName
+                displayName = it.displayName.toString()
+            }
+            if(!displayName.isEmpty()){
+                binding.titleView.text = "Hi ${displayName}, Good Day!"
+            }else {
+                firebaseDatabaseReference.child("users")
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
+                                val firstname = snapshot.child(firebaseAuth.currentUser!!.uid)
+                                    .child("firstname").value.toString()
+                                binding.titleView.text = "Hi $firstname, Good Day!"
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            Toast.makeText(
+                                dashboardCustomer,
+                                "${error.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    })
             }
         }
-
-
     }
 
 }

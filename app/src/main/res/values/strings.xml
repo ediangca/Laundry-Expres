@@ -24,5 +24,10 @@
     <string name="step_3">Step 3: Delivery -
        Once your laundry is ready, we will send you a notification through the app. You can then schedule a time for them to deliver your laundry back to you. Our delivery drivers will arrive at your specified location, and your clean laundry will be handed over to you.</string>
 
+    <string-array name="sex">
+        <item name="Select">Select sex</item>
+        <item name="Male">Male</item>
+        <item name="Female">Female</item>
+    </string-array>
 
 </resources>

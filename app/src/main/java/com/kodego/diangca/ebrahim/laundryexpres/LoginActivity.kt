@@ -23,8 +23,9 @@ import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityLoginBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogUserTypeBinding
-import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import com.kodego.diangca.ebrahim.laundryexpres.registration.RegisterCustomerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.registration.partner.RegisterPartnerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.registration.rider.RegisterRiderActivity
 
 class LoginActivity: AppCompatActivity() {
 
@@ -48,6 +49,8 @@ class LoginActivity: AppCompatActivity() {
 
     private lateinit var googleSignInClient: GoogleSignInClient
 
+    private lateinit var userBuilder: AlertDialog.Builder
+    private lateinit var userDialogInterface: DialogInterface
 
     companion object {
         private const val TAG = "GoogleActivity"
@@ -139,36 +142,18 @@ class LoginActivity: AppCompatActivity() {
     }
 
     private fun btnRegisterOnClickListener() {
-        val builder =  showAddRecordDialog(getUserTypeView("Register"))
-        builder.setPositiveButton("Select",
-            DialogInterface.OnClickListener { _, _ -> //to sign in the user
-
-                when (userType) {
-                    "Customer" -> {
-                        showProgressBar(false)
-                        var loginIntent = Intent(this, RegisterCustomerActivity::class.java)
-                        startActivity(Intent(loginIntent))
-                        finish()
-                    }
-                    "Partner" -> {
-                        showProgressBar(false)
-                        //Checking if Verified
-
-                    }
-                    "Rider" -> {
-                        showProgressBar(true)
-                    }
-                    else -> {
-
-                        showProgressBar(true)
-                    }
-                }
-
+        userBuilder =  AlertDialog.Builder(this)
+//        userBuilder.setCancelable(false)
+        userBuilder.setView(getUserTypeView("Register"))
+      /*  userBuilder.setPositiveButton("Select",
+            DialogInterface.OnClickListener { dialog, _ ->
+                dialogInterfaceOnClickListener(dialog)
             })
-        builder.setNegativeButton("Cancel",
-            DialogInterface.OnClickListener { _, _ ->
-            })
-        builder.show()
+        userBuilder.setNegativeButton("Select",
+            DialogInterface.OnClickListener { dialog, _ ->
+                dialog.dismiss()
+            })*/
+        this.userDialogInterface = userBuilder.show()
     }
 
     private fun isValidEmail(email: String): Boolean {
@@ -226,19 +211,11 @@ class LoginActivity: AppCompatActivity() {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
-                        userType = snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
+                        this@LoginActivity.userType = snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
                             .getValue(String::class.java).toString()
                         goToDashboard()
                     } else {
-                        val builder =  showAddRecordDialog(getUserTypeView("Login"))
-                        builder.setPositiveButton("Select",
-                            DialogInterface.OnClickListener { _, _ -> //to sign in the user
-                                addRecordToFirebaseDatabase()
-                            })
-                        builder.setNegativeButton("Cancel",
-                            DialogInterface.OnClickListener { _, _ ->
-                            })
-                        builder.show()
+                        btnRegisterOnClickListener()
                     }
                 }
 
@@ -260,7 +237,7 @@ class LoginActivity: AppCompatActivity() {
 
                     Log.d("ForSingleValueEvent", firebaseAuth.currentUser!!.uid)
 
-                    userType = snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
+                    this@LoginActivity.userType = snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
                         .getValue(String::class.java).toString()
 
                     goToDashboard()
@@ -293,46 +270,55 @@ class LoginActivity: AppCompatActivity() {
         with(customDialogBinding) {
             titleView.text  = title
             userPartner.setOnClickListener {
-                userGroup.clearCheck()
-                userPartner.isChecked = true
                 userType = "Partner"
+                showProgressBar(true)
+                showRegistrationActivity()
             }
             userRider.setOnClickListener {
-                userGroup.clearCheck()
-                userRider.isChecked = true
                 userType = "Rider"
+                showProgressBar(true)
+                showRegistrationActivity()
             }
             userCustomer.setOnClickListener {
-                userGroup.clearCheck()
-                userCustomer.isChecked = true
                 userType = "Customer"
+                showProgressBar(true)
+                showRegistrationActivity()
             }
         }
         return customDialogBinding.root
     }
 
-    private fun showAddRecordDialog(view: View): AlertDialog.Builder {
+    private fun showRegistrationActivity() {
+        when (userType) {
+            "Customer" -> {
+                showProgressBar(false)
+                userDialogInterface.dismiss()
+                startActivity(Intent(Intent(this, RegisterCustomerActivity::class.java)))
+                finish()
+            }
+            "Partner" -> {
+                showProgressBar(false)
+                userDialogInterface.dismiss()
+                startActivity(Intent(Intent(this, RegisterPartnerActivity::class.java)))
+                finish()
+                //Checking if Verified
 
-        val builder = AlertDialog.Builder(this)
-        builder.setView(view)
-        with(builder) {
-            setView(view)
-            setPositiveButton("Select",
-                DialogInterface.OnClickListener { _, _ -> //to sign in the user
-                    addRecordToFirebaseDatabase()
-                })
-            setNegativeButton("Cancel",
-                DialogInterface.OnClickListener { _, _ ->
-                })
-
-            builder.create()
+            }
+            "Rider" -> {
+                showProgressBar(false)
+                userDialogInterface.dismiss()
+                startActivity(Intent(Intent(this, RegisterRiderActivity::class.java)))
+                finish()
+            }
+            else -> {
+                userDialogInterface.dismiss()
+                showProgressBar(false)
+            }
         }
-
-        return builder
     }
 
     private fun addRecordToFirebaseDatabase() {
-
+/*
         val databaseRef = firebaseDatabase.reference.child("users")
             .child(firebaseAuth.currentUser!!.uid)
 
@@ -354,6 +340,7 @@ class LoginActivity: AppCompatActivity() {
                 user = User(
                     firebaseAuth.currentUser!!.uid,
                     firstName,
+                    null,
                     null,
                     email,
                     userType,
@@ -381,7 +368,8 @@ class LoginActivity: AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
+        }*/
+
     }
 
     private fun goToDashboard() {

@@ -26,51 +26,53 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:padding="20dp"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-
-        <RadioGroup
-            android:id="@+id/userGroup"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <androidx.appcompat.widget.AppCompatRadioButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/userPartner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_secondary"
+                android:clickable="false"
                 android:drawableTop="@drawable/icon_laundry"
-                android:padding="20dp"
                 android:text="PARTNER"
                 android:textAlignment="center"
                 android:textColor="@color/color_blue_1"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <androidx.appcompat.widget.AppCompatRadioButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/userRider"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="20dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_secondary"
                 android:drawableTop="@drawable/icon_rider"
                 android:text="RIDER"
                 android:textAlignment="center"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:textColor="@color/color_blue_1"/>
 
-            <androidx.appcompat.widget.AppCompatRadioButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/userCustomer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_secondary"
                 android:drawableTop="@drawable/icon_customer"
-                android:padding="20dp"
                 android:text="CUSTOMER"
                 android:textAlignment="center"
                 android:textColor="@color/color_blue_1"
-                android:textSize="18sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
-
-        </RadioGroup>
 
     </LinearLayout>
 

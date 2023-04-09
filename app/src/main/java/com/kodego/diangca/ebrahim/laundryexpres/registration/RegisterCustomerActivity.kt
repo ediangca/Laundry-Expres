@@ -22,7 +22,7 @@ class RegisterCustomerActivity : AppCompatActivity() {
 
     private lateinit var dialogLoadingBinding: DialogLoadingBinding
 
-    private var userType: String = "UNKNOWN"
+    private var userType: String = "Customer"
 
     private var firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance()
     private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
@@ -56,14 +56,19 @@ class RegisterCustomerActivity : AppCompatActivity() {
         val mobileNo = binding.mobileNo.text.toString()
         val firstName = binding.firstName.text.toString()
         val lastName = binding.lastName.text.toString()
+        val address = binding.address.text.toString()
+        val sex = ""
+        val birthdate = ""
         val email = binding.email.text.toString()
         val password = binding.password.text.toString()
         val confirmPassword = binding.confirmPassword.text.toString()
+        val datetimeCreated = ""
+        val datetimeUpdated = ""
 
         binding.passwordLayout.isPasswordVisibilityToggleEnabled = true
         binding.confirmPasswordLayout.isPasswordVisibilityToggleEnabled = true
 
-        if (mobileNo.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+        if (mobileNo.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || address.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             if (mobileNo.isEmpty()) {
                 binding.mobileNo.error = "Please enter your Mobile No."
             }
@@ -72,6 +77,9 @@ class RegisterCustomerActivity : AppCompatActivity() {
             }
             if (lastName.isEmpty()) {
                 binding.lastName.error = "Please enter your Lastname."
+            }
+            if (address.isEmpty()) {
+                binding.address.error = "Please enter your Address."
             }
             if (email.isEmpty() || !isValidEmail(email)) {
                 binding.email.error = "Please enter an email or a valid email."
@@ -113,27 +121,20 @@ class RegisterCustomerActivity : AppCompatActivity() {
 
                                     val user = User(
                                         firebaseAuth.currentUser!!.uid,
-                                        firstName,
-                                        lastName,
                                         email,
                                         userType,
                                         password,
+                                        firstName,
+                                        lastName,
+                                        sex,
+                                        birthdate,
+                                        address,
                                         mobileNo,
+                                        null,
                                         false,
-                                        null
+                                        datetimeCreated,
+                                        datetimeUpdated
                                     )
-
-/*
-                        val uid = firebaseAuth.currentUser!!.uid
-                        firebaseDatabaseReference.child("users").child(uid).child("type").setValue("customer")
-                        firebaseDatabaseReference.child("users").child(uid).child("firstname").setValue(firstName)
-                        firebaseDatabaseReference.child("users").child(uid).child("lastname").setValue(lastName)
-                        firebaseDatabaseReference.child("users").child(uid).child("email").setValue(email)
-                        firebaseDatabaseReference.child("users").child(uid).child("password").setValue(password)
-                        firebaseDatabaseReference.child("users").child(uid).child("phone").setValue(mobileNo)
-                        firebaseDatabaseReference.child("users").child(uid).child("isVerified").setValue(false)
-                        firebaseDatabaseReference.child("users").child(uid).child("profile").setValue(null)
-*/
 
                                     databaseRef.setValue(user).addOnCompleteListener {task ->
                                         if (task.isSuccessful) {
@@ -159,25 +160,9 @@ class RegisterCustomerActivity : AppCompatActivity() {
     }
 
     private fun goToDashboard() {
-        when (userType) {
-            "Customer" -> {
-                showProgressBar(false)
-                startActivity(Intent(Intent(this, DashboardCustomerActivity::class.java)))
-                finish()
-            }
-            "Partner" -> {
-                showProgressBar(false)
-                //Checking if Verified
-
-            }
-            "Rider" -> {
-                showProgressBar(true)
-            }
-            else -> {
-
-                showProgressBar(true)
-            }
-        }
+        showProgressBar(false)
+        startActivity(Intent(Intent(this, DashboardCustomerActivity::class.java)))
+        finish()
     }
 
     private fun showProgressBar(visible: Boolean) {
