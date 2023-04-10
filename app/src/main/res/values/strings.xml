@@ -30,4 +30,12 @@
         <item name="Female">Female</item>
     </string-array>
 
+    <string-array name="vehicle">
+        <item name="Select">Select Vehicle to use</item>
+        <item name="Bicycle">Bicycle</item>
+        <item name="Motorcycle">Motorcycle</item>
+        <item name="Wheels">Wheels</item>
+    </string-array>
+
+
 </resources>

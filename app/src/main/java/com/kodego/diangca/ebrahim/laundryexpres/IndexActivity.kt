@@ -12,6 +12,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartnerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityIndexBinding
 import com.kodego.diangca.ebrahim.laundryexpres.registration.RegisterCustomerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.registration.partner.RegisterPartnerActivity
@@ -30,6 +32,7 @@ class IndexActivity : AppCompatActivity() {
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
+    private var userType = "UNKNOWN"
 
     fun getDatabaseReference(): DatabaseReference {
         return firebaseDatabaseReference
@@ -65,10 +68,10 @@ class IndexActivity : AppCompatActivity() {
                 ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
-                        val userType =
+                        userType =
                             snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
                                 .getValue(String::class.java).toString()
-                        goToDashboard(userType)
+                        goToDashboard()
                     } else {
                         showProgressBar(false)
                         Log.d("SIGN_OUT_USER", "WITH_AUTH_BUT_NOT_REGISTERED")
@@ -91,24 +94,23 @@ class IndexActivity : AppCompatActivity() {
     }
 
 
-    private fun goToDashboard(userType: String) {
+    private fun goToDashboard() {
+        showProgressBar(false)
         when (userType) {
             "Customer" -> {
-                showProgressBar(false)
                 startActivity((Intent(this, DashboardCustomerActivity::class.java)))
                 finish()
             }
             "Partner" -> {
-                showProgressBar(false)
-                //Checking if Verified
-
+                startActivity((Intent(this, DashboardPartnerActivity::class.java)))
+                finish()
             }
             "Rider" -> {
-                showProgressBar(true)
+                startActivity((Intent(this, DashboardRiderActivity::class.java)))
+                finish()
             }
             else -> {
 
-                showProgressBar(true)
             }
         }
     }

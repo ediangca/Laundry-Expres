@@ -1,4 +1,4 @@
-package com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer
+package com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,7 +13,7 @@ import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityDashboardCustomerBinding
 
-class DashboardCustomerActivity : AppCompatActivity() {
+class DashboardRiderActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDashboardCustomerBinding
 
@@ -35,11 +35,6 @@ class DashboardCustomerActivity : AppCompatActivity() {
     }
     private fun initComponent() {
 
-        mainFrame = supportFragmentManager.beginTransaction()
-        mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardHomeFragment(this));
-        mainFrame.addToBackStack(null);
-        mainFrame.commit();
-
         binding.dashboardNav.setOnItemSelectedListener {
             navMenuOnItemSelectedListener(it)
         }
@@ -50,38 +45,38 @@ class DashboardCustomerActivity : AppCompatActivity() {
         Log.d("MENU ITEM", "ID: ${it.itemId}")
         when (it.itemId) {
             R.id.navCustomerHome -> {
-                mainFrame = supportFragmentManager.beginTransaction()
-                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardHomeFragment(this));
-                mainFrame.addToBackStack(null);
-                mainFrame.commit();
+//                mainFrame = supportFragmentManager.beginTransaction()
+//                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardHomeFragment(this));
+//                mainFrame.addToBackStack(null);
+//                mainFrame.commit();
                 return true
             }
             R.id.navCustomerOrder -> {
-                mainFrame = supportFragmentManager.beginTransaction()
-                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardOrdersFragment(this));
-                mainFrame.addToBackStack(null);
-                mainFrame.commit();
+//                mainFrame = supportFragmentManager.beginTransaction()
+//                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardOrdersFragment(this));
+//                mainFrame.addToBackStack(null);
+//                mainFrame.commit();
                 return true
             }
             R.id.navCustomerUpdates -> {
-                mainFrame = supportFragmentManager.beginTransaction()
-                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardNotificationFragment(this));
-                mainFrame.addToBackStack(null);
-                mainFrame.commit();
+//                mainFrame = supportFragmentManager.beginTransaction()
+//                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardNotificationFragment(this));
+//                mainFrame.addToBackStack(null);
+//                mainFrame.commit();
                 return true
             }
             R.id.navCustomerInbox -> {
-                mainFrame = supportFragmentManager.beginTransaction()
-                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardInboxFragment(this));
-                mainFrame.addToBackStack(null);
-                mainFrame.commit();
+//                mainFrame = supportFragmentManager.beginTransaction()
+//                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardInboxFragment(this));
+//                mainFrame.addToBackStack(null);
+//                mainFrame.commit();
                 return true
             }
             R.id.navCustomerAccount -> {
-                mainFrame = supportFragmentManager.beginTransaction()
-                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardAccountFragment(this));
-                mainFrame.addToBackStack(null);
-                mainFrame.commit();
+//                mainFrame = supportFragmentManager.beginTransaction()
+//                mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardAccountFragment(this));
+//                mainFrame.addToBackStack(null);
+//                mainFrame.commit();
                 return true
             }
 

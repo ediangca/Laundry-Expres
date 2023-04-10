@@ -21,11 +21,11 @@ import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartnerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityLoginBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogUserTypeBinding
-import com.kodego.diangca.ebrahim.laundryexpres.registration.RegisterCustomerActivity
-import com.kodego.diangca.ebrahim.laundryexpres.registration.partner.RegisterPartnerActivity
-import com.kodego.diangca.ebrahim.laundryexpres.registration.rider.RegisterRiderActivity
+import com.kodego.diangca.ebrahim.laundryexpres.registration.RegisterPersonalInfoActivity
 
 class LoginActivity: AppCompatActivity() {
 
@@ -44,6 +44,7 @@ class LoginActivity: AppCompatActivity() {
     private lateinit var credential: AuthCredential
 
     private var userType = "UNKNOWN"
+    private lateinit var gmail:String
 
 //    implementation 'com.google.firebase:firebase-database:20.1.0'
 
@@ -175,14 +176,19 @@ class LoginActivity: AppCompatActivity() {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
-                Toast.makeText(this, "GOOGLE_SIGN_IN_SUCCESS ${account.id}",Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this, "GOOGLE_SIGN_IN_SUCCESS ${account.id}",Toast.LENGTH_SHORT).show()
                 Log.d("onActivityResult", "firebaseAuthWithGoogle:" + account.id)
                 firebaseAuthWithGoogle(account.idToken!!)
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
-                Log.w("onActivityResult", "Google sign in failed", e)
+                 Toast.makeText(this, "onActivityResult ${e.message}",Toast.LENGTH_SHORT).show()
+                Log.d("onActivityResult", "Google sign in failed", e)
             }
         }
+    }
+
+    private fun setGmail(gmail: String) {
+            this.gmail = gmail
     }
 
     private fun firebaseAuthWithGoogle(idToken: String) {
@@ -191,15 +197,15 @@ class LoginActivity: AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Log.d("firebaseAuthWithGoogle", "signInWithCredential:success")
                     val user = firebaseAuth.currentUser
-                    Toast.makeText(this, "GOOGLE_SIGN_IN_SUCCESS ${user!!.displayName}",Toast.LENGTH_SHORT).show()
+                    user?.email?.let { setGmail(it) }
+//                    Toast.makeText(this, "GOOGLE_SIGN_IN_SUCCESS ${user!!.displayName}",Toast.LENGTH_SHORT).show()
                     Log.d("GOOGLE_SIGN_IN_SUCCESS", "${user!!.displayName}")
                     checkUserAccount()
                 } else {
                     // If sign in fails, display a message to the user.
                     Toast.makeText(this, "GOOGLE_SIGN_IN_FAIL ${task.exception!!.message}",Toast.LENGTH_SHORT).show()
-                    Log.w("firebaseAuthWithGoogle", "signInWithCredential:failure", task.exception)
+                    Log.d("firebaseAuthWithGoogle", "signInWithCredential:failure", task.exception)
                 }
             }
     }
@@ -289,111 +295,37 @@ class LoginActivity: AppCompatActivity() {
     }
 
     private fun showRegistrationActivity() {
-        when (userType) {
-            "Customer" -> {
-                showProgressBar(false)
-                userDialogInterface.dismiss()
-                startActivity(Intent(Intent(this, RegisterCustomerActivity::class.java)))
-                finish()
-            }
-            "Partner" -> {
-                showProgressBar(false)
-                userDialogInterface.dismiss()
-                startActivity(Intent(Intent(this, RegisterPartnerActivity::class.java)))
-                finish()
-                //Checking if Verified
 
-            }
-            "Rider" -> {
-                showProgressBar(false)
-                userDialogInterface.dismiss()
-                startActivity(Intent(Intent(this, RegisterRiderActivity::class.java)))
-                finish()
-            }
-            else -> {
-                userDialogInterface.dismiss()
-                showProgressBar(false)
-            }
-        }
-    }
+        showProgressBar(false)
+        userDialogInterface.dismiss()
 
-    private fun addRecordToFirebaseDatabase() {
-/*
-        val databaseRef = firebaseDatabase.reference.child("users")
-            .child(firebaseAuth.currentUser!!.uid)
-
-        var user = User()
-
-        val firebaseAuthUser = firebaseAuth.currentUser
-        firebaseAuthUser?.let {
-            for (profile in it.providerData) {
-                // Id of the provider (ex: google.com)
-                val providerId = profile.providerId
-                // UID specific to the provider
-                val uid = profile.uid
-                // Name, email address, and profile photo Url
-                val firstName = profile.displayName
-                val email = profile.email
-                val photoUrl = profile.photoUrl
-                val phone = profile.phoneNumber
-
-                user = User(
-                    firebaseAuth.currentUser!!.uid,
-                    firstName,
-                    null,
-                    null,
-                    email,
-                    userType,
-                    providerId,
-                    phone,
-                    false,
-                    photoUrl.toString()
-                )
-            }
-        }
-
-        if (user!=null) {
-            user.printLOG()
-        }
-
-        databaseRef.setValue(user).addOnCompleteListener {
-            if (it.isSuccessful) {
-                Toast.makeText(this, "User has been successfully Registered!", Toast.LENGTH_SHORT)
-                    .show()
-                goToDashboard()
-            } else {
-                Toast.makeText(
-                    this,
-                    "User fail to Register. ${it.exception!!.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }*/
+        val intent = Intent(this, RegisterPersonalInfoActivity::class.java)
+        intent.putExtra("email", gmail)
+        intent.putExtra("userType", userType)
+        startActivity(intent)
 
     }
 
     private fun goToDashboard() {
+        showProgressBar(false)
         when (userType) {
             "Customer" -> {
-                showProgressBar(false)
-                startActivity(Intent(this, DashboardCustomerActivity::class.java))
+                startActivity((Intent(this, DashboardCustomerActivity::class.java)))
                 finish()
             }
             "Partner" -> {
-                showProgressBar(false)
-                //Checking if Verified
-
+                startActivity((Intent(this, DashboardPartnerActivity::class.java)))
+                finish()
             }
             "Rider" -> {
-                showProgressBar(true)
+                startActivity((Intent(this, DashboardRiderActivity::class.java)))
+                finish()
             }
             else -> {
 
-                showProgressBar(true)
             }
         }
     }
-
 
     private fun showProgressBar(visible: Boolean) {
         if (visible) {

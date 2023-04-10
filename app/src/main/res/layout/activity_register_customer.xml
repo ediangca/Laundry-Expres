@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
     tools:context=".registration.RegisterCustomerActivity">
 
     <androidx.appcompat.widget.AppCompatButton
@@ -189,12 +188,32 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Spinner
+            android:id="@+id/sex"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_margin="5dp"
             android:background="@color/white"
             android:entries="@array/sex"
             android:nestedScrollingEnabled="true"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:padding="10dp"
+            android:layout_margin="10dp"
+            android:text="Get Current Location"
+            android:drawableStart="@drawable/vector_location"
+            android:textColor="@color/color_light_3"
+            android:background="@drawable/button_primary"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/currentLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -208,12 +227,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
-                android:hint="*Address"
-                android:inputType="textMultiLine"
-                android:gravity="start|top"
-                android:lines="3"
-                android:minLines="3"
-                android:maxLines="3"
+                android:hint="*Street"
+                android:inputType="textCapWords"
                 android:textSize="12sp" />
 
         </com.google.android.material.textfield.TextInputLayout>

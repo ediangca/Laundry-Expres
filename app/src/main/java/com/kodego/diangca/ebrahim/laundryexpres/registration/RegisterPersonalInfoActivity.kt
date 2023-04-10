@@ -23,18 +23,20 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
-import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityRegisterCustomerBinding
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityRegisterPersonalInfoBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
+import com.kodego.diangca.ebrahim.laundryexpres.registration.partner.RegisterPartnerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.registration.rider.RegisterRiderActivity
 import java.util.*
 import java.util.regex.Pattern
 
-class RegisterCustomerActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityRegisterCustomerBinding
+class RegisterPersonalInfoActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityRegisterPersonalInfoBinding
 
     private lateinit var dialogLoadingBinding: DialogLoadingBinding
 
-    private var userType: String = "Customer"
+    private var userType: String = "UNKNOWN"
 
     private var firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance()
     private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
@@ -44,19 +46,24 @@ class RegisterCustomerActivity : AppCompatActivity() {
 
     private val permissionId = 2
 
-    private  var longtitude: Double = 0.0
-    private  var latitude: Double = 0.0
+    private var longtitude: Double = 0.0
+    private var latitude: Double = 0.0
 
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityRegisterCustomerBinding.inflate(layoutInflater)
+        binding = ActivityRegisterPersonalInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         initComponent()
     }
 
     private fun initComponent() {
+
+        binding.email.setText(intent.getStringExtra("email").toString())
+        userType = intent.getStringExtra("userType")!!
+
+        Log.d("REGISTER_PERSONAL_INFO", "Register $userType -> Personal Info")
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -80,6 +87,7 @@ class RegisterCustomerActivity : AppCompatActivity() {
         startActivity(Intent(Intent(this, LoginActivity::class.java)))
         finish()
     }
+
     private fun isLocationEnabled(): Boolean {
         val locationManager: LocationManager =
             getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -87,20 +95,22 @@ class RegisterCustomerActivity : AppCompatActivity() {
             LocationManager.NETWORK_PROVIDER
         )
     }
+
     private fun checkPermissions(): Boolean {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED &&
+            )==PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
+            )==PackageManager.PERMISSION_GRANTED
         ) {
             return true
         }
         return false
     }
+
     private fun requestPermissions() {
         ActivityCompat.requestPermissions(
             this,
@@ -111,14 +121,15 @@ class RegisterCustomerActivity : AppCompatActivity() {
             permissionId
         )
     }
+
     @SuppressLint("MissingSuperCall")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
-        if (requestCode == permissionId) {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+        if (requestCode==permissionId) {
+            if ((grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED)) {
                 getLocation()
             }
         }
@@ -130,7 +141,7 @@ class RegisterCustomerActivity : AppCompatActivity() {
             if (isLocationEnabled()) {
                 mFusedLocationClient.lastLocation.addOnCompleteListener(this) { task ->
                     val location: Location? = task.result
-                    if (location != null) {
+                    if (location!=null) {
                         val geocoder = Geocoder(this, Locale.getDefault())
                         val list: List<Address> =
                             geocoder.getFromLocation(location.latitude, location.longitude, 1)!!
@@ -138,13 +149,13 @@ class RegisterCustomerActivity : AppCompatActivity() {
                             currentLocation.text = list[0].toString()
                             latitude = list[0].latitude
                             longtitude = list[0].longitude
-                            address.setText(list[0].getAddressLine(0)?:"n/a")
-                            city.setText(list[0].locality?:"n/a")
-                            state.setText(list[0].adminArea?:"n/a")
-                            zipCode.setText(list[0].postalCode?:"n/a")
-                            country.setText(list[0].countryName?:"n/a")
+                            address.setText(list[0].getAddressLine(0) ?: "n/a")
+                            city.setText(list[0].locality ?: "n/a")
+                            state.setText(list[0].adminArea ?: "n/a")
+                            zipCode.setText(list[0].postalCode ?: "n/a")
+                            country.setText(list[0].countryName ?: "n/a")
                         }
-                    }else{
+                    } else {
                         Toast.makeText(this, "Not Found Location", Toast.LENGTH_LONG).show()
                     }
                 }
@@ -167,13 +178,8 @@ class RegisterCustomerActivity : AppCompatActivity() {
         val country = binding.country.text.toString()
         val sex = binding.sex.getItemAtPosition(binding.sex.selectedItemPosition).toString()
         val email = binding.email.text.toString()
-        val password = binding.password.text.toString()
-        val confirmPassword = binding.confirmPassword.text.toString()
 
-        binding.passwordLayout.isPasswordVisibilityToggleEnabled = true
-        binding.confirmPasswordLayout.isPasswordVisibilityToggleEnabled = true
-
-        if (mobileNo.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+        if (mobileNo.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty() || email.isEmpty()) {
             if (mobileNo.isEmpty()) {
                 binding.mobileNo.error = "Please enter your Mobile No."
             }
@@ -201,94 +207,98 @@ class RegisterCustomerActivity : AppCompatActivity() {
             if (email.isEmpty() || !isValidEmail(email)) {
                 binding.email.error = "Please enter an email or a valid email."
             }
-            if (password.isEmpty()) {
-                binding.password.error = "Please enter your password."
-                binding.passwordLayout.isPasswordVisibilityToggleEnabled = false
-            }
-            if (confirmPassword.isEmpty()) {
-                binding.confirmPassword.error = "Please enter your password."
-                binding.confirmPasswordLayout.isPasswordVisibilityToggleEnabled = false
-            }
             Toast.makeText(this, "Please check empty fields!", Toast.LENGTH_SHORT).show()
             return
         } else if (mobileNo.length!=13) {
             Toast.makeText(this, "Please check mobile no.!", Toast.LENGTH_SHORT).show()
             return
-        } else if (password.length < 6) {
-            binding.password.error = "Password must be more than 6 characters."
-            binding.passwordLayout.isPasswordVisibilityToggleEnabled = false
-            Toast.makeText(this,"Please enter password more than 6 characters!",Toast.LENGTH_SHORT).show()
-        } else if (password!=confirmPassword) {
-            binding.confirmPassword.error = "Unmatched password and confirm password."
-            binding.confirmPasswordLayout.isPasswordVisibilityToggleEnabled = false
-            Toast.makeText(this,"Password not matched to confirm password. Please try again!",Toast.LENGTH_SHORT).show()
         } else {
             showProgressBar(true)
-            firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-                if (it.isSuccessful) {
-                    firebaseDatabaseReference.child("users")
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(snapshot: DataSnapshot) {
-                                if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
-                                    Toast.makeText(this@RegisterCustomerActivity,"User is already Registered!",Toast.LENGTH_SHORT).show()
-                                } else {
-                                    val databaseRef = firebaseDatabase.reference.child("users")
-                                        .child(firebaseAuth.currentUser!!.uid)
+
+            firebaseDatabaseReference.child("users")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
+                            Toast.makeText(
+                                this@RegisterPersonalInfoActivity,
+                                "User is already Registered!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            val databaseRef = firebaseDatabase.reference.child("users")
+                                .child(firebaseAuth.currentUser!!.uid)
 
 
-                                    val user = User(
-                                        firebaseAuth.currentUser!!.uid,
-                                        email,
-                                        userType,
-                                        firstName,
-                                        lastName,
-                                        sex,
-                                        street,
-                                        city,
-                                        state,
-                                        zipCode,
-                                        country,
-                                        mobileNo,
-                                        null,
-                                        false,
-                                    )
-                                    user.printLOG()
+                            val user = User(
+                                firebaseAuth.currentUser!!.uid,
+                                email,
+                                userType,
+                                firstName,
+                                lastName,
+                                sex,
+                                street,
+                                city,
+                                state,
+                                zipCode,
+                                country,
+                                mobileNo,
+                                null,
+                                false,
+                            )
+                            user.printLOG()
 
 
-                                    databaseRef.setValue(user).addOnCompleteListener {task ->
-                                        if (task.isSuccessful) {
-                                            Toast.makeText(this@RegisterCustomerActivity,"User has been successfully Registered!",Toast.LENGTH_SHORT).show()
-                                            clearField()
-                                            goToDashboard()
-                                        }
-                                    }
-
+                            databaseRef.setValue(user).addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Toast.makeText(
+                                        this@RegisterPersonalInfoActivity,
+                                        "User has been successfully Registered!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    clearField()
+                                    goToDashboard()
                                 }
                             }
 
-                            override fun onCancelled(error: DatabaseError) {
-                                Log.d("ListenerForSingleValueEvent", "${it.exception!!.message}")
-                            }
+                        }
+                    }
 
-                        })
-                } else {
-                    showProgressBar(false)
-                    Toast.makeText(this,"${it.exception.toString()}",Toast.LENGTH_SHORT).show()
-                }
-            }
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.d("addListenerForSingleValueEvent -> onCancelled", error.message)
+                    }
+
+                })
+
         }
     }
 
     private fun goToDashboard() {
+
         showProgressBar(false)
-        startActivity(Intent(Intent(this, DashboardCustomerActivity::class.java)))
-        finish()
+        when (userType) {
+            "Customer" -> {
+                startActivity(Intent(Intent(this, DashboardCustomerActivity::class.java)))
+                finish()
+            }
+            "Partner" -> {
+                startActivity(Intent(Intent(this, RegisterPartnerActivity::class.java)))
+                finish()
+
+            }
+            "Rider" -> {
+                startActivity(Intent(Intent(this, RegisterRiderActivity::class.java)))
+                finish()
+            }
+            else -> {
+                showProgressBar(false)
+            }
+        }
     }
 
     private fun showProgressBar(visible: Boolean) {
-        if(visible){
+        if (visible) {
             binding.progressBar.visibility = View.VISIBLE
-        }else{
+        } else {
             binding.progressBar.visibility = View.GONE
         }
     }
@@ -313,7 +323,6 @@ class RegisterCustomerActivity : AppCompatActivity() {
         binding.firstName.text = null
         binding.lastName.text = null
         binding.email.text = null
-        binding.password.text = null
     }
 
 

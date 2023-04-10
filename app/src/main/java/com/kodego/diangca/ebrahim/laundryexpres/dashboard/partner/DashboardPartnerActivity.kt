@@ -1,4 +1,4 @@
-package com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer
+package com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,7 +13,7 @@ import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityDashboardCustomerBinding
 
-class DashboardCustomerActivity : AppCompatActivity() {
+class DashboardPartnerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDashboardCustomerBinding
 

@@ -1,6 +1,7 @@
 package com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +23,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    private lateinit var displayName: String
+    private var displayName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,36 +53,37 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
         displayUserName()
 
-
     }
 
     private fun displayUserName() {
         firebaseAuth.currentUser?.let {
             for (profile in it.providerData){
-                displayName = it.displayName.toString()
+                displayName = profile.displayName
             }
-            if(!displayName.isEmpty()){
-                binding.titleView.text = "Hi ${displayName}, Good Day!"
-            }else {
-                firebaseDatabaseReference.child("users")
-                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
-                                val firstname = snapshot.child(firebaseAuth.currentUser!!.uid)
-                                    .child("firstname").value.toString()
-                                binding.titleView.text = "Hi $firstname, Good Day!"
-                            }
-                        }
+        }
 
-                        override fun onCancelled(error: DatabaseError) {
-                            Toast.makeText(
-                                dashboardCustomer,
-                                "${error.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+        if(!displayName.isNullOrEmpty()){
+            Log.d("displayUserName", "Hi ${displayName}, Good Day!")
+            binding.titleView.text = "Hi ${displayName}, Good Day!"
+        }else {
+            firebaseDatabaseReference.child("users")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
+                            val firstname = snapshot.child(firebaseAuth.currentUser!!.uid)
+                                .child("firstname").value.toString()
+                            binding.titleView.text = "Hi $firstname, Good Day!"
                         }
-                    })
-            }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        Toast.makeText(
+                            dashboardCustomer,
+                            "${error.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                })
         }
     }
 

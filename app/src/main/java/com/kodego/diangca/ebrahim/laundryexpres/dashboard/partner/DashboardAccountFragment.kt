@@ -1,4 +1,4 @@
-package com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer
+package com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner
 
 import android.os.Bundle
 import android.util.Log
@@ -9,12 +9,12 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardAccountBinding
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardPartnerAccountBinding
 
 
-class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity) : Fragment() {
+class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) : Fragment() {
 
-    private var _binding: FragmentDashboardAccountBinding? = null
+    private var _binding: FragmentDashboardPartnerAccountBinding? = null
     private val binding get() = _binding!!
 
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -33,7 +33,7 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentDashboardAccountBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentDashboardPartnerAccountBinding.inflate(layoutInflater, container, false)
         return binding.root
 
     }
@@ -59,7 +59,7 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
 
     private fun btnLogoutOnClickListener() {
         firebaseAuth.signOut()
-        dashboardCustomer.signOut()
+        dashboardPartner.signOut()
     }
 
     private fun displayUserName() {
@@ -87,7 +87,7 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
 
                     override fun onCancelled(error: DatabaseError) {
                         Toast.makeText(
-                            dashboardCustomer,
+                            dashboardPartner,
                             "${error.message}",
                             Toast.LENGTH_SHORT
                         ).show()

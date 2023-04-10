@@ -1,21 +1,19 @@
-package com.kodego.diangca.ebrahim.laundryexpres.registration.partner
+package com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentPartnerBasicInfoBinding
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardInboxBinding
 
-class PartnerBasicInfoFragment(var registerPartnerActivity: RegisterPartnerActivity) : Fragment() {
+class DashboardInboxFragment(var dashboardPartner: DashboardPartnerActivity) : Fragment() {
 
-    var _binding: FragmentPartnerBasicInfoBinding? = null
-    val binding get() = _binding!!
+    private var _binding: FragmentDashboardInboxBinding? = null
+    private val binding get() = _binding!!
 
-    private var currentItem = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -23,7 +21,7 @@ class PartnerBasicInfoFragment(var registerPartnerActivity: RegisterPartnerActiv
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentPartnerBasicInfoBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentDashboardInboxBinding.inflate(layoutInflater, container, false)
         return binding.root
 
     }
@@ -39,7 +37,6 @@ class PartnerBasicInfoFragment(var registerPartnerActivity: RegisterPartnerActiv
     }
 
     private fun initComponent() {
-
 
     }
 }

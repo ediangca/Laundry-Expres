@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/vector_customer"
+    android:background="@drawable/vector_laundry"
     android:backgroundTint="@color/color_light_3"
     android:backgroundTintMode="add"
-    tools:context=".dashboard.customer.DashboardHomeFragment">
+    tools:context=".dashboard.partner.DashboardHomeFragment">
 
     <TextView
         android:id="@+id/titleView"

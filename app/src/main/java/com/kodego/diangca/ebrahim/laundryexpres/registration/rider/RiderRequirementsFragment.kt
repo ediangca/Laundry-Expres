@@ -1,15 +1,15 @@
-package com.kodego.diangca.ebrahim.laundryexpres.registration.partner
+package com.kodego.diangca.ebrahim.laundryexpres.registration.rider
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentPartnerBasicInfoBinding
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentRiderRequirementsBinding
 
-class PartnerBasicInfoFragment(var registerPartnerActivity: RegisterPartnerActivity) : Fragment() {
+class RiderRequirementsFragment(var registerRiderActivity: RegisterRiderActivity) : Fragment() {
 
-    var _binding: FragmentPartnerBasicInfoBinding? = null
+    var _binding: FragmentRiderRequirementsBinding? = null
     val binding get() = _binding!!
 
     private var currentItem = 0
@@ -23,7 +23,7 @@ class PartnerBasicInfoFragment(var registerPartnerActivity: RegisterPartnerActiv
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentPartnerBasicInfoBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentRiderRequirementsBinding.inflate(layoutInflater, container, false)
         return binding.root
 
     }
