@@ -43,11 +43,10 @@ class RegisterCustomerActivity : AppCompatActivity() {
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
     private val permissionId = 2
-
     private  var longtitude: Double = 0.0
     private  var latitude: Double = 0.0
-
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterCustomerBinding.inflate(layoutInflater)
@@ -57,6 +56,13 @@ class RegisterCustomerActivity : AppCompatActivity() {
     }
 
     private fun initComponent() {
+
+        if(firebaseAuth.currentUser!=null){
+            binding.passwordLayout.visibility = View.GONE
+            binding.confirmPasswordLayout.visibility = View.GONE
+
+            binding.email.setText(firebaseAuth.currentUser!!.email)
+        }
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -201,24 +207,27 @@ class RegisterCustomerActivity : AppCompatActivity() {
             if (email.isEmpty() || !isValidEmail(email)) {
                 binding.email.error = "Please enter an email or a valid email."
             }
-            if (password.isEmpty()) {
-                binding.password.error = "Please enter your password."
-                binding.passwordLayout.isPasswordVisibilityToggleEnabled = false
-            }
-            if (confirmPassword.isEmpty()) {
-                binding.confirmPassword.error = "Please enter your password."
-                binding.confirmPasswordLayout.isPasswordVisibilityToggleEnabled = false
+            if(firebaseAuth.currentUser == null) {
+                if (password.isEmpty()) {
+                    binding.password.error = "Please enter your password."
+                    binding.passwordLayout.isPasswordVisibilityToggleEnabled = false
+                }
+                if (confirmPassword.isEmpty()) {
+                    binding.confirmPassword.error = "Please enter your password."
+                    binding.confirmPasswordLayout.isPasswordVisibilityToggleEnabled = false
+                }
             }
             Toast.makeText(this, "Please check empty fields!", Toast.LENGTH_SHORT).show()
             return
         } else if (mobileNo.length!=13) {
             Toast.makeText(this, "Please check mobile no.!", Toast.LENGTH_SHORT).show()
             return
-        } else if (password.length < 6) {
+        } else if ((firebaseAuth==null) && password.length < 6) {
             binding.password.error = "Password must be more than 6 characters."
             binding.passwordLayout.isPasswordVisibilityToggleEnabled = false
             Toast.makeText(this,"Please enter password more than 6 characters!",Toast.LENGTH_SHORT).show()
-        } else if (password!=confirmPassword) {
+        } else if ((firebaseAuth==null) &&
+            (password!=confirmPassword)) {
             binding.confirmPassword.error = "Unmatched password and confirm password."
             binding.confirmPasswordLayout.isPasswordVisibilityToggleEnabled = false
             Toast.makeText(this,"Password not matched to confirm password. Please try again!",Toast.LENGTH_SHORT).show()

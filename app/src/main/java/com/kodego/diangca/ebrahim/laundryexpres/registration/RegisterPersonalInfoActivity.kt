@@ -26,8 +26,6 @@ import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCust
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityRegisterPersonalInfoBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
-import com.kodego.diangca.ebrahim.laundryexpres.registration.partner.RegisterPartnerActivity
-import com.kodego.diangca.ebrahim.laundryexpres.registration.rider.RegisterRiderActivity
 import java.util.*
 import java.util.regex.Pattern
 
@@ -281,12 +279,12 @@ class RegisterPersonalInfoActivity : AppCompatActivity() {
                 finish()
             }
             "Partner" -> {
-                startActivity(Intent(Intent(this, RegisterPartnerActivity::class.java)))
+                startActivity(Intent(Intent(this, DashboardCustomerActivity::class.java)))
                 finish()
 
             }
             "Rider" -> {
-                startActivity(Intent(Intent(this, RegisterRiderActivity::class.java)))
+                startActivity(Intent(Intent(this, DashboardCustomerActivity::class.java)))
                 finish()
             }
             else -> {

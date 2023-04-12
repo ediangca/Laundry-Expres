@@ -2,8 +2,6 @@ package com.kodego.diangca.ebrahim.laundryexpres.registration.partner
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.view.View.OnAttachStateChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
@@ -15,7 +13,7 @@ import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.adater.FragmentAdapter
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityRegisterPartnerBinding
 
-class RegisterPartnerActivity : AppCompatActivity(){
+class RegisterPartnerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterPartnerBinding
 
@@ -35,13 +33,9 @@ class RegisterPartnerActivity : AppCompatActivity(){
     }
 
     private fun initComponent() {
-        fragmentAdapter =  FragmentAdapter(supportFragmentManager, lifecycle)
-        if(firebaseAuth.currentUser == null) {
-            fragmentAdapter.addFragment(PartnerBusinessInfoFragment(this)) //0
-            fragmentAdapter.addFragment(PartnerBusinessInfoFragment(this)) //1
-        }else{
-            fragmentAdapter.addFragment(PartnerBusinessInfoFragment(this)) //1
-        }
+        fragmentAdapter = FragmentAdapter(supportFragmentManager, lifecycle)
+        fragmentAdapter.addFragment(PartnerBasicInfoFragment(this)) //0
+        fragmentAdapter.addFragment(PartnerBusinessInfoFragment(this)) //1
         with(binding.viewPager2) {
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = fragmentAdapter
@@ -50,33 +44,10 @@ class RegisterPartnerActivity : AppCompatActivity(){
             }.attach()
 
         }
-        binding.viewPager2.addOnAttachStateChangeListener(object : OnAttachStateChangeListener{
-            override fun onViewAttachedToWindow(v: View) {
-
-                println( "View onViewAttachedToWindow ${v.id}")
-
-            }
-
-            override fun onViewDetachedFromWindow(v: View) {
-
-                println( "View onViewDetachedFromWindow ${v.id}")
-            }
-
-        })
-        binding.viewPager2.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-            println(
-                "View onViewDetachedFromWindow $v, $left, $top, $right, $bottom, $oldLeft, $oldTop, $oldRight, $oldBottom"
-            )
-        }
 
         with(binding.tabLayout) {
-
-            if(firebaseAuth.currentUser == null) {
-                getTabAt(0)!!.setIcon(R.drawable.vector_account).text = "PERSONAL"
-                getTabAt(1)!!.setIcon(R.drawable.vector_laundry).text = "BUSINESS"
-            }else{
-                getTabAt(0)!!.setIcon(R.drawable.vector_laundry).text = "BUSINESS"
-            }
+            getTabAt(0)!!.setIcon(R.drawable.vector_account).text = "PERSONAL"
+            getTabAt(1)!!.setIcon(R.drawable.vector_laundry).text = "BUSINESS"
         }
 
 
@@ -88,6 +59,13 @@ class RegisterPartnerActivity : AppCompatActivity(){
     private fun btnBackOnClickListener() {
         startActivity(Intent(Intent(this, LoginActivity::class.java)))
         finish()
+    }
+
+    fun nextTab() {
+        val currentItem = binding.viewPager2.currentItem
+        binding.viewPager2.post {
+            binding.viewPager2.setCurrentItem(currentItem + 1, true)
+        }
     }
 
 }

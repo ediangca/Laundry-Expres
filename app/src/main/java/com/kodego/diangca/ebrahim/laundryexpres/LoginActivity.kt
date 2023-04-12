@@ -25,7 +25,9 @@ import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartn
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityLoginBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogUserTypeBinding
-import com.kodego.diangca.ebrahim.laundryexpres.registration.RegisterPersonalInfoActivity
+import com.kodego.diangca.ebrahim.laundryexpres.registration.RegisterCustomerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.registration.partner.RegisterPartnerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.registration.rider.RegisterRiderActivity
 
 class LoginActivity: AppCompatActivity() {
 
@@ -146,6 +148,7 @@ class LoginActivity: AppCompatActivity() {
         userBuilder =  AlertDialog.Builder(this)
 //        userBuilder.setCancelable(false)
         userBuilder.setView(getUserTypeView("Register"))
+        userBuilder.setCancelable(true)
       /*  userBuilder.setPositiveButton("Select",
             DialogInterface.OnClickListener { dialog, _ ->
                 dialogInterfaceOnClickListener(dialog)
@@ -154,6 +157,7 @@ class LoginActivity: AppCompatActivity() {
             DialogInterface.OnClickListener { dialog, _ ->
                 dialog.dismiss()
             })*/
+        userBuilder.create()
         this.userDialogInterface = userBuilder.show()
     }
 
@@ -213,6 +217,8 @@ class LoginActivity: AppCompatActivity() {
 
     private fun checkUserAccount() {
         showProgressBar(true)
+        Toast.makeText(this, "Checking Account...", Toast.LENGTH_SHORT).show()
+
         firebaseDatabaseReference.child("users")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -298,11 +304,33 @@ class LoginActivity: AppCompatActivity() {
 
         showProgressBar(false)
         userDialogInterface.dismiss()
+        /*
+        if(firebaseAuth.currentUser!=null){
+            val intent = Intent(this, RegisterPersonalInfoActivity::class.java)
+            intent.putExtra("email", gmail)
+            intent.putExtra("userType", userType)
+            startActivity(intent)
+            finish()
+        }
+        */
+            when (userType) {
+                "Customer" -> {
 
-        val intent = Intent(this, RegisterPersonalInfoActivity::class.java)
-        intent.putExtra("email", gmail)
-        intent.putExtra("userType", userType)
-        startActivity(intent)
+                    startActivity((Intent(this, RegisterCustomerActivity::class.java)))
+                    finish()
+                }
+                "Partner" -> {
+                    startActivity((Intent(this, RegisterPartnerActivity::class.java)))
+                    finish()
+                }
+                "Rider" -> {
+                    startActivity((Intent(this, RegisterRiderActivity::class.java)))
+                    finish()
+                }
+                else -> {
+
+                }
+            }
 
     }
 

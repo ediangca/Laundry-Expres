@@ -81,7 +81,7 @@
                 android:layout_height="match_parent"
                 android:background="@color/white"
                 android:hint="*Phone Number of the Contact Person"
-                android:inputType="textCapWords"
+                android:inputType="text|phone"
                 android:textSize="12sp" />
 
         </com.google.android.material.textfield.TextInputLayout>

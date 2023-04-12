@@ -140,6 +140,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            app:helperText="Kindly input number without space, Follow format country code +XX then followed by your number. (+639123456789)"
+            app:helperTextTextColor="@android:color/holo_red_dark"
             app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -147,7 +149,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
-                android:hint="*(Country Code + Mobile #) eg. 639123456789"
+                android:hint="*Phone Number"
                 android:inputType="text|phone"
                 android:textSize="12sp" />
 
@@ -214,6 +216,7 @@
             android:id="@+id/currentLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -279,7 +282,7 @@
                 android:layout_height="match_parent"
                 android:background="@color/white"
                 android:hint="*Zip code"
-                android:inputType="textCapWords"
+                android:inputType="number"
                 android:textSize="12sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
