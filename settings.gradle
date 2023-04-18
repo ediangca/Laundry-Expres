@@ -14,4 +14,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Laundry Expres"
 include ':app'
-include ':loginregistrationmodule'

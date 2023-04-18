@@ -18,39 +18,31 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentPartnerBasicInfoBinding
 import java.util.*
 
-class PartnerBasicInfoFragment(var registerPartnerActivity: RegisterPartnerActivity) : Fragment() {
+class PartnerBasicInfoFragment(private var registerPartnerActivity: RegisterPartnerActivity) : Fragment() {
 
-    var _binding: FragmentPartnerBasicInfoBinding? = null
-    val binding get() = _binding!!
+    private var bindingPartner: FragmentPartnerBasicInfoBinding? = null
+    val binding get() = bindingPartner!!
 
-    private var firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance()
-    private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
-    private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
-        .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
+//    private var firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance()
+//    private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
+//    private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
+//        .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
     private val permissionId = 2
-    private  var longtitude: Double = 0.0
+    private  var longitude: Double = 0.0
     private  var latitude: Double = 0.0
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentPartnerBasicInfoBinding.inflate(layoutInflater, container, false)
+        bindingPartner = FragmentPartnerBasicInfoBinding.inflate(layoutInflater, container, false)
         return binding.root
 
     }
@@ -61,10 +53,7 @@ class PartnerBasicInfoFragment(var registerPartnerActivity: RegisterPartnerActiv
         initComponent()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
+    @SuppressLint("SetTextI18n")
     private fun initComponent() {
 
         if(firebaseAuth.currentUser!=null){
@@ -95,18 +84,16 @@ class PartnerBasicInfoFragment(var registerPartnerActivity: RegisterPartnerActiv
 
     private fun btnSubmitOnClickListener() {
         if(firebaseAuth.currentUser == null && binding.btnSubmit.text.toString().equals("Next", true)) {
+            if(registerPartnerActivity.checkBasicInfoFields()){
+                Toast.makeText(registerPartnerActivity, "Please check error field(s)!", Toast.LENGTH_SHORT).show()
+                return
+            }
             registerPartnerActivity.nextTab()
-        }else{
-            registerUser()
         }
     }
 
-    private fun checkFields() {
-
-    }
 
     private fun registerUser() {
-
     }
 
     private fun isLocationEnabled(): Boolean {
@@ -140,6 +127,9 @@ class PartnerBasicInfoFragment(var registerPartnerActivity: RegisterPartnerActiv
             permissionId
         )
     }
+/*
+
+    @Deprecated("Deprecated in Java")
     @SuppressLint("MissingSuperCall")
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -152,7 +142,9 @@ class PartnerBasicInfoFragment(var registerPartnerActivity: RegisterPartnerActiv
             }
         }
     }
+*/
 
+    @Suppress("DEPRECATION")
     @SuppressLint("MissingPermission")
     private fun getLocation() {
         if (checkPermissions()) {
@@ -166,7 +158,7 @@ class PartnerBasicInfoFragment(var registerPartnerActivity: RegisterPartnerActiv
                         binding.apply {
                             currentLocation.text = list[0].toString()
                             latitude = list[0].latitude
-                            longtitude = list[0].longitude
+                            longitude = list[0].longitude
                             address.setText(list[0].getAddressLine(0)?:"n/a")
                             city.setText(list[0].locality?:"n/a")
                             state.setText(list[0].adminArea?:"n/a")

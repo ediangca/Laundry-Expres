@@ -152,6 +152,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Spinner
+            android:id="@+id/sex"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_margin="5dp"

@@ -97,7 +97,6 @@ class CheckMapFragment(var mainActivity: MainFragment) : Fragment() {
             mainActivity.indexActivity.mainFrame.commit();
         }
 
-
         binding.btnProceed.setOnClickListener {
 
             btnProceedOnClickListener()

@@ -18,8 +18,6 @@ class CheckAvailabilityFragment(var mainFragment: MainFragment): Fragment() {
     private var _binding: FragmentCheckAvailabilityBinding? = null
     private val binding get() = _binding!!
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -79,7 +77,7 @@ class CheckAvailabilityFragment(var mainFragment: MainFragment): Fragment() {
     private fun btnCheckAvailabilityOnClickListener() {
         val stringLocation = binding.searchLocation.text.toString()
         var addresses: List<Address>? = null
-        if(!stringLocation.isEmpty()){
+        if(stringLocation.isNotEmpty()){
             var geocoder = Geocoder(binding.root.context)
             try {
                 addresses = geocoder.getFromLocationName(stringLocation, 1)
@@ -87,8 +85,7 @@ class CheckAvailabilityFragment(var mainFragment: MainFragment): Fragment() {
                 Log.d("SEARCH_GEO_LOCATION", "${e.message}")
             }
 
-
-            if(addresses!=null && !addresses.isEmpty()) {
+            if(addresses!=null && addresses.isNotEmpty()) {
                 val address = addresses[0]
                 val searchLocation = LatLng(address.latitude, address.longitude)
                 getAddressDetails(searchLocation)
@@ -104,12 +101,12 @@ class CheckAvailabilityFragment(var mainFragment: MainFragment): Fragment() {
         val addresses: List<Address>? = geocoder.getFromLocation(currentLatLong.latitude, currentLatLong.longitude, 1)
 
 
-        if(addresses!=null && !addresses.isEmpty()) {
-            val address: String = addresses[0].getAddressLine(0) ?: ""
-            val city: String = addresses[0].locality ?: ""
-            val state: String = addresses[0].adminArea ?: ""
-            val zip: String = addresses[0].postalCode ?: ""
-            val country: String = addresses[0].countryName ?: ""
+        if(addresses!=null && addresses.isNotEmpty()) {
+            val address: String = addresses[0].getAddressLine(0)
+            val city: String = addresses[0].locality
+            val state: String = addresses[0].adminArea
+            val zip: String = addresses[0].postalCode
+            val country: String = addresses[0].countryName
 
             Toast.makeText(
                 context,

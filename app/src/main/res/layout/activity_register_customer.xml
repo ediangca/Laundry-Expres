@@ -70,6 +70,7 @@
             android:textStyle="bold|italic" />
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
@@ -137,6 +138,7 @@
             android:textStyle="bold|italic" />
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/mobileNoLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -156,6 +158,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/firstNameLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
@@ -173,6 +176,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/lastNameLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"

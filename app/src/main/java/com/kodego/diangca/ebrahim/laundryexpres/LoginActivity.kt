@@ -29,7 +29,8 @@ import com.kodego.diangca.ebrahim.laundryexpres.registration.RegisterCustomerAct
 import com.kodego.diangca.ebrahim.laundryexpres.registration.partner.RegisterPartnerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.registration.rider.RegisterRiderActivity
 
-class LoginActivity: AppCompatActivity() {
+
+class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private lateinit var customDialogBinding: DialogUserTypeBinding
@@ -46,22 +47,21 @@ class LoginActivity: AppCompatActivity() {
     private lateinit var credential: AuthCredential
 
     private var userType = "UNKNOWN"
-    private lateinit var gmail:String
-
-//    implementation 'com.google.firebase:firebase-database:20.1.0'
+    private lateinit var gmail: String
 
     private lateinit var googleSignInClient: GoogleSignInClient
 
     private lateinit var userBuilder: AlertDialog.Builder
     private lateinit var userDialogInterface: DialogInterface
 
+
     companion object {
         private const val TAG = "GoogleActivity"
+
         //9001
         private const val RC_SIGN_IN = 9001
 
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,10 +73,15 @@ class LoginActivity: AppCompatActivity() {
 
     private fun initComponent() {
 
+        firebaseAuth = Firebase.auth
+
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
+//            .requestIdToken(BuildConfig.WEB_CLIENT_ID)
             .requestEmail()
             .build()
+
+
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
 
@@ -94,6 +99,34 @@ class LoginActivity: AppCompatActivity() {
 
         binding.btnRegister.setOnClickListener {
             btnRegisterOnClickListener()
+        }
+
+
+    }
+
+    private fun signIn() {
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+    // ...
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode==RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                val account = task.getResult(ApiException::class.java)!!
+//                Toast.makeText(this, "GOOGLE_SIGN_IN_SUCCESS ${account.id}",Toast.LENGTH_SHORT).show()
+                Log.d("onActivityResult", "firebaseAuthWithGoogle:" + account.id)
+                firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: ApiException) {
+                // Google Sign In failed, update UI appropriately
+                Toast.makeText(this, "ApiException ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.d("onActivityResult", "Google sign in failed", e)
+            }
         }
     }
 
@@ -145,18 +178,9 @@ class LoginActivity: AppCompatActivity() {
     }
 
     private fun btnRegisterOnClickListener() {
-        userBuilder =  AlertDialog.Builder(this)
-//        userBuilder.setCancelable(false)
-        userBuilder.setView(getUserTypeView("Register"))
+        userBuilder = AlertDialog.Builder(this)
         userBuilder.setCancelable(true)
-      /*  userBuilder.setPositiveButton("Select",
-            DialogInterface.OnClickListener { dialog, _ ->
-                dialogInterfaceOnClickListener(dialog)
-            })
-        userBuilder.setNegativeButton("Select",
-            DialogInterface.OnClickListener { dialog, _ ->
-                dialog.dismiss()
-            })*/
+        userBuilder.setView(getUserTypeView("Register"))
         userBuilder.create()
         this.userDialogInterface = userBuilder.show()
     }
@@ -165,66 +189,55 @@ class LoginActivity: AppCompatActivity() {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
-    private fun signIn() {
-        firebaseAuth = Firebase.auth
-        val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, 9001)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode==RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                val account = task.getResult(ApiException::class.java)!!
-//                Toast.makeText(this, "GOOGLE_SIGN_IN_SUCCESS ${account.id}",Toast.LENGTH_SHORT).show()
-                Log.d("onActivityResult", "firebaseAuthWithGoogle:" + account.id)
-                firebaseAuthWithGoogle(account.idToken!!)
-            } catch (e: ApiException) {
-                // Google Sign In failed, update UI appropriately
-                 Toast.makeText(this, "onActivityResult ${e.message}",Toast.LENGTH_SHORT).show()
-                Log.d("onActivityResult", "Google sign in failed", e)
-            }
-        }
-    }
-
     private fun setGmail(gmail: String) {
-            this.gmail = gmail
+        this.gmail = gmail
     }
 
     private fun firebaseAuthWithGoogle(idToken: String) {
         credential = GoogleAuthProvider.getCredential(idToken, null)
         firebaseAuth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    val user = firebaseAuth.currentUser
-                    user?.email?.let { setGmail(it) }
-//                    Toast.makeText(this, "GOOGLE_SIGN_IN_SUCCESS ${user!!.displayName}",Toast.LENGTH_SHORT).show()
-                    Log.d("GOOGLE_SIGN_IN_SUCCESS", "${user!!.displayName}")
+            .addOnSuccessListener { _ ->
+                // Sign in success
+                Log.d(TAG, "firebaseAuthWithGoogle: LoggedIN")
+                // Sign in success, update UI with the signed-in user's information
+                val user = firebaseAuth.currentUser
+                if (user!=null) {
+                    val uid = user.uid
+                    val email = user.email
+
+//                    if(authResult.additionalUserInfo!!.isNewUser){} //Check if LoggedIn User is new
+                    setGmail(email!!)
+
+                    Toast.makeText(this, "GOOGLE_SIGN_IN_SUCCESS: ${user.displayName}",Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "GOOGLE_SIGN_IN_SUCCESS: ${user.displayName}")
+
                     checkUserAccount()
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Toast.makeText(this, "GOOGLE_SIGN_IN_FAIL ${task.exception!!.message}",Toast.LENGTH_SHORT).show()
-                    Log.d("firebaseAuthWithGoogle", "signInWithCredential:failure", task.exception)
                 }
+
+            }
+            .addOnFailureListener {authResult ->
+
+                // If sign in fails, display a message to the user.
+                Toast.makeText(
+                    this,
+                    "GOOGLE_SIGN_IN_FAIL ${authResult.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Log.d(TAG, "firebaseAuthWithGoogle:failure ${authResult.message}")
+
             }
     }
-
 
     private fun checkUserAccount() {
         showProgressBar(true)
         Toast.makeText(this, "Checking Account...", Toast.LENGTH_SHORT).show()
-
         firebaseDatabaseReference.child("users")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
-                        this@LoginActivity.userType = snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
-                            .getValue(String::class.java).toString()
+                        this@LoginActivity.userType =
+                            snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
+                                .getValue(String::class.java).toString()
                         goToDashboard()
                     } else {
                         btnRegisterOnClickListener()
@@ -249,8 +262,9 @@ class LoginActivity: AppCompatActivity() {
 
                     Log.d("ForSingleValueEvent", firebaseAuth.currentUser!!.uid)
 
-                    this@LoginActivity.userType = snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
-                        .getValue(String::class.java).toString()
+                    this@LoginActivity.userType =
+                        snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
+                            .getValue(String::class.java).toString()
 
                     goToDashboard()
 
@@ -280,7 +294,7 @@ class LoginActivity: AppCompatActivity() {
         customDialogBinding = DialogUserTypeBinding.inflate(this.layoutInflater)
 
         with(customDialogBinding) {
-            titleView.text  = title
+            titleView.text = title
             userPartner.setOnClickListener {
                 userType = "Partner"
                 showProgressBar(true)
@@ -313,24 +327,24 @@ class LoginActivity: AppCompatActivity() {
             finish()
         }
         */
-            when (userType) {
-                "Customer" -> {
+        when (userType) {
+            "Customer" -> {
 
-                    startActivity((Intent(this, RegisterCustomerActivity::class.java)))
-                    finish()
-                }
-                "Partner" -> {
-                    startActivity((Intent(this, RegisterPartnerActivity::class.java)))
-                    finish()
-                }
-                "Rider" -> {
-                    startActivity((Intent(this, RegisterRiderActivity::class.java)))
-                    finish()
-                }
-                else -> {
-
-                }
+                startActivity((Intent(this, RegisterCustomerActivity::class.java)))
+                finish()
             }
+            "Partner" -> {
+                startActivity((Intent(this, RegisterPartnerActivity::class.java)))
+                finish()
+            }
+            "Rider" -> {
+                startActivity((Intent(this, RegisterRiderActivity::class.java)))
+                finish()
+            }
+            else -> {
+
+            }
+        }
 
     }
 

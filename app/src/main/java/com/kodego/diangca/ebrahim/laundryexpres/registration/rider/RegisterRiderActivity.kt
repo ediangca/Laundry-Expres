@@ -2,6 +2,7 @@ package com.kodego.diangca.ebrahim.laundryexpres.registration.rider
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
@@ -11,6 +12,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.adater.FragmentAdapter
+import com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityRegisterRiderBinding
 
 class RegisterRiderActivity : AppCompatActivity() {
@@ -68,6 +70,19 @@ class RegisterRiderActivity : AppCompatActivity() {
         val currentItem = binding.viewPager2.currentItem
         binding.viewPager2.post {
             binding.viewPager2.setCurrentItem(currentItem + 1, true)
+        }
+    }
+
+    fun goToDashboard() {
+        startActivity(Intent(Intent(this, DashboardRiderActivity::class.java)))
+        finish()
+    }
+
+    fun showProgressBar(visible: Boolean) {
+        if (visible) {
+            binding.progressBar.visibility = View.VISIBLE
+        } else {
+            binding.progressBar.visibility = View.GONE
         }
     }
 }
