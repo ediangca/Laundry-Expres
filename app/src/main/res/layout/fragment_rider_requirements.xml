@@ -163,7 +163,6 @@
                 android:src="@drawable/vector_image_holder"
                 android:tint="@color/color_blue_1" />
 
-
         </LinearLayout>
 
         <LinearLayout

@@ -89,9 +89,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
+            app:endIconMode="clear_text"
             app:helperText="Kindly input number without space, Follow format country code +XX then followed by your number. (+639123456789)"
-            app:helperTextTextColor="@android:color/holo_red_dark"
-            app:endIconMode="clear_text">
+            app:helperTextTextColor="@android:color/holo_red_dark">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/businessPhone"
@@ -116,8 +116,8 @@
             android:textAlignment="center"
             android:textColor="@color/color_blue_1"
             android:textSize="24sp"
-            android:textStyle="bold|italic"
-            />
+            android:textStyle="bold|italic" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -125,39 +125,49 @@
             android:textAlignment="center"
             android:textColor="@android:color/holo_red_dark"
             android:textSize="12sp"
-            android:textStyle="bold|italic"
-            />
+            android:textStyle="bold|italic" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="12">
+
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/fromMondayLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
+                android:layout_weight="5"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/fromMonday"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_weight="5"
                     android:background="@color/white"
+                    android:editable="false"
                     android:hint="*Monday From"
                     android:inputType="text|number"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    tools:ignore="Deprecated" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tomMondayLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/fromMondayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
+                android:layout_weight="5"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -168,22 +178,29 @@
                     android:hint="*Monday To"
                     android:inputType="text|number"
                     android:textSize="12sp" />
-
             </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/toMondayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="12">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/fromTuesdayLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
+                android:layout_weight="5"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -194,15 +211,21 @@
                     android:hint="*Tuesday From"
                     android:inputType="text"
                     android:textSize="12sp" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/toTuesdayLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/fromTuesdayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
+                android:layout_weight="5"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -213,22 +236,30 @@
                     android:hint="*Tuesday To"
                     android:inputType="text"
                     android:textSize="12sp" />
-
             </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/toTuesdayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
+
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="12">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/fromWednesdayLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
+                android:layout_weight="5"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -239,15 +270,21 @@
                     android:hint="*Wednesday From"
                     android:inputType="text|number"
                     android:textSize="12sp" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/toWednesdayLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/fromWednesdayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
+                android:layout_weight="5"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -258,21 +295,31 @@
                     android:hint="*Wednesday To"
                     android:inputType="text|number"
                     android:textSize="12sp" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/toWednesdayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
+
+
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="12">
+
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/fromThursdayLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
+                android:layout_weight="5"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -283,15 +330,22 @@
                     android:hint="*Thursday From"
                     android:inputType="text|number"
                     android:textSize="12sp" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/toThursdayLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/fromThursdayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
+                android:layout_weight="5"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -302,21 +356,30 @@
                     android:hint="*Thursday To"
                     android:inputType="text|number"
                     android:textSize="12sp" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/toThursdayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
+
+
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="12">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/fromFridayLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
+                android:layout_weight="5"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -327,15 +390,22 @@
                     android:hint="*Friday From"
                     android:inputType="text|number"
                     android:textSize="12sp" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/toFridayLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/fromFridayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
+                android:layout_weight="5"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -346,22 +416,145 @@
                     android:hint="*Friday To"
                     android:inputType="text|number"
                     android:textSize="12sp" />
-
             </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/toFridayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="12">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/fromHolidayLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
+                android:layout_weight="5"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/fromSaturday"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:hint="*Saturday From"
+                    android:inputType="text|number"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/fromSaturdayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="5"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/toSaturday"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:hint="*Saturday To"
+                    android:inputType="text|number"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/toSaturdayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="12">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="5"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/fromSunday"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:hint="*Sunday From"
+                    android:inputType="text|number"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/fromSundayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="5"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/toSunday"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:hint="*Sunday To"
+                    android:inputType="text|number"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/toSundayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="12">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:layout_weight="5"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -372,15 +565,21 @@
                     android:hint="*Holiday From"
                     android:inputType="text|number"
                     android:textSize="12sp" />
-
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/toHolidayLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/fromHolidayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_margin="5dp"
+                android:layout_weight="5"
                 app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -391,8 +590,15 @@
                     android:hint="*Holiday To"
                     android:inputType="text|number"
                     android:textSize="12sp" />
-
             </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/toHolidayBut"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/vector_time" />
 
         </LinearLayout>
 
@@ -451,9 +657,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
+            app:endIconMode="clear_text"
             app:helperText="Kindly input number without space, 10-16 digits."
-            app:helperTextTextColor="@android:color/holo_red_dark"
-            app:endIconMode="clear_text">
+            app:helperTextTextColor="@android:color/holo_red_dark">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/bankNoHolder"
@@ -471,9 +677,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
+            app:endIconMode="clear_text"
             app:helperText="Swift Code to be entered, Kindly input number without space."
-            app:helperTextTextColor="@android:color/holo_red_dark"
-            app:endIconMode="clear_text">
+            app:helperTextTextColor="@android:color/holo_red_dark">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/bankBIC"
@@ -485,6 +691,35 @@
                 android:textSize="12sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/button_secondary"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Please take a picture of your proof Slip."
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="12sp"
+                android:textStyle="bold|italic" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btnNBIPoliceClearance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:padding="10dp"
+                android:src="@drawable/vector_image_holder"
+                android:tint="@color/color_blue_1" />
+
+
+        </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSubmit"

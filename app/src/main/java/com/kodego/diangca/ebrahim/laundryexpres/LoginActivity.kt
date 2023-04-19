@@ -318,15 +318,6 @@ class LoginActivity : AppCompatActivity() {
 
         showProgressBar(false)
         userDialogInterface.dismiss()
-        /*
-        if(firebaseAuth.currentUser!=null){
-            val intent = Intent(this, RegisterPersonalInfoActivity::class.java)
-            intent.putExtra("email", gmail)
-            intent.putExtra("userType", userType)
-            startActivity(intent)
-            finish()
-        }
-        */
         when (userType) {
             "Customer" -> {
 
