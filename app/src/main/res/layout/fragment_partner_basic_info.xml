@@ -155,10 +155,10 @@
             android:id="@+id/sex"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_margin="5dp"
             android:background="@color/white"
             android:entries="@array/sex"
             />
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnLocation"
             android:layout_width="match_parent"

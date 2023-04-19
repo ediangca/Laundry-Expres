@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -28,6 +29,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
 
     var fragmentAdapter = FragmentAdapter(supportFragmentManager, lifecycle)
     private var partnerBasicInfoFragment = PartnerBasicInfoFragment(this)
+    private var partnerBusinessInfoFragment = PartnerBusinessInfoFragment(this)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +43,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
     private fun initComponent() {
         fragmentAdapter = FragmentAdapter(supportFragmentManager, lifecycle)
         fragmentAdapter.addFragment(partnerBasicInfoFragment) //0
-        fragmentAdapter.addFragment(PartnerBusinessInfoFragment(this)) //1
+        fragmentAdapter.addFragment(partnerBusinessInfoFragment) //1
         with(binding.viewPager2) {
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             adapter = fragmentAdapter
@@ -90,9 +92,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
 
     fun nextTab() {
         val currentItem = binding.viewPager2.currentItem
-        binding.viewPager2.post {
-            binding.viewPager2.setCurrentItem(currentItem + 1, true)
-        }
+        setTab(currentItem+1)
     }
 
     fun String.isEmailValid() =
@@ -111,6 +111,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
     }
     fun checkBasicInfoFields(): Boolean {
         val bindingBasicInfo = partnerBasicInfoFragment.binding
+        val bindingBusinessInfo = partnerBusinessInfoFragment.binding
 
         val mobileNo = bindingBasicInfo.mobileNo.text.toString()
         val firstName = bindingBasicInfo.firstName.text.toString()
@@ -133,7 +134,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
 
         if(currentItem == 1){ //Trap for ViewPager 1 (Basic Info)
 
-            if (mobileNo.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty() || email.isEmpty()) {
+            if (email.isEmpty() || mobileNo.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || bindingBasicInfo.sex.selectedItemPosition ==0 ||  street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty() ) {
                 if (mobileNo.isEmpty()) {
                     bindingBasicInfo.mobileNo.error = "Please enter your Mobile No."
                 }
@@ -146,20 +147,23 @@ class RegisterPartnerActivity : AppCompatActivity() {
                 if (lastName.isEmpty()) {
                     bindingBasicInfo.lastName.error = "Please enter your Lastname."
                 }
+                if (bindingBasicInfo.sex.selectedItemPosition ==0) {
+                    (bindingBasicInfo.sex.selectedView as TextView).error = "Please select your sex."
+                }
                 if (street.isEmpty()) {
                     bindingBasicInfo.address.error = "Please enter your Street."
                 }
                 if (city.isEmpty()) {
-                    bindingBasicInfo.address.error = "Please enter your City."
+                    bindingBasicInfo.city.error = "Please enter your City."
                 }
                 if (state.isEmpty()) {
-                    bindingBasicInfo.address.error = "Please enter your State."
+                    bindingBasicInfo.state.error = "Please enter your State."
                 }
                 if (zipCode.isEmpty()) {
-                    bindingBasicInfo.address.error = "Please enter your Zip Code."
+                    bindingBasicInfo.zipCode.error = "Please enter your Zip Code."
                 }
                 if (country.isEmpty()) {
-                    bindingBasicInfo.address.error = "Please enter your Country."
+                    bindingBasicInfo.country.error = "Please enter your Country."
                 }
                 if (email.isEmpty() || email.isEmailValid()) {
                     bindingBasicInfo.email.error = "Please enter an email or a valid email."
@@ -190,10 +194,48 @@ class RegisterPartnerActivity : AppCompatActivity() {
                 }
             }
 
+            if(trap){
+                setTab(1)
+            }
+
         }else {
 
+            val businessName = bindingBusinessInfo.businessName.text.toString()
+            val businessLegalName = bindingBusinessInfo.businessLegalName.text.toString()
+            val businessEmail = bindingBusinessInfo.businessEmail.text.toString()
+            val businessPhone = bindingBusinessInfo.businessPhone.text.toString()
+
+            val businessHoursMondayFrom = bindingBusinessInfo.fromMonday.text.toString()
+            val businessHoursMondayTo = bindingBusinessInfo.toMonday.text.toString()
+            val businessHoursTuesdayFrom = bindingBusinessInfo.fromTuesday.text.toString()
+            val businessHoursTuesdayTo = bindingBusinessInfo.toTuesday.text.toString()
+            val businessHoursWednesdayFrom = bindingBusinessInfo.fromWednesday.text.toString()
+            val businessHoursWednesdayTo = bindingBusinessInfo.toWednesday.text.toString()
+            val businessHoursThursdayFrom = bindingBusinessInfo.fromThursday.text.toString()
+            val businessHoursThursdayTo = bindingBusinessInfo.toThursday.text.toString()
+            val businessHoursFridayFrom = bindingBusinessInfo.fromFriday.text.toString()
+            val businessHoursFridayTo = bindingBusinessInfo.toFriday.text.toString()
+            val businessHoursSaturdayFrom = bindingBusinessInfo.fromSaturday.text.toString()
+            val businessHoursSaturdayTo = bindingBusinessInfo.toSaturday.text.toString()
+            val businessHoursSundayFrom = bindingBusinessInfo.fromSunday.text.toString()
+            val businessHoursSundayTo = bindingBusinessInfo.toSunday.text.toString()
+            val businessHoursHolidayFrom = bindingBusinessInfo.fromHoliday.text.toString()
+            val businessHoursHolidayTo = bindingBusinessInfo.toHoliday.text.toString()
+
+            val businessBankName = bindingBusinessInfo.bankName.text.toString()
+            val businessBankAccountName = bindingBusinessInfo.bankAccNameHolder.text.toString()
+            val businessBankAccNo = bindingBusinessInfo.bankAccNo.text.toString()
+            val businessBankBIC = bindingBusinessInfo.bankBIC.text.toString()
+
         }
+
         return trap
+    }
+
+    private fun setTab(currentItem: Int) {
+        binding.viewPager2.post {
+            binding.viewPager2.setCurrentItem(currentItem, true)
+        }
     }
 
     fun saveInfoToFirebase() {

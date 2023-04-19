@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -189,7 +190,7 @@ class RegisterCustomerActivity : AppCompatActivity() {
 
         var trap: Boolean = false
 
-        if (mobileNo.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty() || email.isEmpty()) {
+        if (email.isEmpty() || mobileNo.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || binding.sex.selectedItemPosition ==0 || street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty()) {
             if (mobileNo.isEmpty()) {
                 binding.mobileNo.error = "Please enter your Mobile No."
                 trap =  true
@@ -203,6 +204,9 @@ class RegisterCustomerActivity : AppCompatActivity() {
             if (lastName.isEmpty()) {
                 binding.lastName.error = "Please enter your Lastname."
             }
+            if (binding.sex.selectedItemPosition ==0) {
+                (binding.sex.selectedView as TextView).error = "Please select your sex."
+            }
             if (street.isEmpty()) {
                 binding.address.error = "Please enter your Street."
             }
@@ -210,13 +214,13 @@ class RegisterCustomerActivity : AppCompatActivity() {
                 binding.address.error = "Please enter your City."
             }
             if (state.isEmpty()) {
-                binding.address.error = "Please enter your State."
+                binding.city.error = "Please enter your State."
             }
             if (zipCode.isEmpty()) {
-                binding.address.error = "Please enter your Zip Code."
+                binding.zipCode.error = "Please enter your Zip Code."
             }
             if (country.isEmpty()) {
-                binding.address.error = "Please enter your Country."
+                binding.country.error = "Please enter your Country."
             }
             if (email.isEmpty() || !email.isEmailValid()) {
                 binding.email.error = "Please enter an email or a valid email."

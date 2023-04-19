@@ -635,14 +635,14 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/bankNameHolderLayout"
+            android:id="@+id/bankAccNameHolderLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
             app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/bankNameHolder"
+                android:id="@+id/bankAccNameHolder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
@@ -653,7 +653,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/bankNoHolderLayout"
+            android:id="@+id/bankNoAccLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
@@ -662,7 +662,7 @@
             app:helperTextTextColor="@android:color/holo_red_dark">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/bankNoHolder"
+                android:id="@+id/bankAccNo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
