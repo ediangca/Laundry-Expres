@@ -84,7 +84,7 @@ class PartnerBasicInfoFragment(private var registerPartnerActivity: RegisterPart
 
     private fun btnSubmitOnClickListener() {
         if(firebaseAuth.currentUser == null && binding.btnSubmit.text.toString().equals("Next", true)) {
-            if(registerPartnerActivity.checkBasicInfoFields()){
+            if(registerPartnerActivity.checkFields()){
                 Toast.makeText(registerPartnerActivity, "Please check error field(s)!", Toast.LENGTH_SHORT).show()
                 return
             }

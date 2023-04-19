@@ -235,17 +235,15 @@ class PartnerBusinessInfoFragment(var registerPartnerActivity: RegisterPartnerAc
     }
 
     private fun btnSubmitOnClickListener() {
-        if (registerPartnerActivity.checkBasicInfoFields()) {
-            if (registerPartnerActivity.checkBasicInfoFields()) {
-                Toast.makeText(
-                    registerPartnerActivity,
-                    "Please check error field(s)!",
-                    Toast.LENGTH_SHORT
-                ).show()
-                return
-            } else {
-                registerPartnerActivity.saveInfoToFirebase()
-            }
+        if (registerPartnerActivity.checkFields()) {
+            Toast.makeText(
+                registerPartnerActivity,
+                "Please check error field(s)!",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        } else {
+            registerPartnerActivity.saveInfoToFirebase()
         }
     }
 

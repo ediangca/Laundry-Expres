@@ -92,7 +92,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
 
     fun nextTab() {
         val currentItem = binding.viewPager2.currentItem
-        setTab(currentItem+1)
+        setTab(currentItem + 1)
     }
 
     fun String.isEmailValid() =
@@ -109,7 +109,8 @@ class RegisterPartnerActivity : AppCompatActivity() {
     private fun isValidEmail(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
-    fun checkBasicInfoFields(): Boolean {
+
+    fun checkFields(): Boolean {
         val bindingBasicInfo = partnerBasicInfoFragment.binding
         val bindingBusinessInfo = partnerBusinessInfoFragment.binding
 
@@ -121,7 +122,8 @@ class RegisterPartnerActivity : AppCompatActivity() {
         val state = bindingBasicInfo.state.text.toString()
         val zipCode = bindingBasicInfo.zipCode.text.toString()
         val country = bindingBasicInfo.country.text.toString()
-        val sex = bindingBasicInfo.sex.getItemAtPosition(bindingBasicInfo.sex.selectedItemPosition).toString()
+        val sex = bindingBasicInfo.sex.getItemAtPosition(bindingBasicInfo.sex.selectedItemPosition)
+            .toString()
         val email = bindingBasicInfo.email.text.toString()
         val password = bindingBasicInfo.password.text.toString()
         val confirmPassword = bindingBasicInfo.confirmPassword.text.toString()
@@ -129,12 +131,10 @@ class RegisterPartnerActivity : AppCompatActivity() {
         bindingBasicInfo.passwordLayout.isPasswordVisibilityToggleEnabled = true
         bindingBasicInfo.confirmPasswordLayout.isPasswordVisibilityToggleEnabled = true
 
-        var trap = false
-        val currentItem = binding.viewPager2.currentItem
+        var validate1 = false
+        var validate2 = false
 
-        if(currentItem == 1){ //Trap for ViewPager 1 (Basic Info)
-
-            if (email.isEmpty() || mobileNo.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || bindingBasicInfo.sex.selectedItemPosition ==0 ||  street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty() ) {
+            if (email.isEmpty() || mobileNo.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || bindingBasicInfo.sex.selectedItemPosition==0 || street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty() ) {
                 if (mobileNo.isEmpty()) {
                     bindingBasicInfo.mobileNo.error = "Please enter your Mobile No."
                 }
@@ -147,8 +147,9 @@ class RegisterPartnerActivity : AppCompatActivity() {
                 if (lastName.isEmpty()) {
                     bindingBasicInfo.lastName.error = "Please enter your Lastname."
                 }
-                if (bindingBasicInfo.sex.selectedItemPosition ==0) {
-                    (bindingBasicInfo.sex.selectedView as TextView).error = "Please select your sex."
+                if (bindingBasicInfo.sex.selectedItemPosition==0) {
+                    (bindingBasicInfo.sex.selectedView as TextView).error =
+                        "Please select your sex."
                 }
                 if (street.isEmpty()) {
                     bindingBasicInfo.address.error = "Please enter your Street."
@@ -168,37 +169,32 @@ class RegisterPartnerActivity : AppCompatActivity() {
                 if (email.isEmpty() || email.isEmailValid()) {
                     bindingBasicInfo.email.error = "Please enter an email or a valid email."
                 }
-                trap = true
+                validate1 = true
             }
 
             if (firebaseAuth.currentUser==null) {
                 if (password.isEmpty()) {
                     bindingBasicInfo.password.error = "Please enter your password."
                     bindingBasicInfo.passwordLayout.isPasswordVisibilityToggleEnabled = false
-                    trap = true
+                    validate1 = true
                 }
                 if (confirmPassword.isEmpty()) {
                     bindingBasicInfo.confirmPassword.error = "Please enter your password."
                     bindingBasicInfo.confirmPasswordLayout.isPasswordVisibilityToggleEnabled = false
-                    trap = true
+                    validate1 = true
                 }
                 if (password.length < 6) {
                     bindingBasicInfo.password.error = "Password must be more than 6 characters."
                     bindingBasicInfo.passwordLayout.isPasswordVisibilityToggleEnabled = false
-                    trap = true
+                    validate1 = true
                 }
                 if (password!=confirmPassword) {
                     bindingBasicInfo.confirmPassword.error = "Password not match."
                     bindingBasicInfo.confirmPasswordLayout.isPasswordVisibilityToggleEnabled = false
-                    trap = true
+                    validate1 = true
                 }
             }
 
-            if(trap){
-                setTab(1)
-            }
-
-        }else {
 
             val businessName = bindingBusinessInfo.businessName.text.toString()
             val businessLegalName = bindingBusinessInfo.businessLegalName.text.toString()
@@ -227,9 +223,18 @@ class RegisterPartnerActivity : AppCompatActivity() {
             val businessBankAccNo = bindingBusinessInfo.bankAccNo.text.toString()
             val businessBankBIC = bindingBusinessInfo.bankBIC.text.toString()
 
+            val businessSignatureUri = "E-Signature URI"
+
+            if (businessName.isEmpty()) {
+
+                validate2 = true
+            }
+
+        if (validate1) {
+            setTab(0)
         }
 
-        return trap
+        return (validate1 or validate2)
     }
 
     private fun setTab(currentItem: Int) {
