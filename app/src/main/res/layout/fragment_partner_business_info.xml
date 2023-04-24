@@ -104,6 +104,72 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/button_secondary"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/businessBIRNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="Please browse or take a picture of your BIR 2303 / Certificate of Registration ."
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="12sp"
+                android:textStyle="bold|italic" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/businessBIRImageUri"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/businessBIRNote"
+                android:textAlignment="center"
+                android:background="@android:color/transparent"
+                android:textColor="@android:color/holo_red_dark"
+                android:text="Filename"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/businessBIRImage"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                app:layout_constraintTop_toBottomOf="@id/businessBIRImageUri"
+                android:visibility="gone"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCaptureBusinessBIR"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/businessBIRImage"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnBrowseBusinessBIR"
+                android:background="@android:color/transparent"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                android:text="Capture" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnBrowseBusinessBIR"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/businessBIRImage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnCaptureBusinessBIR"
+                android:background="@android:color/transparent"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                android:text="Browse" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -692,7 +758,7 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -701,25 +767,62 @@
             android:padding="10dp">
 
             <TextView
+                android:id="@+id/bankSlipNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Please take a picture of your proof Slip."
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="Please browse or take a picture of your proof Slip."
                 android:textAlignment="center"
                 android:textColor="@android:color/holo_red_dark"
                 android:textSize="12sp"
                 android:textStyle="bold|italic" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btnNBIPoliceClearance"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/bankSlipImageUri"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/bankSlipNote"
+                android:textAlignment="center"
                 android:background="@android:color/transparent"
-                android:padding="10dp"
-                android:src="@drawable/vector_image_holder"
-                android:tint="@color/color_blue_1" />
+                android:textColor="@android:color/holo_red_dark"
+                android:text="Filename"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/bankSlipImage"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                app:layout_constraintTop_toBottomOf="@id/bankSlipImageUri"
+                android:visibility="gone"
+                />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCaptureBankSlip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/bankSlipImage"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnBrowseBankSlip"
+                android:background="@android:color/transparent"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                android:text="Capture" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnBrowseBankSlip"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/bankSlipImage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnCaptureBankSlip"
+                android:background="@android:color/transparent"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                android:text="Browse" />
 
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSubmit"

@@ -23,10 +23,10 @@ import java.util.*
 
 class PartnerBasicInfoFragment(private var registerPartnerActivity: RegisterPartnerActivity) : Fragment() {
 
-    private var bindingPartner: FragmentPartnerBasicInfoBinding? = null
-    val binding get() = bindingPartner!!
+    private var bindingBasicInfo: FragmentPartnerBasicInfoBinding? = null
+    val binding get() = bindingBasicInfo!!
 
-//    private var firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance()
+    //    private var firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance()
 //    private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
 //    private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
 //        .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
@@ -36,13 +36,17 @@ class PartnerBasicInfoFragment(private var registerPartnerActivity: RegisterPart
     private  var longitude: Double = 0.0
     private  var latitude: Double = 0.0
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
+    @JvmName("getBinding1")
+    fun getBinding(): FragmentPartnerBasicInfoBinding {
+        return binding
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        bindingPartner = FragmentPartnerBasicInfoBinding.inflate(layoutInflater, container, false)
+        bindingBasicInfo = FragmentPartnerBasicInfoBinding.inflate(layoutInflater, container, false)
         return binding.root
 
     }
@@ -92,9 +96,6 @@ class PartnerBasicInfoFragment(private var registerPartnerActivity: RegisterPart
         }
     }
 
-
-    private fun registerUser() {
-    }
 
     private fun isLocationEnabled(): Boolean {
         val locationManager: LocationManager =

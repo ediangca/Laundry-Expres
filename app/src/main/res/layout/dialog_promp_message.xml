@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="20dp"
+        android:background="@color/color_light_3"
+        android:text="Prompt Title"
+        android:textAlignment="center"
+        android:textColor="@color/color_blue_1"
+        android:textSize="24sp"
+        android:textStyle="bold|italic"
+        />
+
+    <TextView
+        android:id="@+id/dialogDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/dialogTitle"
+        android:padding="20dp"
+        android:text="Description"
+        android:justificationMode="inter_word"
+        android:textAlignment="center"
+        />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

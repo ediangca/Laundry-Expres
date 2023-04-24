@@ -1,29 +1,53 @@
 package com.kodego.diangca.ebrahim.laundryexpres.registration.partner
 
+import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.graphics.*
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.provider.OpenableColumns
+import android.provider.Settings
+import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import coil.load
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.kodego.diangca.ebrahim.laundryexpres.classes.TouchEventView
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogTimePickerBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentPartnerBusinessInfoBinding
+import java.io.ByteArrayOutputStream
+
 
 class PartnerBusinessInfoFragment(var registerPartnerActivity: RegisterPartnerActivity) :
     Fragment() {
 
-    var _binding: FragmentPartnerBusinessInfoBinding? = null
-    val binding get() = _binding!!
+    var bindingBusinessInfo: FragmentPartnerBusinessInfoBinding? = null
+    val binding get() = bindingBusinessInfo!!
 
-    private var firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance()
+    private lateinit var firebaseStorageRef: StorageReference
+    private lateinit var firebaseFirestore: FirebaseFirestore
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
         .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
@@ -31,9 +55,26 @@ class PartnerBusinessInfoFragment(var registerPartnerActivity: RegisterPartnerAc
 
     private var currentItem = 0
 
-
     private lateinit var timePickerBuilder: AlertDialog.Builder
     private lateinit var timePickerDialogInterface: DialogInterface
+
+    private lateinit var drawingBoard: TouchEventView
+    private var businessImageUri: Uri? = null
+    private var bankImageUri: Uri? = null
+
+
+    var businessImageBytes:String? = null
+    var bankImageBytes:String? = null
+
+    private val PICK_BUSINESS_CODE = 100
+    private val PICK_BANK_CODE = 200
+    private val CAMERA_BUSINESS_CODE = 1
+    private val CAMERA_BANK_CODE = 2
+
+    @JvmName("getBinding1")
+    fun getBinding(): FragmentPartnerBusinessInfoBinding {
+        return binding
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +86,8 @@ class PartnerBusinessInfoFragment(var registerPartnerActivity: RegisterPartnerAc
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentPartnerBusinessInfoBinding.inflate(layoutInflater, container, false)
+        bindingBusinessInfo =
+            FragmentPartnerBusinessInfoBinding.inflate(layoutInflater, container, false)
         return binding.root
 
     }
@@ -61,9 +103,10 @@ class PartnerBusinessInfoFragment(var registerPartnerActivity: RegisterPartnerAc
     }
 
     private fun initComponent() {
-        binding.btnSubmit.setOnClickListener {
-            btnSubmitOnClickListener()
-        }
+
+        firebaseStorageRef =
+            FirebaseStorage.getInstance().reference.child(System.currentTimeMillis().toString())
+        firebaseFirestore = FirebaseFirestore.getInstance()
 
         binding.fromMonday.setOnClickListener {
             setTime(it)
@@ -169,6 +212,238 @@ class PartnerBusinessInfoFragment(var registerPartnerActivity: RegisterPartnerAc
             setTime(binding.toHoliday)
         }
 
+        binding.btnBrowseBusinessBIR.setOnClickListener {
+            btnBrowseBusinessBIROnClickListener()
+        }
+        binding.btnCaptureBusinessBIR.setOnClickListener {
+            btnCaptureBusinessBIROnClickListener()
+        }
+
+        binding.btnBrowseBankSlip.setOnClickListener {
+            btnBrowseBankSlipOnClickListener()
+        }
+
+        binding.btnCaptureBankSlip.setOnClickListener {
+            btnCaptureBankSlipOnClickListener()
+        }
+
+        binding.btnSubmit.setOnClickListener {
+            btnSubmitOnClickListener()
+        }
+    }
+
+    private fun btnCaptureBusinessBIROnClickListener() {
+        cameraCheckPermission(CAMERA_BUSINESS_CODE)
+    }
+
+
+    private fun btnCaptureBankSlipOnClickListener() {
+        cameraCheckPermission(CAMERA_BANK_CODE)
+    }
+
+    private fun cameraCheckPermission(code: Int) {
+
+        Dexter.withContext(registerPartnerActivity)
+            .withPermissions(
+                android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.CAMERA).withListener(
+
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.let {
+
+                            if (report.areAllPermissionsGranted()) {
+                                camera(code)
+                            }else{
+                                toast(it.toString())
+                            }
+
+                        }
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        p0: MutableList<PermissionRequest>?,
+                        p1: PermissionToken?,
+                    ) {
+                        showRotationalDialogForPermission()
+                    }
+
+                }
+            ).onSameThread().check()
+    }
+
+    private fun camera(code : Int) {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(intent, code)
+    }
+    private fun btnBrowseBusinessBIROnClickListener() {
+        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        startActivityForResult(gallery, PICK_BUSINESS_CODE)
+    }
+    private fun btnBrowseBankSlipOnClickListener() {
+        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        startActivityForResult(gallery, PICK_BANK_CODE)
+    }
+
+    private fun showRotationalDialogForPermission() {
+        AlertDialog.Builder(registerPartnerActivity)
+            .setMessage("It looks like you have turned off permissions"
+                    + "required for this feature. It can be enable under App settings!!!")
+
+            .setPositiveButton("Go TO SETTINGS") { _, _ ->
+
+                try {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri = Uri.fromParts("package", registerPartnerActivity.packageName, null)
+                    intent.data = uri
+                    startActivity(intent)
+
+                } catch (e: ActivityNotFoundException) {
+                    e.printStackTrace()
+                }
+            }
+
+            .setNegativeButton("CANCEL") { dialog, _ ->
+                dialog.dismiss()
+            }.show()
+    }
+
+
+    private fun toast(message: String) {
+        Toast.makeText(
+            registerPartnerActivity,
+            message,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode==RESULT_OK) {
+            when (requestCode) {
+                PICK_BUSINESS_CODE -> {
+                    businessImageUri = data?.data
+                    binding.businessBIRImageUri.visibility = View.VISIBLE
+                    binding.businessBIRImageUri.text = getFileName(businessImageUri, registerPartnerActivity)
+                    Log.d("IMAGE_URI", "BUSINESS BIR: $businessImageUri")
+
+                    val inputStream = registerPartnerActivity.contentResolver.openInputStream(businessImageUri!!)
+                    val myBitmap = BitmapFactory.decodeStream(inputStream)
+                    val stream = ByteArrayOutputStream()
+                    myBitmap.compress(Bitmap.CompressFormat.PNG, 100,stream)
+                    val bytes = stream.toByteArray()
+                    businessImageBytes = Base64.encodeToString(bytes,Base64.DEFAULT)
+                    binding.businessBIRImage.visibility = View.VISIBLE
+                    binding.businessBIRImage.setImageBitmap(myBitmap)
+                    inputStream!!.close()
+                    Toast.makeText(registerPartnerActivity,"Image Selected for BIR", Toast.LENGTH_SHORT).show()
+
+                }
+
+                CAMERA_BUSINESS_CODE -> {
+                    try {
+                        if(data != null) {
+                            //we are using coroutine image loader (coil)
+                            val bitmap = data.extras?.get("data") as Bitmap
+
+                            val byteArrayOutputStream = ByteArrayOutputStream()
+                            bitmap.compress(
+                                Bitmap.CompressFormat.PNG,
+                                100,
+                                byteArrayOutputStream
+                            )
+                            val bytes = byteArrayOutputStream.toByteArray()
+                            businessImageBytes = Base64.encodeToString(bytes,Base64.DEFAULT)
+                            binding.businessBIRImage.visibility = View.VISIBLE
+                            binding.businessBIRImage.load(bitmap) {
+                                crossfade(true)
+                                crossfade(1000)
+//                        transformations(CircleCropTransformation())
+                            }
+                        }
+                    }catch (e: Exception){
+                        Log.d("CAMERA", e.toString())
+                        e.printStackTrace()
+                    }
+                }
+
+                PICK_BANK_CODE -> {
+                    bankImageUri = data?.data
+                    binding.bankSlipImageUri.visibility = View.VISIBLE
+                    binding.bankSlipImageUri.text = getFileName(bankImageUri, registerPartnerActivity)
+                    Log.d("IMAGE_URI", "BANK SLIP: $bankImageUri")
+//                    binding.bankSlipImage.setImageURI(imageUri)
+
+                    val inputStream = registerPartnerActivity.contentResolver.openInputStream(bankImageUri!!)
+                    val myBitmap = BitmapFactory.decodeStream(inputStream)
+                    val stream = ByteArrayOutputStream()
+                    myBitmap.compress(Bitmap.CompressFormat.PNG, 100,stream)
+                    val bytes = stream.toByteArray()
+                    bankImageBytes = Base64.encodeToString(bytes,Base64.DEFAULT)
+                    binding.bankSlipImage.visibility = View.VISIBLE
+                    binding.bankSlipImage.setImageBitmap(myBitmap)
+                    inputStream!!.close()
+                    Toast.makeText(registerPartnerActivity,"Image Selected for Proof Bank", Toast.LENGTH_SHORT).show()
+
+                }
+
+                CAMERA_BANK_CODE -> {
+                    try {
+                        if(data != null) {
+                            //we are using coroutine image loader (coil)
+                            val bitmap = data.extras?.get("data") as Bitmap
+
+                            val byteArrayOutputStream = ByteArrayOutputStream()
+                            bitmap.compress(
+                                Bitmap.CompressFormat.PNG,
+                                100,
+                                byteArrayOutputStream
+                            )
+                            val bytes = byteArrayOutputStream.toByteArray()
+                            bankImageBytes = Base64.encodeToString(bytes,Base64.DEFAULT)
+                            binding.bankSlipImage.visibility = View.VISIBLE
+                            binding.bankSlipImage.load(bitmap) {
+                                crossfade(true)
+                                crossfade(1000)
+//                        transformations(CircleCropTransformation())
+                            }
+                        }
+                    }catch (e: Exception){
+                        Log.d("CAMERA", e.toString())
+                        e.printStackTrace()
+                    }
+                }
+
+            }
+        }
+    }
+
+    @SuppressLint("Range")
+    private fun getFileName(imageUri: Uri?, context: Context): String? {
+        var filename: String? = null
+        if (imageUri!!.scheme.equals("content")) {
+            val cursor = context.contentResolver.query(imageUri, null, null,null, null)
+            try {
+                if(cursor != null && cursor.moveToFirst()){
+                    filename = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                }
+            }finally {
+                cursor!!.close()
+            }
+
+            if(filename == null){
+                filename = imageUri.path
+                val cut: Int = filename!!.lastIndexOf('/')
+                if(cut != -1){
+                    filename = filename.substring(cut +1)
+                }
+
+            }
+
+        }
+        return  filename
     }
 
     private fun setTime(view: View) {

@@ -259,18 +259,33 @@ class LoginActivity : AppCompatActivity() {
             ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
-
                     Log.d("ForSingleValueEvent", firebaseAuth.currentUser!!.uid)
-
                     this@LoginActivity.userType =
                         snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
                             .getValue(String::class.java).toString()
-
+                    val isverified: Boolean = snapshot.child(firebaseAuth.currentUser!!.uid).child("verified")
+                        .getValue(Boolean::class.java)!!
+                    if(!isverified){
+                        showProgressBar(false)
+                        Log.d("ACCOUNT","Unverified Account! Please wait for your verification. We will notify you within 24-72hours.")
+                        val builder = AlertDialog.Builder(this@LoginActivity)
+                        builder.setCancelable(false)
+                        builder.setTitle("UNVERIFIED ACCOUNT")
+                        builder.setMessage("Please wait for your verification. We will notify you within 24-72hours. Thank you!")
+                        builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                            firebaseAuth.signOut()
+                            binding.username.text = null
+                            binding.password.text = null
+                        }
+                        builder.show()
+                        return
+                    }
                     goToDashboard()
 
                 } else {
+                    showProgressBar(false)
                     Log.d(
-                        "NOT FOUND",
+                        "ACCOUNT",
                         "Either your username or password is Invalid! Please try again!"
                     )
                     Toast.makeText(

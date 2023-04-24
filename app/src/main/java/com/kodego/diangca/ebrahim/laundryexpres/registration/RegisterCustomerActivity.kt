@@ -331,7 +331,6 @@ class RegisterCustomerActivity : AppCompatActivity() {
                             val databaseRef = firebaseDatabase.reference.child("users")
                                 .child(firebaseAuth.currentUser!!.uid)
 
-
                             val user = User(
                                 firebaseAuth.currentUser!!.uid,
                                 email,
