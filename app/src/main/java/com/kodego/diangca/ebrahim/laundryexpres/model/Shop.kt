@@ -4,13 +4,15 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.util.Log
 
-data class BusinessInfo(
+data class Shop(
     var uid: String? = null,
+    var businessLogo:String? = null,
     var businessName: String? = null,
     var businessLegalName: String? = null,
     var businessEmail: String? = null,
     var businessPhoneNumber: String? = null,
     var businessBIRImage: String? = null,
+    var businessAddress: String? = null,
     var mondayFrom: String? = null,
     var mondayTo: String? = null,
     var TuesdayFrom: String? = null,
@@ -34,8 +36,9 @@ data class BusinessInfo(
     var bankProofImage: String? = null,
 ): Parcelable {
 
-
     constructor(parcel: Parcel) : this(
+        parcel.readString(),
+        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -73,11 +76,13 @@ data class BusinessInfo(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(uid)
+        parcel.writeString(businessLogo)
         parcel.writeString(businessName)
         parcel.writeString(businessLegalName)
         parcel.writeString(businessEmail)
         parcel.writeString(businessPhoneNumber)
         parcel.writeString(businessBIRImage)
+        parcel.writeString(businessAddress)
         parcel.writeString(mondayFrom)
         parcel.writeString(mondayTo)
         parcel.writeString(TuesdayFrom)
@@ -106,15 +111,15 @@ data class BusinessInfo(
     }
 
     override fun toString(): String {
-        return "BusinessInfo(uid=$uid, businessName=$businessName, businessLegalName=$businessLegalName, businessEmail=$businessEmail, businessPhoneNumber=$businessPhoneNumber, businessBIRImage=$businessBIRImage, mondayFrom=$mondayFrom, mondayTo=$mondayTo, TuesdayFrom=$TuesdayFrom, TuesdayTo=$TuesdayTo, wednesdayFrom=$wednesdayFrom, wednesdayTo=$wednesdayTo, thursdayFrom=$thursdayFrom, thursdayTo=$thursdayTo, fridayFrom=$fridayFrom, fridayTo=$fridayTo, SaturdayFrom=$SaturdayFrom, SaturdayTo=$SaturdayTo, SundayFrom=$SundayFrom, SundayTo=$SundayTo, HolidayFrom=$HolidayFrom, HolidayTo=$HolidayTo, bankName=$bankName, bankAccountName=$bankAccountName, bankAccountNumber=$bankAccountNumber, bankAccountBIC=$bankAccountBIC, bankProofImage=$bankProofImage)"
+        return "Shop(uid=$uid, businessLogo=$businessLogo, businessName=$businessName, businessLegalName=$businessLegalName, businessEmail=$businessEmail, businessPhoneNumber=$businessPhoneNumber, businessBIRImage=$businessBIRImage, businessAddress=$businessAddress, mondayFrom=$mondayFrom, mondayTo=$mondayTo, TuesdayFrom=$TuesdayFrom, TuesdayTo=$TuesdayTo, wednesdayFrom=$wednesdayFrom, wednesdayTo=$wednesdayTo, thursdayFrom=$thursdayFrom, thursdayTo=$thursdayTo, fridayFrom=$fridayFrom, fridayTo=$fridayTo, SaturdayFrom=$SaturdayFrom, SaturdayTo=$SaturdayTo, SundayFrom=$SundayFrom, SundayTo=$SundayTo, HolidayFrom=$HolidayFrom, HolidayTo=$HolidayTo, bankName=$bankName, bankAccountName=$bankAccountName, bankAccountNumber=$bankAccountNumber, bankAccountBIC=$bankAccountBIC, bankProofImage=$bankProofImage)"
     }
 
-    companion object CREATOR : Parcelable.Creator<BusinessInfo> {
-        override fun createFromParcel(parcel: Parcel): BusinessInfo {
-            return BusinessInfo(parcel)
+    companion object CREATOR : Parcelable.Creator<Shop> {
+        override fun createFromParcel(parcel: Parcel): Shop {
+            return Shop(parcel)
         }
 
-        override fun newArray(size: Int): Array<BusinessInfo?> {
+        override fun newArray(size: Int): Array<Shop?> {
             return arrayOfNulls(size)
         }
     }

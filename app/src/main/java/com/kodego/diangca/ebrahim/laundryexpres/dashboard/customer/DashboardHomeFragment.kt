@@ -61,25 +61,12 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         initComponent()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
     private fun initComponent() {
 
         displayUserName()
 
-        binding.btnServiceRegular.setOnClickListener {
-            btnServiceRegularOnClickListener()
-        }
-        binding.btnServicePets.setOnClickListener {
-            btnServicePetsOnClickListener()
-        }
-        binding.btnServiceDryClean.setOnClickListener {
-            btnServiceDryCleanOnClickListener()
-        }
-        binding.btnServiceSneakers.setOnClickListener {
-            btnServiceSneakersOnClickListener()
+        binding.btnLaundryShop.setOnClickListener {
+            btnLaundryShopOnClickListener()
         }
         binding.editPickupLayout.setOnClickListener {
             setSchedule(binding.editPickup, "Pick-Up")
@@ -97,6 +84,10 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             btnBookOnClickListener()
         }
 
+    }
+
+    private fun btnLaundryShopOnClickListener() {
+        dashboardCustomer.showShopList()
     }
 
     private fun btnBookOnClickListener() {

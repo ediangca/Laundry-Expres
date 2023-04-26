@@ -104,6 +104,26 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/businessAddressLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            app:endIconMode="clear_text"
+            app:helperText="Kindly input with this format (City, Province)"
+            app:helperTextTextColor="@android:color/holo_red_dark">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/businessAddress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:hint="*Business Address"
+                android:inputType="textMultiLine"
+                android:textSize="12sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -187,7 +207,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Please indicate time 24 format. \n ex. 7:30am-4:30pm put instead from 7.30 to 16.30) \n Leave it empty if Closed."
+            android:text="Leave it empty if Closed."
             android:textAlignment="center"
             android:textColor="@android:color/holo_red_dark"
             android:textSize="12sp"

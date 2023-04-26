@@ -312,7 +312,7 @@ class LoginActivity : AppCompatActivity() {
                     showProgressBar(false)
                     Toast.makeText(
                         this@LoginActivity,
-                        "${error.message}",
+                        error.message,
                         Toast.LENGTH_SHORT
                     ).show()
                 }

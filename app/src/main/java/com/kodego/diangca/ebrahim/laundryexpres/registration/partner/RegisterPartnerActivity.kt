@@ -3,6 +3,8 @@ package com.kodego.diangca.ebrahim.laundryexpres.registration.partner
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
@@ -20,7 +22,9 @@ import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.adater.FragmentAdapter
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityRegisterPartnerBinding
-import com.kodego.diangca.ebrahim.laundryexpres.model.BusinessInfo
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentPartnerBasicInfoBinding
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentPartnerBusinessInfoBinding
+import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import java.util.regex.Pattern
 
@@ -55,6 +59,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
     var businessLegalName: String? = null
     var businessEmail: String? = null
     var businessPhone: String? = null
+    var businessAddress: String? = null
 
     var businessHoursMondayFrom: String? = null
     var businessHoursMondayTo: String? = null
@@ -168,21 +173,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
 
         if (binding.viewPager2.currentItem==1) {
             val bindingBasicInfo = partnerBasicInfoFragment.getBinding()
-
-            mobileNo = bindingBasicInfo.mobileNo.text.toString()
-            firstName = bindingBasicInfo.firstName.text.toString()
-            lastName = bindingBasicInfo.lastName.text.toString()
-            street = bindingBasicInfo.address.text.toString()
-            city = bindingBasicInfo.city.text.toString()
-            state = bindingBasicInfo.state.text.toString()
-            zipCode = bindingBasicInfo.zipCode.text.toString()
-            country = bindingBasicInfo.country.text.toString()
-            sex =
-                bindingBasicInfo.sex.getItemAtPosition(bindingBasicInfo.sex.selectedItemPosition)
-                    .toString()
-            email = bindingBasicInfo.email.text.toString()
-            password = bindingBasicInfo.password.text.toString()
-            confirmPassword = bindingBasicInfo.confirmPassword.text.toString()
+            setDataBasicInfo(bindingBasicInfo)
 
             bindingBasicInfo.passwordLayout.isPasswordVisibilityToggleEnabled = true
             bindingBasicInfo.confirmPasswordLayout.isPasswordVisibilityToggleEnabled = true
@@ -249,38 +240,11 @@ class RegisterPartnerActivity : AppCompatActivity() {
             }
 
         } else if (binding.viewPager2.currentItem==1) {
-            val bindingBusinessInfo = partnerBusinessInfoFragment.binding
-
-            businessName = bindingBusinessInfo.businessName.text.toString()
-            businessLegalName = bindingBusinessInfo.businessLegalName.text.toString()
-            businessEmail = bindingBusinessInfo.businessEmail.text.toString()
-            businessPhone = bindingBusinessInfo.businessPhone.text.toString()
-
-            businessHoursMondayFrom = bindingBusinessInfo.fromMonday.text.toString()
-            businessHoursMondayTo = bindingBusinessInfo.toMonday.text.toString()
-            businessHoursTuesdayFrom = bindingBusinessInfo.fromTuesday.text.toString()
-            businessHoursTuesdayTo = bindingBusinessInfo.toTuesday.text.toString()
-            businessHoursWednesdayFrom = bindingBusinessInfo.fromWednesday.text.toString()
-            businessHoursWednesdayTo = bindingBusinessInfo.toWednesday.text.toString()
-            businessHoursThursdayFrom = bindingBusinessInfo.fromThursday.text.toString()
-            businessHoursThursdayTo = bindingBusinessInfo.toThursday.text.toString()
-            businessHoursFridayFrom = bindingBusinessInfo.fromFriday.text.toString()
-            businessHoursFridayTo = bindingBusinessInfo.toFriday.text.toString()
-            businessHoursSaturdayFrom = bindingBusinessInfo.fromSaturday.text.toString()
-            businessHoursSaturdayTo = bindingBusinessInfo.toSaturday.text.toString()
-            businessHoursSundayFrom = bindingBusinessInfo.fromSunday.text.toString()
-            businessHoursSundayTo = bindingBusinessInfo.toSunday.text.toString()
-            businessHoursHolidayFrom = bindingBusinessInfo.fromHoliday.text.toString()
-            businessHoursHolidayTo = bindingBusinessInfo.toHoliday.text.toString()
-
-            businessBankName = bindingBusinessInfo.bankName.text.toString()
-            businessBankAccountName = bindingBusinessInfo.bankAccNameHolder.text.toString()
-            businessBankAccNo = bindingBusinessInfo.bankAccNo.text.toString()
-            businessBankBIC = bindingBusinessInfo.bankBIC.text.toString()
-
+            val bindingBusinessInfo = partnerBusinessInfoFragment.getBinding()
+            setDataBusinessInfo(bindingBusinessInfo)
             val businessSignatureUri = "E-Signature URI"
 
-            if (businessName!!.isEmpty() || businessLegalName!!.isEmpty() || businessEmail!!.isEmpty() || businessPhone!!.isEmpty() ||
+            if (businessName!!.isEmpty() || businessLegalName!!.isEmpty() || businessEmail!!.isEmpty() || businessPhone!!.isEmpty() || businessAddress!!.isEmpty() ||
                 businessBankName!!.isEmpty() || businessBankAccountName!!.isEmpty() || businessBankAccNo!!.isEmpty() || businessBankBIC!!.isEmpty()
             ) {
                 if (businessName!!.isEmpty()) {
@@ -295,6 +259,12 @@ class RegisterPartnerActivity : AppCompatActivity() {
                 }
                 if (businessPhone!!.isEmpty()) {
                     bindingBusinessInfo.businessPhone.error = "Please enter your Business Phone."
+                }
+                if (businessAddress!!.isEmpty()) {
+                    bindingBusinessInfo.businessAddress.error = "Please enter your Business Address."
+                    if(isValidAddress(businessAddress!!)){
+                        bindingBusinessInfo.businessAddress.error = "Please enter a valid Business Address."
+                    }
                 }
 
                 if (businessBankName!!.isEmpty()) {
@@ -398,6 +368,83 @@ class RegisterPartnerActivity : AppCompatActivity() {
         return (validate1 or validate2)
     }
 
+    private fun isValidAddress(address: String): Boolean {
+        var addresses : List<Address>? = null
+        var locality : String? = null
+
+        if(address.isNotEmpty()){
+            var geocoder = Geocoder(binding.root.context)
+            try {
+                addresses = geocoder.getFromLocationName(address, 1)
+            }catch (e: Exception){
+                Log.d("SEARCH_GEO_LOCATION", "${e.message}")
+            }
+
+            if(addresses!=null && addresses.isNotEmpty()) {
+                locality = addresses[0].locality
+            }else{
+                Log.d("CITY AVAILABILITY", "NO AVAILABLE FROM SELECTED CITY")
+            }
+        }
+        return address.isEmpty()
+    }
+
+    private fun setDataBasicInfo(bindingBasicInfo: FragmentPartnerBasicInfoBinding) {
+        mobileNo = bindingBasicInfo.mobileNo.text.toString()
+        firstName = bindingBasicInfo.firstName.text.toString()
+        lastName = bindingBasicInfo.lastName.text.toString()
+        street = bindingBasicInfo.address.text.toString()
+        city = bindingBasicInfo.city.text.toString()
+        state = bindingBasicInfo.state.text.toString()
+        zipCode = bindingBasicInfo.zipCode.text.toString()
+        country = bindingBasicInfo.country.text.toString()
+        sex =
+            bindingBasicInfo.sex.getItemAtPosition(bindingBasicInfo.sex.selectedItemPosition)
+                .toString()
+        email = bindingBasicInfo.email.text.toString()
+        password = bindingBasicInfo.password.text.toString()
+        confirmPassword = bindingBasicInfo.confirmPassword.text.toString()
+    }
+
+    private fun setDataBusinessInfo(bindingBusinessInfo: FragmentPartnerBusinessInfoBinding) {
+        businessName = bindingBusinessInfo.businessName.text.toString()
+        businessLegalName = bindingBusinessInfo.businessLegalName.text.toString()
+        businessEmail = bindingBusinessInfo.businessEmail.text.toString()
+        businessPhone = bindingBusinessInfo.businessPhone.text.toString()
+        businessAddress = bindingBusinessInfo.businessAddress.text.toString()
+
+        businessHoursMondayFrom = closeIfEmpty(bindingBusinessInfo.fromMonday.text.toString())
+        businessHoursMondayTo = closeIfEmpty(bindingBusinessInfo.toMonday.text.toString())
+        businessHoursTuesdayFrom = closeIfEmpty(bindingBusinessInfo.fromTuesday.text.toString())
+        businessHoursTuesdayTo = closeIfEmpty(bindingBusinessInfo.toTuesday.text.toString())
+        businessHoursWednesdayFrom = closeIfEmpty(bindingBusinessInfo.fromWednesday.text.toString())
+        businessHoursWednesdayTo = closeIfEmpty(bindingBusinessInfo.toWednesday.text.toString())
+        businessHoursThursdayFrom = closeIfEmpty(bindingBusinessInfo.fromThursday.text.toString())
+        businessHoursThursdayTo = closeIfEmpty(bindingBusinessInfo.toThursday.text.toString())
+        businessHoursFridayFrom = closeIfEmpty(bindingBusinessInfo.fromFriday.text.toString())
+        businessHoursFridayTo = closeIfEmpty(bindingBusinessInfo.toFriday.text.toString())
+        businessHoursSaturdayFrom = closeIfEmpty(bindingBusinessInfo.fromSaturday.text.toString())
+        businessHoursSaturdayTo = closeIfEmpty(bindingBusinessInfo.toSaturday.text.toString())
+        businessHoursSundayFrom = closeIfEmpty(bindingBusinessInfo.fromSunday.text.toString())
+        businessHoursSundayTo = closeIfEmpty(bindingBusinessInfo.toSunday.text.toString())
+        businessHoursHolidayFrom = closeIfEmpty(bindingBusinessInfo.fromHoliday.text.toString())
+        businessHoursHolidayTo = closeIfEmpty(bindingBusinessInfo.toHoliday.text.toString())
+
+        businessBankName = bindingBusinessInfo.bankName.text.toString()
+        businessBankAccountName = bindingBusinessInfo.bankAccNameHolder.text.toString()
+        businessBankAccNo = bindingBusinessInfo.bankAccNo.text.toString()
+        businessBankBIC = bindingBusinessInfo.bankBIC.text.toString()
+
+    }
+
+    private fun closeIfEmpty(text: String): String? {
+        return if(text.isEmpty()){
+            "Closed"
+        }else{
+            text
+        }
+    }
+
     fun showProgressBar(visible: Boolean) {
         if (visible) {
             binding.progressBar.visibility = View.VISIBLE
@@ -413,7 +460,9 @@ class RegisterPartnerActivity : AppCompatActivity() {
     }
 
     fun saveInfoToFirebase() {
+
         if (firebaseAuth.currentUser==null) {
+
             showProgressBar(true)
             firebaseAuth.createUserWithEmailAndPassword(email!!, password!!).addOnCompleteListener {
                 if (it.isSuccessful) {
@@ -441,7 +490,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
                     showProgressBar(false)
                     Snackbar.make(
                         binding.root,
-                        "User email already existing",
+                        it.exception!!.message!!,
                         Snackbar.LENGTH_SHORT
                     ).show()
                     Log.d("USER -> ListenerForSingleValueEvent", "${it.exception!!.message}")
@@ -453,8 +502,9 @@ class RegisterPartnerActivity : AppCompatActivity() {
     }
 
     private fun saveUserInfo() {
-        val databaseRef = firebaseDatabase.reference.child("users")
-            .child(firebaseAuth.currentUser!!.uid)
+
+        val bindingBasicInfo = partnerBasicInfoFragment.getBinding()
+        setDataBasicInfo(bindingBasicInfo)
 
         val user = User(
             firebaseAuth.currentUser!!.uid,
@@ -474,6 +524,8 @@ class RegisterPartnerActivity : AppCompatActivity() {
         )
         //user.printLOG()
 
+        val databaseRef = firebaseDatabase.reference.child("users")
+            .child(firebaseAuth.currentUser!!.uid)
         databaseRef.setValue(user).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Log.d("USER", "User has been successfully Registered!")
@@ -491,32 +543,35 @@ class RegisterPartnerActivity : AppCompatActivity() {
     }
 
     private fun saveBusinessInfo() {
-        val databaseRef = firebaseDatabase.reference.child("business")
-            .child(firebaseAuth.currentUser!!.uid)
 
-        val businessInfo = BusinessInfo(
+        val bindingBusinessInfo = partnerBusinessInfoFragment.getBinding()
+        setDataBusinessInfo(bindingBusinessInfo)
+
+        val shop = Shop(
             firebaseAuth.currentUser!!.uid,
+            null,
             businessName,
             businessLegalName,
             businessEmail,
             businessPhone,
             partnerBusinessInfoFragment.businessImageBytes,
+            businessAddress,
             businessHoursMondayFrom,
             businessHoursMondayTo ,
-            businessHoursTuesdayFrom ?: "Closed",
-            businessHoursTuesdayTo ?: "Closed",
-            businessHoursWednesdayFrom ?: "Closed",
-            businessHoursWednesdayTo ?: "Closed",
-            businessHoursThursdayFrom ?: "Closed",
-            businessHoursThursdayTo ?: "Closed",
-            businessHoursFridayFrom ?: "Closed",
-            businessHoursFridayTo ?: "Closed",
-            businessHoursSaturdayFrom ?: "Closed",
-            businessHoursSaturdayTo ?: "Closed",
-            businessHoursSundayFrom ?: "Closed",
-            businessHoursSundayTo ?: "Closed",
-            businessHoursHolidayFrom ?: "Closed",
-            businessHoursHolidayTo ?: "Closed",
+            businessHoursTuesdayFrom,
+            businessHoursTuesdayTo,
+            businessHoursWednesdayFrom,
+            businessHoursWednesdayTo,
+            businessHoursThursdayFrom,
+            businessHoursThursdayTo,
+            businessHoursFridayFrom,
+            businessHoursFridayTo,
+            businessHoursSaturdayFrom,
+            businessHoursSaturdayTo,
+            businessHoursSundayFrom,
+            businessHoursSundayTo,
+            businessHoursHolidayFrom,
+            businessHoursHolidayTo,
             businessBankName,
             businessBankAccountName,
             businessBankAccNo,
@@ -525,7 +580,9 @@ class RegisterPartnerActivity : AppCompatActivity() {
         )
         //businessInfo.printLOG()
 
-        databaseRef.setValue(businessInfo).addOnCompleteListener { task ->
+        val databaseRef = firebaseDatabase.reference.child("shop")
+            .child(firebaseAuth.currentUser!!.uid)
+        databaseRef.setValue(shop).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 showProgressBar(false)
                 Log.d("BUSINESS", "User has been successfully Registered!")

@@ -96,7 +96,6 @@ class PartnerBasicInfoFragment(private var registerPartnerActivity: RegisterPart
         }
     }
 
-
     private fun isLocationEnabled(): Boolean {
         val locationManager: LocationManager =
             registerPartnerActivity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
