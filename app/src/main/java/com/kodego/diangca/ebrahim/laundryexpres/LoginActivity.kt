@@ -1,6 +1,7 @@
 package com.kodego.diangca.ebrahim.laundryexpres
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -13,6 +14,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
@@ -24,6 +26,7 @@ import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCust
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartnerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityLoginBinding
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogForgotPasswordBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogUserTypeBinding
 import com.kodego.diangca.ebrahim.laundryexpres.registration.RegisterCustomerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.registration.partner.RegisterPartnerActivity
@@ -33,7 +36,8 @@ import com.kodego.diangca.ebrahim.laundryexpres.registration.rider.RegisterRider
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var customDialogBinding: DialogUserTypeBinding
+    private lateinit var dialogUserTypeBinding: DialogUserTypeBinding
+    private lateinit var dialogForgotPasswordBinding: DialogForgotPasswordBinding
 
     private lateinit var client: GoogleSignInClient
 
@@ -53,6 +57,8 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var userBuilder: AlertDialog.Builder
     private lateinit var userDialogInterface: DialogInterface
+
+    private lateinit var dialogForgotPassword: Dialog
 
 
     companion object {
@@ -93,6 +99,9 @@ class LoginActivity : AppCompatActivity() {
             btnHomeOnClickListener()
         }
 
+        binding.btnForgotPass.setOnClickListener {
+            btnForgotPassOnClickListener()
+        }
         binding.btnSubmit.setOnClickListener {
             btnSubmitOnClickListener()
         }
@@ -102,6 +111,58 @@ class LoginActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    private fun btnForgotPassOnClickListener() {
+
+        dialogForgotPasswordBinding = DialogForgotPasswordBinding.inflate(this.layoutInflater)
+
+        val builder = AlertDialog.Builder(this)
+        builder.setView(dialogForgotPasswordBinding.root)
+        builder.setCancelable(false)
+        dialogForgotPassword = builder.create()
+        with(dialogForgotPasswordBinding){
+            btnReset.setOnClickListener {
+                checkEmail(email)
+            }
+            btnCancel.setOnClickListener {
+                dialogForgotPassword.dismiss()
+            }
+
+        }
+        /*if(dialogForgotPassword.window != null){
+            dialogForgotPassword.window!!.setBackgroundDrawable(ColorDrawable(0))
+        }*/
+        dialogForgotPassword.show()
+    }
+
+    private fun checkEmail(input: TextInputEditText) {
+        val email: String = input.text.toString()
+        if(email.isEmpty()){
+            input.error = "Please enter an email."
+            Toast.makeText(this, "Please enter an email.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            input.error = "Please enter a valid email."
+            Toast.makeText(this, "Please enter a valid email.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
+            if(task.isSuccessful){
+                dialogForgotPassword.dismiss()
+//                Toast.makeText(this, "Please check your email. Find it to your spam if not in your inbox.", Toast.LENGTH_SHORT).show()
+                val builder = AlertDialog.Builder(this)
+                builder.setCancelable(false)
+                builder.setTitle("RESET PASSWORD SENT!")
+                builder.setMessage("Please check your email. \nFind it to your spam if not seen in your inbox.\n Thank you!")
+
+                builder.setNegativeButton(android.R.string.yes) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                builder.show()
+            }
+        }
     }
 
     private fun signIn() {
@@ -162,7 +223,7 @@ class LoginActivity : AppCompatActivity() {
                 showProgressBar(true)
                 Log.d("SIGN_IN_WITH_EMAIL_PASSWORD", it.toString())
                 if (it.isSuccessful) {
-                    checkFirebaseDatabaseRecord()
+                    checkUserAccount()
                 } else {
                     Toast.makeText(
                         this,
@@ -238,13 +299,17 @@ class LoginActivity : AppCompatActivity() {
                         this@LoginActivity.userType =
                             snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
                                 .getValue(String::class.java).toString()
-                        goToDashboard()
+                        val isVerified: Boolean = snapshot.child(firebaseAuth.currentUser!!.uid).child("verified")
+                            .getValue(Boolean::class.java)!!
+                        checkIfVerified(isVerified)
                     } else {
+                        showProgressBar(false)
                         btnRegisterOnClickListener()
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
+                    showProgressBar(false)
                     Toast.makeText(
                         this@LoginActivity,
                         "${error.message}",
@@ -254,7 +319,7 @@ class LoginActivity : AppCompatActivity() {
             })
     }
 
-    private fun checkFirebaseDatabaseRecord() {
+   /* private fun checkFirebaseDatabaseRecord() {
         firebaseDatabaseReference.child("users").addListenerForSingleValueEvent(object :
             ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -263,28 +328,14 @@ class LoginActivity : AppCompatActivity() {
                     this@LoginActivity.userType =
                         snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
                             .getValue(String::class.java).toString()
-                    val isverified: Boolean = snapshot.child(firebaseAuth.currentUser!!.uid).child("verified")
+                    val isVerified: Boolean = snapshot.child(firebaseAuth.currentUser!!.uid).child("verified")
                         .getValue(Boolean::class.java)!!
-                    if(!isverified){
-                        showProgressBar(false)
-                        Log.d("ACCOUNT","Unverified Account! Please wait for your verification. We will notify you within 24-72hours.")
-                        val builder = AlertDialog.Builder(this@LoginActivity)
-                        builder.setCancelable(false)
-                        builder.setTitle("UNVERIFIED ACCOUNT")
-                        builder.setMessage("Please wait for your verification. We will notify you within 24-72hours. Thank you!")
-                        builder.setPositiveButton(android.R.string.yes) { dialog, which ->
-                            firebaseAuth.signOut()
-                            binding.username.text = null
-                            binding.password.text = null
-                        }
-                        builder.show()
-                        return
-                    }
-                    goToDashboard()
+                    checkIfVerified(isVerified)
+
 
                 } else {
                     showProgressBar(false)
-                    Log.d(
+                    *//*Log.d(
                         "ACCOUNT",
                         "Either your username or password is Invalid! Please try again!"
                     )
@@ -292,23 +343,42 @@ class LoginActivity : AppCompatActivity() {
                         this@LoginActivity,
                         "Either your username or password is Invalid! Please try again!",
                         Toast.LENGTH_SHORT
-                    ).show()
+                    ).show()*//*
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@LoginActivity, "${error.message}", Toast.LENGTH_SHORT).show()
                 showProgressBar(false)
+                Toast.makeText(this@LoginActivity, "${error.message}", Toast.LENGTH_SHORT).show()
             }
 
         })
+    }*/
+
+    private fun checkIfVerified(isverified: Boolean) {
+        if(!isverified){
+            showProgressBar(false)
+            Log.d("ACCOUNT","Unverified Account! Please wait for your verification. We will notify you within 24-72hours.")
+            val builder = AlertDialog.Builder(this)
+            builder.setCancelable(false)
+            builder.setTitle("UNVERIFIED ACCOUNT")
+            builder.setMessage("Please wait for your verification. We will notify you within 24-72hours. Thank you!")
+            builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                firebaseAuth.signOut()
+                binding.username.text = null
+                binding.password.text = null
+            }
+            builder.show()
+            return
+        }
+        goToDashboard()
     }
 
 
     private fun getUserTypeView(title: String): View {
-        customDialogBinding = DialogUserTypeBinding.inflate(this.layoutInflater)
+        dialogUserTypeBinding = DialogUserTypeBinding.inflate(this.layoutInflater)
 
-        with(customDialogBinding) {
+        with(dialogUserTypeBinding) {
             titleView.text = title
             userPartner.setOnClickListener {
                 userType = "Partner"
@@ -326,7 +396,7 @@ class LoginActivity : AppCompatActivity() {
                 showRegistrationActivity()
             }
         }
-        return customDialogBinding.root
+        return dialogUserTypeBinding.root
     }
 
     private fun showRegistrationActivity() {
@@ -335,7 +405,6 @@ class LoginActivity : AppCompatActivity() {
         userDialogInterface.dismiss()
         when (userType) {
             "Customer" -> {
-
                 startActivity((Intent(this, RegisterCustomerActivity::class.java)))
                 finish()
             }

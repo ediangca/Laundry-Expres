@@ -19,7 +19,6 @@
             android:layout_weight="11"
             app:navGraph = "@navigation/navigation_customer"/>
 
-
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/dashboardNav"
             android:layout_width="match_parent"

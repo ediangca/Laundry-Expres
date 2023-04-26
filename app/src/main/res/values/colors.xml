@@ -9,6 +9,15 @@
     <color name="color_blue_5">#0447b7</color>
     <color name="color_blue_6">#048eff</color>
 
+    <color name="color_light_1">#dbdbdb</color>
+    <color name="color_light_2">#e4e4e2</color>
+    <color name="color_light_3">#a8d6da</color>
+
+    <color name="color_white_1">#ffffff</color>
+    <color name="color_white_2">#AEFFFFFF</color>
+    <color name="color_white_3">#737373</color>
+
+
     <color name="color_orange_1">#ff8c00</color>
     <color name="color_orange_2">#ffbe00</color>
     <color name="color_orange_3">#ffc000</color>
@@ -16,9 +25,6 @@
     <color name="color_brown_1">#683604</color>
     <color name="color_brown_2">#8b4b00</color>
 
-    <color name="color_light_1">#dbdbdb</color>
-    <color name="color_light_2">#e4e4e2</color>
-    <color name="color_light_3">#a8d6da</color>
 
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>

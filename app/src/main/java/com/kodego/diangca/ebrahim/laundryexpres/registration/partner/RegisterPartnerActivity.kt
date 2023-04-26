@@ -532,9 +532,10 @@ class RegisterPartnerActivity : AppCompatActivity() {
                 val builder = AlertDialog.Builder(this)
                 builder.setCancelable(false)
                 builder.setTitle("ACKNOWLEDGEMENT RECEIPT")
-                builder.setMessage("This is to acknowledge receipt of your accomplished Application. \n" +
-                        "You will receive a call from Laundry Express regarding Fees/ Charges, etc. \n" +
-                        "We will also send you a notification once your application is verified or if there is anything else you need to submit. \n Thank you!")
+                builder.setMessage("This is to acknowledge receipt of your accomplished Application.\n" +
+                        "You will receive a call from Laundry Express regarding Fees/ Charges, etc.\n" +
+                        "We will also send you a notification once your application is verified or if there is anything else you need to submit.\n" +
+                        "Thank you!")
 
                 builder.setPositiveButton(android.R.string.yes) { dialog, which ->
                     firebaseAuth.signOut()
