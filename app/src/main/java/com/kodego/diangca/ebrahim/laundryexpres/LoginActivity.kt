@@ -379,7 +379,7 @@ class LoginActivity : AppCompatActivity() {
         dialogUserTypeBinding = DialogUserTypeBinding.inflate(this.layoutInflater)
 
         with(dialogUserTypeBinding) {
-            titleView.text = title
+            userDisplayName.text = title
             userPartner.setOnClickListener {
                 userType = "Partner"
                 showProgressBar(true)

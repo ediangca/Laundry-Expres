@@ -119,7 +119,7 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
                         if(shop!=null) {
                             val shopCity = getCity(shop.businessAddress!!) //if null -> n/a
-                            Log.d("SHOP_CITY", shopCity)
+                            Log.d("SHOP_CITY ${shop.uid}", shopCity)
                             val customerCity = getCity(binding.address.text.toString()) //if null -> n/a
                             Log.d("CUSTOMER_CITY", customerCity)
 

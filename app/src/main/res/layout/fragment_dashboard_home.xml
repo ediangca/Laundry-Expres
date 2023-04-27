@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTintMode="add"
+    android:background="@android:color/transparent"
     tools:context=".dashboard.customer.DashboardHomeFragment">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/titleView"
+            android:id="@+id/userDisplayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -77,10 +77,10 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:padding="10dp"
-                android:background="@drawable/button_primary"
+                android:background="@drawable/button_secondary"
                 android:drawableStart="@drawable/vector_laundry"
-                android:drawableTint="@color/color_light_3"
-                android:textColor="@color/color_light_3"
+                android:drawableTint="@color/color_blue_1"
+                android:textColor="@color/color_blue_1"
                 android:text="SELECT LAUNDRY SHOP"
                 android:textSize="18sp"
                 android:textStyle="bold" />

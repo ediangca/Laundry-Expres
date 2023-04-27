@@ -9,7 +9,7 @@
     tools:context=".dashboard.partner.DashboardHomeFragment">
 
     <TextView
-        android:id="@+id/titleView"
+        android:id="@+id/userDisplayName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"

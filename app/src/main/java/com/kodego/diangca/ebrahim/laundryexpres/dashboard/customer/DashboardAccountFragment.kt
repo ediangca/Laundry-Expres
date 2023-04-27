@@ -71,7 +71,7 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
 
         if(!displayName.isNullOrEmpty()){
             Log.d("displayUserName", "Hi ${displayName}, Good Day!")
-            binding.titleView.text = displayName
+            binding.userDisplayName.text = displayName
         }else {
             firebaseDatabaseReference.child("users")
                 .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -81,7 +81,7 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
                                 .child("firstname").value.toString()
                             val lastname = snapshot.child(firebaseAuth.currentUser!!.uid)
                                 .child("lastname").value.toString()
-                            binding.titleView.text = "$firstname $lastname"
+                            binding.userDisplayName.text = "$firstname $lastname"
                         }
                     }
 

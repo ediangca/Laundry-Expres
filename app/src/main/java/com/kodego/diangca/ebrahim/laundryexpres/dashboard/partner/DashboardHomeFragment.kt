@@ -64,7 +64,7 @@ class DashboardHomeFragment(var dashboardPartner: DashboardPartnerActivity) : Fr
 
         if(!displayName.isNullOrEmpty()){
             Log.d("displayUserName", "Hi ${displayName}, Good Day!")
-            binding.titleView.text = "Hi ${displayName}, Good Day!"
+            binding.userDisplayName.text = "Hi ${displayName}, Good Day!"
         }else {
             firebaseDatabaseReference.child("users")
                 .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -72,7 +72,7 @@ class DashboardHomeFragment(var dashboardPartner: DashboardPartnerActivity) : Fr
                         if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
                             val firstname = snapshot.child(firebaseAuth.currentUser!!.uid)
                                 .child("firstname").value.toString()
-                            binding.titleView.text = "Hi $firstname, Good Day!"
+                            binding.userDisplayName.text = "Hi $firstname, Good Day!"
                         }
                     }
 
