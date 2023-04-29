@@ -2,17 +2,27 @@ package com.kodego.diangca.ebrahim.laundryexpres.registration
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.provider.OpenableColumns
+import android.provider.Settings
+import android.util.Base64
 import android.util.Log
 import android.util.Patterns
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -23,11 +33,20 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityRegisterCustomerBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
+import com.squareup.picasso.Picasso
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.OutputStream
 import java.util.*
 import java.util.regex.Pattern
 
@@ -48,6 +67,11 @@ class RegisterCustomerActivity : AppCompatActivity() {
     private var longtitude: Double = 0.0
     private var latitude: Double = 0.0
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
+
+    private val PICK_PROFILE_CODE = 100
+    private val CAMERA_PROFILE_CODE = 2
+    private var profileImageUri: Uri? = null
+    var profileImageBytes:String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +102,174 @@ class RegisterCustomerActivity : AppCompatActivity() {
         binding.btnLocation.setOnClickListener {
             btnLocationOnClickListener()
         }
+        binding.btnCaptureProfile.setOnClickListener {
+            btnCaptureProfileOnClickListener()
+        }
+        binding.btnBrowseProfile.setOnClickListener {
+            btnBrowseProfileOnClickListener()
+        }
+    }
+    private fun btnBrowseProfileOnClickListener() {
+        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        startActivityForResult(gallery, PICK_PROFILE_CODE)
+    }
+    private fun btnCaptureProfileOnClickListener() {
+        cameraCheckPermission(CAMERA_PROFILE_CODE)
+    }
+
+    private fun cameraCheckPermission(code: Int) {
+
+        Dexter.withContext(this)
+            .withPermissions(
+                android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                android.Manifest.permission.CAMERA).withListener(
+
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.let {
+
+                            if (report.areAllPermissionsGranted()) {
+                                camera(code)
+                            }else{
+                                toast(it.toString())
+                            }
+
+                        }
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        p0: MutableList<PermissionRequest>?,
+                        p1: PermissionToken?,
+                    ) {
+                        showRotationalDialogForPermission()
+                    }
+
+                }
+            ).onSameThread().check()
+    }
+
+    private fun toast(message: String) {
+        Toast.makeText(
+            this,
+            message,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+    private fun camera(code : Int) {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(intent, code)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode==RESULT_OK) {
+            when (requestCode) {
+                PICK_PROFILE_CODE -> {
+                    profileImageUri = data?.data
+                    binding.profileFileName.visibility = View.VISIBLE
+                    binding.profileFileName.text = getFileName(profileImageUri, this)
+                    Log.d("IMAGE_URI", "BUSINESS BIR: $profileImageUri")
+
+                    val inputStream = contentResolver.openInputStream(profileImageUri!!)
+                    val myBitmap = BitmapFactory.decodeStream(inputStream)
+                    val stream = ByteArrayOutputStream()
+                    myBitmap.compress(Bitmap.CompressFormat.PNG, 100,stream)
+                    val bytes = stream.toByteArray()
+                    profileImageBytes = Base64.encodeToString(bytes, Base64.DEFAULT)
+                    binding.profilePic.setImageBitmap(myBitmap)
+                    inputStream!!.close()
+                    Toast.makeText(this,"Image Selected for BIR", Toast.LENGTH_SHORT).show()
+
+                }
+
+                CAMERA_PROFILE_CODE -> {
+                    try {
+                        if(data != null) {
+                            //we are using coroutine image loader (coil)
+                            val bitmap = data.extras?.get("data") as Bitmap
+
+                            val byteArrayOutputStream = ByteArrayOutputStream()
+                            bitmap.compress(
+                                Bitmap.CompressFormat.PNG,
+                                100,
+                                byteArrayOutputStream
+                            )
+                            val bytes = byteArrayOutputStream.toByteArray()
+                            profileImageBytes = Base64.encodeToString(bytes, Base64.DEFAULT)
+
+                            val profileView: ImageView = binding.profilePic
+                            loadBitmapByPicasso(this, bitmap, profileView)
+                        }
+                    }catch (e: Exception){
+                        Log.d("CAMERA", e.toString())
+                        e.printStackTrace()
+                    }
+                }
+
+            }
+        }
+    }
+    private fun loadBitmapByPicasso(pContext: Context, pBitmap: Bitmap, pImageView: ImageView) {
+        try {
+            profileImageUri = Uri.fromFile(File.createTempFile("temp_profile", ".jpg", pContext.cacheDir))
+            val outputStream: OutputStream? = pContext.contentResolver.openOutputStream(profileImageUri!!)
+            pBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            outputStream!!.close()
+            Picasso.with(this).load(profileImageUri).into(pImageView)
+        } catch (e: java.lang.Exception) {
+            Log.e("LoadBitmapByPicasso", e.message!!)
+        }
+    }
+
+    @SuppressLint("Range")
+    private fun getFileName(imageUri: Uri?, context: Context): String? {
+        var filename: String? = null
+        if (imageUri!!.scheme.equals("content")) {
+            val cursor = context.contentResolver.query(imageUri, null, null,null, null)
+            try {
+                if(cursor != null && cursor.moveToFirst()){
+                    filename = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                }
+            }finally {
+                cursor!!.close()
+            }
+
+            if(filename == null){
+                filename = imageUri.path
+                val cut: Int = filename!!.lastIndexOf('/')
+                if(cut != -1){
+                    filename = filename.substring(cut +1)
+                }
+
+            }
+
+        }
+        return  filename
+    }
+
+    private fun showRotationalDialogForPermission() {
+        AlertDialog.Builder(this)
+            .setMessage("It looks like you have turned off permissions"
+                    + "required for this feature. It can be enable under App settings!!!")
+
+            .setPositiveButton("Go TO SETTINGS") { _, _ ->
+
+                try {
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri = Uri.fromParts("package", packageName, null)
+                    intent.data = uri
+                    startActivity(intent)
+
+                } catch (e: ActivityNotFoundException) {
+                    e.printStackTrace()
+                }
+            }
+
+            .setNegativeButton("CANCEL") { dialog, _ ->
+                dialog.dismiss()
+            }.show()
     }
 
     private fun btnLocationOnClickListener() {
@@ -284,7 +476,7 @@ class RegisterCustomerActivity : AppCompatActivity() {
                                         zipCode,
                                         country,
                                         mobileNo,
-                                        null,
+                                        profileImageUri.toString(),
                                         false,
                                     )
                                     user.printLOG()

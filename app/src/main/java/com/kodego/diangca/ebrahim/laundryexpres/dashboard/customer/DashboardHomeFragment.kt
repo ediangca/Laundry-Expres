@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.DatePicker
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
@@ -19,8 +21,11 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogSchedulePickerBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardHomeBinding
+import com.kodego.diangca.ebrahim.laundryexpres.model.User
+import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : Fragment() {
 
@@ -33,10 +38,11 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
+    private var user: User? = null
     private var displayName: String? = null
+    private var profileUri: Uri? = null
 
     private var selectedService: String? = null
-
 
     private lateinit var schedulePickerBuilder: AlertDialog.Builder
     private lateinit var schedulePickerDialogInterface: Dialog
@@ -47,7 +53,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentDashboardHomeBinding.inflate(layoutInflater, container, false)
@@ -63,7 +69,14 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
     private fun initComponent() {
 
-        displayUserName()
+
+        user = dashboardCustomer.getUser()
+        val bundle = this.arguments
+        if (bundle!=null) {
+            user = bundle.getParcelable<User>("user")!!
+            Log.d("FETCH_USER", user.toString())
+        }
+        setUserDetails()
 
         binding.btnLaundryShop.setOnClickListener {
             btnLaundryShopOnClickListener()
@@ -75,13 +88,53 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             setSchedule(it, "Pick-Up")
         }
         binding.editDeliveryLayout.setOnClickListener {
-            setSchedule( binding.editDelivery, "Delivery")
+            setSchedule(binding.editDelivery, "Delivery")
         }
         binding.editDelivery.setOnClickListener {
             setSchedule(it, "Delivery")
         }
         binding.btnBook.setOnClickListener {
             btnBookOnClickListener()
+        }
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun setUserDetails() {
+        firebaseAuth.currentUser?.let {
+            for (profile in it.providerData) {
+                displayName = profile.displayName
+                profileUri = profile.photoUrl
+            }
+        }
+
+        if (profileUri!=null) {
+            Log.d("profilePic", "$profileUri")
+            val profileView: ImageView = binding.profilePic
+            Picasso.with(context).load(profileUri).into(profileView);
+        }
+
+        if (!displayName.isNullOrEmpty()) {
+            Log.d("displayUserName", "Hi ${displayName}, Good Day!")
+            binding.userDisplayName.text = displayName
+        } else {
+            if (user!=null) {
+                displayName = "${user!!.firstname} ${user!!.lastname}"
+                binding.userDisplayName.text = "Hi ${displayName}, Good Day!"
+            }
+        }
+
+        val profileView: ImageView = binding.profilePic
+//        profileView.setImageResource(R.drawable.icon_logo)
+        if (profileUri!=null) {
+            Log.d("profilePic_profileData", "$profileUri")
+            Picasso.with(context).load(profileUri).into(profileView);
+        } else {
+            if (user!!.photoUri!=null) {
+                profileUri = Uri.parse(user!!.photoUri)
+                Log.d("profilePic_user", "$profileUri")
+                Picasso.with(context).load(profileUri).into(profileView);
+            }
         }
 
     }
@@ -93,12 +146,12 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     private fun btnBookOnClickListener() {
         val pickUp = binding.editPickup.text.toString()
         val delivery = binding.editDelivery.text.toString()
-        if(pickUp.isEmpty() || delivery.isEmpty()){
+        if (pickUp.isEmpty() || delivery.isEmpty()) {
 
-            if(pickUp.isEmpty()){
+            if (pickUp.isEmpty()) {
                 binding.editPickup.error = "Please select pick-up schedule."
             }
-            if(delivery.isEmpty()){
+            if (delivery.isEmpty()) {
                 binding.editDelivery.error = "Please select delivery schedule."
             }
 
@@ -126,6 +179,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     private fun btnServicePetsOnClickListener() {
         setService("Pets Wash")
     }
+
     private fun setService(service: String) {
         this.selectedService = service
         binding.selectedService.text = selectedService
@@ -139,10 +193,15 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         var cal = Calendar.getInstance()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            with(schedulePickerBinding){
+            with(schedulePickerBinding) {
                 dialogTitle.text = "$type Schedule"
                 btnSelect.setOnClickListener {
-                    calendarOnDateChangedListener(textInputEditText, calendar.year, calendar.month, calendar.dayOfMonth)
+                    calendarOnDateChangedListener(
+                        textInputEditText,
+                        calendar.year,
+                        calendar.month,
+                        calendar.dayOfMonth
+                    )
                     schedulePickerDialogInterface.dismiss()
                 }
                 btnCancel.setOnClickListener {
@@ -154,10 +213,12 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             schedulePickerBuilder.setView(schedulePickerBinding.root)
             schedulePickerDialogInterface = schedulePickerBuilder.create()
             schedulePickerDialogInterface.show()
-        }else{
+        } else {
             val dateSetListener = object : DatePickerDialog.OnDateSetListener {
-                override fun onDateSet(view: DatePicker, year: Int, monthOfYear: Int,
-                                       dayOfMonth: Int) {
+                override fun onDateSet(
+                    view: DatePicker, year: Int, monthOfYear: Int,
+                    dayOfMonth: Int,
+                ) {
                     cal.set(Calendar.YEAR, year)
                     cal.set(Calendar.MONTH, monthOfYear)
                     cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
@@ -166,12 +227,14 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                     textInputEditText.setText(sdf.format(cal.time))
                 }
             }
-            DatePickerDialog(dashboardCustomer,
+            DatePickerDialog(
+                dashboardCustomer,
                 dateSetListener,
                 // set DatePickerDialog to point to today's date when it loads up
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
-                cal.get(Calendar.DAY_OF_MONTH)).show()
+                cal.get(Calendar.DAY_OF_MONTH)
+            ).show()
         }
     }
 
@@ -180,27 +243,30 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         textInputEditText: TextInputEditText,
         year: Int,
         monthOfYear: Int,
-        dayOfMonth: Int
+        dayOfMonth: Int,
     ) {
         textInputEditText.setText("$monthOfYear/$dayOfMonth/$year")
-    }
-
-    private fun btnDeliveryOnClickListener() {
-
     }
 
 
     private fun displayUserName() {
         firebaseAuth.currentUser?.let {
-            for (profile in it.providerData){
+            for (profile in it.providerData) {
                 displayName = profile.displayName
+                profileUri = profile.photoUrl
             }
         }
 
-        if(!displayName.isNullOrEmpty()){
+        if (profileUri!=null) {
+            Log.d("profilePic", "$profileUri")
+            val profileView: ImageView = binding.profilePic
+            Picasso.with(context).load(profileUri).into(profileView);
+        }
+
+        if (!displayName.isNullOrEmpty()) {
             Log.d("displayUserName", "Hi ${displayName}, Good Day!")
             binding.userDisplayName.text = "Hi ${displayName}, Good Day!"
-        }else {
+        } else {
             firebaseDatabaseReference.child("users")
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {

@@ -41,7 +41,8 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     private val permissionId = 2
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
 
-    private var shopArrayList : ArrayList<Shop> = ArrayList()
+    private var address: String? = null
+    private var shopArrayList: ArrayList<Shop> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,30 +50,49 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentDashboardShopBinding.inflate(layoutInflater, container, false)
         return binding.root
 
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initComponent()
     }
 
-    private fun initComponent() {
+    override fun onResume() {
+        super.onResume()
+        Log.d("SHOP_LIST_ON_RESUME", "RESUME SHOP LIST")
+        if (address!=null) {
+            binding.address.setText(address)
+            showShop()
+        }
+    }
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(dashboardCustomer)
+    override fun onPause() {
+        super.onPause()
+        Log.d("SHOP_LIST_ON_PAUSE", "PAUSE SHOP LIST")
+        if (binding.address.text.toString().isNotEmpty()) {
+            address = binding.address.text.toString()
+        }
+    }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d("SHOP_LIST_ON_ATTACH", "ON ATTACH SHOP LIST")
         firebaseDatabaseReference.child("users")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
-                        val address: String = snapshot.child(firebaseAuth.currentUser!!.uid).child("address")
+                        address = snapshot.child(firebaseAuth.currentUser!!.uid).child("address")
                             .getValue(String::class.java)!!
-                        binding.address.setText(address)
+                        binding.address.setText(address!!)
+                        Log.d("USER_ADDRESS", address!!)
+                        showShop()
                     } else {
                         Toast.makeText(
                             dashboardCustomer,
@@ -81,7 +101,9 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                         ).show()
                     }
                 }
+
                 override fun onCancelled(error: DatabaseError) {
+                    Log.d("USER_ADDRESS", error.message)
                     Toast.makeText(
                         dashboardCustomer,
                         error.message,
@@ -90,7 +112,19 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                 }
             })
 
-        showShop()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Log.d("SHOP_LIST_ON_DETACH", "ON DETACH SHOP LIST")
+    }
+
+
+    private fun initComponent() {
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(dashboardCustomer)
+
+        shopArrayList.clear()
 
         binding.btnBack.setOnClickListener {
             btnBankOnClickListener()
@@ -111,16 +145,18 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
     private fun showShop() {
         shopArrayList.clear()
+
+        dashboardCustomer.showLoadingDialog()
         firebaseDatabaseReference.child("shop").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if(dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     for (postSnapshot in dataSnapshot.children) {
                         val shop = postSnapshot.getValue(Shop::class.java)
 
-                        if(shop!=null) {
+                        if (shop!=null) {
                             val shopCity = getCity(shop.businessAddress!!) //if null -> n/a
                             Log.d("SHOP_CITY ${shop.uid}", shopCity)
-                            val customerCity = getCity(binding.address.text.toString()) //if null -> n/a
+                            val customerCity = getCity(address!!) //if null -> n/a
                             Log.d("CUSTOMER_CITY", customerCity)
 
                             if (shopCity==customerCity) {
@@ -130,14 +166,17 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                     }
 
                     Log.d("SHOP", "shopArrayList.size -> ${shopArrayList.size}")
-                    if(shopArrayList.size > 0){
+                    if (shopArrayList.size > 0) {
                         Log.d("SHOP", shopArrayList[0].toString())
                     }
+
+                    dashboardCustomer.dismissLoadingDialog()
                     setShopAdapter()
 
-                }else{
+                } else {
+                    dashboardCustomer.dismissLoadingDialog()
                     Toast.makeText(
-                        dashboardCustomer,"Sorry! No Available Laundry Shop found in your area.",
+                        dashboardCustomer, "Sorry! No Available Laundry Shop found in your area.",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -145,8 +184,8 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
             override fun onCancelled(error: DatabaseError) {
                 // Getting Post failed, log a message
+                dashboardCustomer.dismissLoadingDialog()
                 Log.w("addValueEventListener", "loadPost:onCancelled", error.toException())
-
                 Toast.makeText(
                     dashboardCustomer,
                     error.message,
@@ -166,24 +205,24 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     }
 
     private fun getCity(address: String): String {
-        var addresses : List<Address>? = null
-        var locality : String? = null
+        var addresses: List<Address>? = null
+        var locality: String? = null
 
-        if(address.isNotEmpty()){
+        if (address.isNotEmpty()) {
             var geocoder = Geocoder(binding.root.context)
             try {
                 addresses = geocoder.getFromLocationName(address, 1)
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 Log.d("SEARCH_GEO_LOCATION", "${e.message}")
             }
 
-            if(addresses!=null && addresses.isNotEmpty()) {
+            if (addresses!=null && addresses.isNotEmpty()) {
                 locality = addresses[0].locality
-            }else{
+            } else {
                 Log.d("CITY AVAILABILITY", "NO AVAILABLE FROM SELECTED CITY")
             }
         }
-        return locality?: "n/a"
+        return locality ?: "n/a"
     }
 
 
@@ -191,16 +230,17 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         if (ActivityCompat.checkSelfPermission(
                 dashboardCustomer,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED &&
+            )==PackageManager.PERMISSION_GRANTED &&
             ActivityCompat.checkSelfPermission(
                 dashboardCustomer,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
+            )==PackageManager.PERMISSION_GRANTED
         ) {
             return true
         }
         return false
     }
+
     private fun isLocationEnabled(): Boolean {
         val locationManager: LocationManager =
             dashboardCustomer.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -208,6 +248,7 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             LocationManager.NETWORK_PROVIDER
         )
     }
+
     @Suppress("DEPRECATION")
     @SuppressLint("MissingPermission")
     private fun setLocation() {
@@ -215,30 +256,36 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             if (isLocationEnabled()) {
                 mFusedLocationClient.lastLocation.addOnCompleteListener(dashboardCustomer) { task ->
                     val location: Location? = task.result
-                    if (location != null) {
+                    if (location!=null) {
                         val geocoder = Geocoder(requireContext(), Locale.getDefault())
                         val list: List<Address> =
                             geocoder.getFromLocation(location.latitude, location.longitude, 1)!!
-                        if(list.isNotEmpty()){
+                        if (list.isNotEmpty()) {
+                            this.address = list[0].getAddressLine(0)
                             binding.apply {
-                                address.setText(list[0].getAddressLine(0)?:"n/a")
+                                address.setText(list[0].getAddressLine(0) ?: "n/a")
                                 val latitude = list[0].latitude
                                 val longitude = list[0].longitude
-                                val city = list[0].locality?:"n/a"
-                                val state = list[0].adminArea?:"n/a"
-                                val zipCode = list[0].postalCode?:"n/a"
-                                val country = list[0].countryName?:"n/a"
+                                val city = list[0].locality ?: "n/a"
+                                val state = list[0].adminArea ?: "n/a"
+                                val zipCode = list[0].postalCode ?: "n/a"
+                                val country = list[0].countryName ?: "n/a"
 
-                                Log.d("GET_CURRENT_ADDRESS", "$latitude $longitude $city $state $zipCode $country")
+                                Log.d(
+                                    "GET_CURRENT_ADDRESS",
+                                    "$latitude $longitude $city $state $zipCode $country"
+                                )
                                 showShop()
                             }
                         }
-                    }else{
-                        Toast.makeText(dashboardCustomer, "Not Found Location", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(dashboardCustomer, "Not Found Location", Toast.LENGTH_LONG)
+                            .show()
                     }
                 }
             } else {
-                Toast.makeText(dashboardCustomer, "Please turn on location", Toast.LENGTH_LONG).show()
+                Toast.makeText(dashboardCustomer, "Please turn on location", Toast.LENGTH_LONG)
+                    .show()
             }
         } else {
             requestPermissions()

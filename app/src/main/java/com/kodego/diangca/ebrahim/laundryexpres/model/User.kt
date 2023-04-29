@@ -21,7 +21,7 @@ data class User(
     var zipCode: String? = null,
     var country: String? = null,
     var phone: String? = null,
-    val photoUrl: String? = null,
+    val photoUri: String? = null,
     var isVerified: Boolean? = null,
     val datetimeCreated: String? = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date()),
     val datetimeUpdated: String? = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date()),
@@ -65,7 +65,7 @@ data class User(
         parcel.writeString(zipCode)
         parcel.writeString(country)
         parcel.writeString(phone)
-        parcel.writeString(photoUrl)
+        parcel.writeString(photoUri)
         parcel.writeValue(isVerified)
         parcel.writeString(datetimeCreated)
         parcel.writeString(datetimeUpdated)
@@ -76,7 +76,7 @@ data class User(
     }
 
     override fun toString(): String {
-        return "User(uid=$uid, email=$email, type=$type, firstname=$firstname, lastname=$lastname, sex=$sex, address=$address, city=$city, state=$state, zipCode=$zipCode, country=$country, phone=$phone, photoUrl=$photoUrl, isVerified=$isVerified, datetimeCreated=$datetimeCreated, datetimeUpdated=$datetimeUpdated)"
+        return "User(uid=$uid, email=$email, type=$type, firstname=$firstname, lastname=$lastname, sex=$sex, address=$address, city=$city, state=$state, zipCode=$zipCode, country=$country, phone=$phone, photoUrl=$photoUri, isVerified=$isVerified, datetimeCreated=$datetimeCreated, datetimeUpdated=$datetimeUpdated)"
     }
 
     companion object CREATOR : Parcelable.Creator<User> {

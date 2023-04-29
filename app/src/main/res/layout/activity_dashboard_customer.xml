@@ -10,24 +10,26 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="12"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="12">
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentCustomerDashboard"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="11"
-            app:navGraph = "@navigation/navigation_customer"/>
+            app:navGraph="@navigation/navigation_customer" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/dashboardNav"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            app:menu="@menu/dashboard_customer_menu"/>
+            app:menu="@menu/dashboard_customer_menu" />
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

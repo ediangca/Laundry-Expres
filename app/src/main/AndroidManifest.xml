@@ -70,6 +70,13 @@
             </intent-filter>
         </activity>
 
+        <!--SPLASH-->
+        <activity
+            android:name=".SplashScreen"
+            android:exported="false"
+            android:theme="@style/Theme.LaundryExpress.NoActionBar">
+        </activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="false"

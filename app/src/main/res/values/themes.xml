@@ -12,11 +12,27 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:windowSplashScreenBackground" tools:ignore="NewApi">@android:color/transparent</item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:ignore="NewApi">@drawable/icon_logo</item>
+        <item name="android:windowSplashScreenAnimationDuration" tools:ignore="NewApi">1000</item>
     </style>
 
     <style name="Theme.LaundryExpress.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/color_blue_1</item>
+        <item name="colorPrimaryVariant">@color/color_blue_2</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/color_blue_1</item>
+        <item name="colorSecondaryVariant">@color/color_blue_2</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+
     </style>
 
     <style name="Theme.LaundryExpres.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

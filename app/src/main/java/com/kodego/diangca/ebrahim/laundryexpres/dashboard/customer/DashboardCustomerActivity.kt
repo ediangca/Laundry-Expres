@@ -1,6 +1,9 @@
 package com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -8,12 +11,13 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityDashboardCustomerBinding
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
+import com.kodego.diangca.ebrahim.laundryexpres.model.User
 
 class DashboardCustomerActivity : AppCompatActivity() {
 
@@ -36,7 +40,13 @@ class DashboardCustomerActivity : AppCompatActivity() {
     private lateinit var dashboardShopFragment: DashboardShopFragment
     private lateinit var dashboardOrderFormFragment: DashboardOrderFormFragment
 
-    lateinit var shop: Shop
+    private var user: User? = null
+    private var shop: Shop? = null
+
+    private var bundle = Bundle()
+
+    private lateinit var loadingBuilder: AlertDialog.Builder
+    private lateinit var loadingDialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +58,7 @@ class DashboardCustomerActivity : AppCompatActivity() {
 
     private fun initComponent() {
 
-        dashboardShopFragment = DashboardShopFragment(this)
+        retrieveUserDetails()
 
         dashboardHomeFragment = DashboardHomeFragment(this)
         dashboardOrdersFragment = DashboardOrdersFragment(this)
@@ -57,19 +67,53 @@ class DashboardCustomerActivity : AppCompatActivity() {
         dashboardAccountFragment = DashboardAccountFragment(this)
         dashboardOrderFormFragment = DashboardOrderFormFragment(this)
 
-        mainFrame = supportFragmentManager.beginTransaction()
-        mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardHomeFragment(this));
-        mainFrame.addToBackStack(null);
-        mainFrame.commit();
+        dashboardShopFragment = DashboardShopFragment(this)
 
         binding.dashboardNav.setOnItemSelectedListener {
             navMenuOnItemSelectedListener(it)
         }
     }
 
+    private fun retrieveUserDetails() {
+
+        firebaseAuth.currentUser?.let {
+            firebaseDatabaseReference.child("users")
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                        if (dataSnapshot.exists()) {
+//                            Log.d("USER_DETAILS", firebaseAuth.currentUser!!.uid)
+                            for (postSnapshot in dataSnapshot.children) {
+                                user = postSnapshot.getValue(User::class.java)
+//                                user!!.printLOG()
+                                if (user!=null) {
+                                    if (user!!.uid==firebaseAuth.currentUser?.uid) {
+                                        Log.d("USER_DETAILS", user.toString())
+                                        bundle.putParcelable("user", user)
+                                        dashboardHomeFragment.arguments = bundle
+                                        mainFrame = supportFragmentManager.beginTransaction()
+                                        mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardHomeFragment(this@DashboardCustomerActivity));
+                                        mainFrame.addToBackStack(null);
+                                        mainFrame.commit();
+                                        return
+                                    }
+                                }
+                            }
+                        } else {
+                            Log.d("USER_DETAILS", "No Record Found!")
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        // Getting Post failed, log a message
+                        Log.d("USER_DETAILS", "loadPost:onCancelled")
+                    }
+                })
+        }
+    }
+
     private fun navMenuOnItemSelectedListener(it: MenuItem?): Boolean {
 
-//        binding.fragmentCustomerDashboard.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,0)
         if (it==null) {
             mainFrame = supportFragmentManager.beginTransaction()
             mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardHomeFragment);
@@ -80,6 +124,8 @@ class DashboardCustomerActivity : AppCompatActivity() {
             Log.d("MENU ITEM", "ID: ${it!!.itemId}")
             when (it.itemId) {
                 R.id.navCustomerHome -> {
+                    bundle.putParcelable("user", user)
+                    dashboardHomeFragment.arguments = bundle
                     mainFrame = supportFragmentManager.beginTransaction()
                     mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardHomeFragment);
                     mainFrame.addToBackStack(null);
@@ -112,6 +158,8 @@ class DashboardCustomerActivity : AppCompatActivity() {
                     return true
                 }
                 R.id.navCustomerAccount -> {
+                    bundle.putParcelable("user", user)
+                    dashboardOrderFormFragment.arguments = bundle
                     mainFrame = supportFragmentManager.beginTransaction()
                     mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardAccountFragment);
                     mainFrame.addToBackStack(null);
@@ -128,7 +176,6 @@ class DashboardCustomerActivity : AppCompatActivity() {
                 }
             }
         }
-        return false
     }
 
 
@@ -137,10 +184,17 @@ class DashboardCustomerActivity : AppCompatActivity() {
         navMenuOnItemSelectedListener(null)
     }
 
+    fun resumeShopList() {
+        binding.dashboardNav.visibility = View.GONE
+        mainFrame = supportFragmentManager.beginTransaction()
+        mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardShopFragment);
+        mainFrame.addToBackStack(null);
+        mainFrame.commit();
+    }
+
     fun showShopList() {
         binding.dashboardNav.visibility = View.GONE
-//        binding.fragmentCustomerDashboard.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-//            LinearLayout.LayoutParams.MATCH_PARENT)
+        dashboardShopFragment = DashboardShopFragment(this)
         mainFrame = supportFragmentManager.beginTransaction()
         mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardShopFragment);
         mainFrame.addToBackStack(null);
@@ -148,6 +202,9 @@ class DashboardCustomerActivity : AppCompatActivity() {
     }
     fun showOrderForm(shop: Shop) {
         this.shop = shop
+        bundle.putParcelable("shop", shop)
+        dashboardOrderFormFragment = DashboardOrderFormFragment(this)
+        dashboardOrderFormFragment.arguments = bundle
         mainFrame = supportFragmentManager.beginTransaction()
         mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardOrderFormFragment);
         mainFrame.addToBackStack(null);
@@ -156,23 +213,34 @@ class DashboardCustomerActivity : AppCompatActivity() {
 
 
     fun signOut() {
-
         var loginIntent = Intent(this, LoginActivity::class.java)
-        var bundle = Bundle()
-        /* bundle.putString("positionApplied", positionApply)
-         bundle.putDouble("desiredSalary", desiredSalary)
-         bundle.putString(
-             "dateAvailable",
-             SimpleDateFormat("yyyy-MM-d").format(dateAvailable)
-         )
-         nextForm.putExtras(bundle)
-
-         nextForm.putExtra("something", "Extra")*/
-
         startActivity(Intent(loginIntent))
         finish()
-
     }
+
+    @JvmName("getShop1")
+    fun getShop(): Shop {
+        return shop!!
+    }
+    fun getUser(): User? {
+        return user!!
+    }
+
+    fun showLoadingDialog(){
+        val loadingBinding = DialogLoadingBinding.inflate(this.layoutInflater)
+        loadingBuilder = AlertDialog.Builder(this)
+        loadingBuilder.setCancelable(false)
+        loadingBuilder.setView(loadingBinding.root)
+        loadingDialog = loadingBuilder.create()
+        if(loadingDialog.window != null){
+            loadingDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+        }
+        loadingDialog.show()
+    }
+    fun dismissLoadingDialog(){
+        loadingDialog.dismiss()
+    }
+
 
 
 }
