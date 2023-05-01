@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item
+        android:id="@+id/navPartnerHome"
+        android:icon="@drawable/vector_home"
+        android:title="@string/nav_home" />
+    <item
+        android:id="@+id/navPartnerOrder"
+        android:icon="@drawable/vector_order"
+        android:title="@string/nav_orders" />
+    <item
+        android:id="@+id/navPartnerUpdates"
+        android:icon="@drawable/vector_updates"
+        android:title="@string/nav_updates" />
+    <item
+        android:id="@+id/navPartnerInbox"
+        android:icon="@drawable/vector_inbox"
+        android:title="@string/nav_inbox" />
+
+    <item
+        android:title="@string/nav_menu_account">
+        <menu>
+            <item
+                android:id="@+id/navPartnerAccountPersonal"
+                android:icon="@drawable/vector_account"
+                android:title="@string/nav_personal_info" />
+            <item
+                android:id="@+id/navPartnerAccountBusiness"
+                android:icon="@drawable/vector_laundry"
+                android:title="@string/nav_business_info" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/navLogout"
+        android:icon="@drawable/vector_logout"
+        android:title="@string/logout" />
+
+</menu>

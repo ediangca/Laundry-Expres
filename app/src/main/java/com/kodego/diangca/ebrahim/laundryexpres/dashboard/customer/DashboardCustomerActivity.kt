@@ -58,6 +58,7 @@ class DashboardCustomerActivity : AppCompatActivity() {
 
     private fun initComponent() {
 
+        Log.d("ON_ATTACH_DASHBOARD_CUSTOMER", "ATTACHED CUSTOMER DASHBOARD")
         retrieveUserDetails()
 
         dashboardHomeFragment = DashboardHomeFragment(this)
@@ -75,53 +76,59 @@ class DashboardCustomerActivity : AppCompatActivity() {
     }
 
     private fun retrieveUserDetails() {
+        val databaseRef = firebaseDatabase.reference.child("users")
+            .child(firebaseAuth.currentUser!!.uid)
 
-        firebaseAuth.currentUser?.let {
-            firebaseDatabaseReference.child("users")
-                .addValueEventListener(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-
-                        if (dataSnapshot.exists()) {
-//                            Log.d("USER_DETAILS", firebaseAuth.currentUser!!.uid)
-                            for (postSnapshot in dataSnapshot.children) {
-                                user = postSnapshot.getValue(User::class.java)
-//                                user!!.printLOG()
-                                if (user!=null) {
-                                    if (user!!.uid==firebaseAuth.currentUser?.uid) {
-                                        Log.d("USER_DETAILS", user.toString())
-                                        bundle.putParcelable("user", user)
-                                        dashboardHomeFragment.arguments = bundle
-                                        mainFrame = supportFragmentManager.beginTransaction()
-                                        mainFrame.replace(R.id.fragmentCustomerDashboard, DashboardHomeFragment(this@DashboardCustomerActivity));
-                                        mainFrame.addToBackStack(null);
-                                        mainFrame.commit();
-                                        return
-                                    }
-                                }
-                            }
-                        } else {
-                            Log.d("USER_DETAILS", "No Record Found!")
-                        }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        // Getting Post failed, log a message
-                        Log.d("USER_DETAILS", "loadPost:onCancelled")
-                    }
-                })
+        databaseRef.get().addOnCompleteListener{dataSnapshot ->
+            if (dataSnapshot.isSuccessful) {
+                user = dataSnapshot.result.getValue(User::class.java)
+                if(user!=null){
+                    Log.d("USER_DETAILS_FOUND", user.toString())
+                    bundle = Bundle()
+                    bundle.putParcelable("user", user)
+                    dashboardHomeFragment.arguments = bundle
+                    mainFrame = supportFragmentManager.beginTransaction()
+                    mainFrame.replace(
+                        R.id.fragmentCustomerDashboard,
+                        DashboardHomeFragment(this@DashboardCustomerActivity)
+                    );
+                    mainFrame.addToBackStack(null);
+                    mainFrame.commit();
+                }
+            }else{
+                Log.d("USER_DETAILS_NOT_FOUND", "USER NOT FOUND")
+            }
         }
     }
 
-    private fun navMenuOnItemSelectedListener(it: MenuItem?): Boolean {
+    fun refreshUser(): User{
+        val databaseRef = firebaseDatabase.reference.child("users")
+            .child(firebaseAuth.currentUser!!.uid)
 
+        databaseRef.get().addOnCompleteListener{dataSnapshot ->
+            if (dataSnapshot.isSuccessful) {
+                this.user = dataSnapshot.result.getValue(User::class.java)!!
+                Log.d("USER_DETAILS_REFRESH", "USER FOUND")
+            }else{
+                Log.d("USER_DETAILS_NOT_FOUND", "USER NOT FOUND")
+            }
+        }
+        return this.user!!
+    }
+
+    private fun navMenuOnItemSelectedListener(it: MenuItem?): Boolean {
         if (it==null) {
+            bundle = Bundle()
+            bundle.putParcelable("user", user)
+            dashboardHomeFragment.arguments = bundle
             mainFrame = supportFragmentManager.beginTransaction()
             mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardHomeFragment);
             mainFrame.addToBackStack(null);
             mainFrame.commit();
             return true
         } else {
-            Log.d("MENU ITEM", "ID: ${it!!.itemId}")
+            Log.d("MENU ITEM", "ID: ${it.itemId}  --------------")
+            bundle = Bundle()
             when (it.itemId) {
                 R.id.navCustomerHome -> {
                     bundle.putParcelable("user", user)
@@ -159,7 +166,7 @@ class DashboardCustomerActivity : AppCompatActivity() {
                 }
                 R.id.navCustomerAccount -> {
                     bundle.putParcelable("user", user)
-                    dashboardOrderFormFragment.arguments = bundle
+                    dashboardAccountFragment.arguments = bundle
                     mainFrame = supportFragmentManager.beginTransaction()
                     mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardAccountFragment);
                     mainFrame.addToBackStack(null);
@@ -168,6 +175,8 @@ class DashboardCustomerActivity : AppCompatActivity() {
                 }
 
                 else -> {
+                    bundle.putParcelable("user", user)
+                    dashboardHomeFragment.arguments = bundle
                     mainFrame = supportFragmentManager.beginTransaction()
                     mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardHomeFragment);
                     mainFrame.addToBackStack(null);
@@ -200,8 +209,10 @@ class DashboardCustomerActivity : AppCompatActivity() {
         mainFrame.addToBackStack(null);
         mainFrame.commit();
     }
+
     fun showOrderForm(shop: Shop) {
         this.shop = shop
+        bundle = Bundle()
         bundle.putParcelable("shop", shop)
         dashboardOrderFormFragment = DashboardOrderFormFragment(this)
         dashboardOrderFormFragment.arguments = bundle
@@ -222,25 +233,26 @@ class DashboardCustomerActivity : AppCompatActivity() {
     fun getShop(): Shop {
         return shop!!
     }
+
     fun getUser(): User? {
         return user!!
     }
 
-    fun showLoadingDialog(){
+    fun showLoadingDialog() {
         val loadingBinding = DialogLoadingBinding.inflate(this.layoutInflater)
         loadingBuilder = AlertDialog.Builder(this)
         loadingBuilder.setCancelable(false)
         loadingBuilder.setView(loadingBinding.root)
         loadingDialog = loadingBuilder.create()
-        if(loadingDialog.window != null){
+        if (loadingDialog.window!=null) {
             loadingDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
         }
         loadingDialog.show()
     }
-    fun dismissLoadingDialog(){
+
+    fun dismissLoadingDialog() {
         loadingDialog.dismiss()
     }
-
 
 
 }

@@ -26,7 +26,6 @@ import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentPartnerBasic
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentPartnerBusinessInfoBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
-import java.util.regex.Pattern
 
 class RegisterPartnerActivity : AppCompatActivity() {
 
@@ -149,7 +148,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
         val currentItem = binding.viewPager2.currentItem
         setTab(currentItem + 1)
     }
-
+/*
     fun String.isEmailValid() =
         Pattern.compile(
             "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
@@ -159,7 +158,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
                     "\\." +
                     "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
                     ")+"
-        ).matcher(this).matches()
+        ).matcher(this).matches()*/
 
     private fun isValidEmail(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
@@ -178,7 +177,16 @@ class RegisterPartnerActivity : AppCompatActivity() {
             bindingBasicInfo.passwordLayout.isPasswordVisibilityToggleEnabled = true
             bindingBasicInfo.confirmPasswordLayout.isPasswordVisibilityToggleEnabled = true
 
-            if (email!!.isEmpty() || mobileNo!!.isEmpty() || firstName!!.isEmpty() || lastName!!.isEmpty() || (bindingBasicInfo.sex.selectedItemPosition==0) || street!!.isEmpty() || city!!.isEmpty() || state!!.isEmpty() || zipCode!!.isEmpty() || country!!.isEmpty()) {
+            if (email!!.isEmpty() || !validEmail(email!!) || mobileNo!!.isEmpty() ||  mobileNo!!.length!=13 ||firstName!!.isEmpty() || lastName!!.isEmpty() || (bindingBasicInfo.sex.selectedItemPosition==0) || street!!.isEmpty() || city!!.isEmpty() || state!!.isEmpty() || zipCode!!.isEmpty() || country!!.isEmpty()
+                || isValidAddress(street!!)
+                || isValidAddress(city!!)
+                || isValidAddress(state!!)
+                || isValidAddress(country!!)
+            ) {
+
+                if (email!!.isEmpty() || !validEmail(email!!)) {
+                    bindingBasicInfo.email.error = "Please enter valid email or a valid email."
+                }
                 if (mobileNo!!.isEmpty()) {
                     bindingBasicInfo.mobileNo.error = "Please enter your Mobile No."
                 }
@@ -209,9 +217,6 @@ class RegisterPartnerActivity : AppCompatActivity() {
                 }
                 if (country!!.isEmpty()) {
                     bindingBasicInfo.country.error = "Please enter your Country."
-                }
-                if (email!!.isEmpty() || email!!.isEmailValid()) {
-                    bindingBasicInfo.email.error = "Please enter an email or a valid email."
                 }
                 validate1 = true
             }
@@ -244,8 +249,8 @@ class RegisterPartnerActivity : AppCompatActivity() {
             setDataBusinessInfo(bindingBusinessInfo)
             val businessSignatureUri = "E-Signature URI"
 
-            if (businessName!!.isEmpty() || businessLegalName!!.isEmpty() || businessEmail!!.isEmpty() || businessPhone!!.isEmpty() || businessAddress!!.isEmpty() ||
-                businessBankName!!.isEmpty() || businessBankAccountName!!.isEmpty() || businessBankAccNo!!.isEmpty() || businessBankBIC!!.isEmpty()
+            if (businessName!!.isEmpty() || businessLegalName!!.isEmpty() || businessEmail!!.isEmpty() || !validEmail(businessEmail!!) || businessPhone!!.isEmpty() || businessPhone!!.length!=13 ||businessAddress!!.isEmpty() ||
+                isValidAddress(businessAddress!!) || businessBankName!!.isEmpty() || businessBankAccountName!!.isEmpty() || businessBankAccNo!!.isEmpty() || businessBankBIC!!.isEmpty()
             ) {
                 if (businessName!!.isEmpty()) {
                     bindingBusinessInfo.businessName.error = "Please enter your Business Name."
@@ -254,11 +259,14 @@ class RegisterPartnerActivity : AppCompatActivity() {
                     bindingBusinessInfo.businessLegalName.error =
                         "Please enter your Business Legal Name."
                 }
-                if (businessEmail!!.isEmpty()) {
-                    bindingBusinessInfo.businessEmail.error = "Please enter your Business Email."
+                if (businessEmail!!.isEmpty() || !validEmail(businessEmail!!)) {
+                    bindingBusinessInfo.businessEmail.error = "Please enter valid Business Email."
                 }
                 if (businessPhone!!.isEmpty()) {
                     bindingBusinessInfo.businessPhone.error = "Please enter your Business Phone."
+                }
+                if (businessPhone!!.length!=13) {
+                    bindingBusinessInfo.businessPhone.error = "Please check length of Mobile No."
                 }
                 if (businessAddress!!.isEmpty()) {
                     bindingBusinessInfo.businessAddress.error = "Please enter your Business Address."
@@ -368,25 +376,29 @@ class RegisterPartnerActivity : AppCompatActivity() {
         return (validate1 or validate2)
     }
 
+    private fun validEmail(email: String): Boolean {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
     private fun isValidAddress(address: String): Boolean {
-        var addresses : List<Address>? = null
-        var locality : String? = null
-
-        if(address.isNotEmpty()){
+        var addresses: List<Address>? = null
+        var locality: String? = null
+        val trap = false
+        if (address.isNotEmpty()) {
             var geocoder = Geocoder(binding.root.context)
             try {
                 addresses = geocoder.getFromLocationName(address, 1)
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 Log.d("SEARCH_GEO_LOCATION", "${e.message}")
             }
 
-            if(addresses!=null && addresses.isNotEmpty()) {
+            if (addresses!=null && addresses.isNotEmpty()) {
                 locality = addresses[0].locality
-            }else{
-                Log.d("CITY AVAILABILITY", "NO AVAILABLE FROM SELECTED CITY")
+                Log.d("SEARCH_GEO_LOCATION > $address", addresses[0].getAddressLine(0))
+            } else {
+                Log.d("CITY AVAILABILITY", "NO AVAILABLE FROM SELECTED > $address")
             }
         }
-        return address.isEmpty()
+        return addresses!!.isEmpty()
     }
 
     private fun setDataBasicInfo(bindingBasicInfo: FragmentPartnerBasicInfoBinding) {

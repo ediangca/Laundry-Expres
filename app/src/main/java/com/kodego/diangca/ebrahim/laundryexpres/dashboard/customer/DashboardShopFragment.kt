@@ -174,11 +174,7 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                     setShopAdapter()
 
                 } else {
-                    dashboardCustomer.dismissLoadingDialog()
-                    Toast.makeText(
-                        dashboardCustomer, "Sorry! No Available Laundry Shop found in your area.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Log.d("SHOP_ON_DATA_CHANGE", "NO SHOP YET AVAILABLE IN RECORD")
                 }
             }
 

@@ -67,14 +67,26 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         initComponent()
     }
 
-    private fun initComponent() {
 
+    override fun onResume() {
+        super.onResume()
 
         user = dashboardCustomer.getUser()
         val bundle = this.arguments
         if (bundle!=null) {
             user = bundle.getParcelable<User>("user")!!
-            Log.d("FETCH_USER", user.toString())
+            Log.d("ON_RESUME_FETCH_USER", user.toString())
+        }
+        setUserDetails()
+    }
+
+    private fun initComponent() {
+
+        user = dashboardCustomer.getUser()
+        val bundle = this.arguments
+        if (bundle!=null) {
+            user = bundle.getParcelable<User>("user")!!
+            Log.d("ON_RESUME_FETCH_USER", user.toString())
         }
         setUserDetails()
 
@@ -116,7 +128,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
         if (!displayName.isNullOrEmpty()) {
             Log.d("displayUserName", "Hi ${displayName}, Good Day!")
-            binding.userDisplayName.text = displayName
+            binding.userDisplayName.text = "Hi ${displayName}, Good Day!"
         } else {
             if (user!=null) {
                 displayName = "${user!!.firstname} ${user!!.lastname}"

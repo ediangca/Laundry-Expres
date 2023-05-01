@@ -1,6 +1,5 @@
 package com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,12 +9,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
-import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardPartnerHomeBinding
-import com.kodego.diangca.ebrahim.laundryexpres.model.User
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardPartnerBusinessBinding
 
-class DashboardHomeFragment(var dashboardPartner: DashboardPartnerActivity) : Fragment() {
 
-    private var _binding: FragmentDashboardPartnerHomeBinding? = null
+class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) : Fragment() {
+
+    private var _binding: FragmentDashboardPartnerBusinessBinding? = null
     private val binding get() = _binding!!
 
     private var firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance()
@@ -24,22 +23,22 @@ class DashboardHomeFragment(var dashboardPartner: DashboardPartnerActivity) : Fr
         .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    private var user: User? = null
-    private var displayName: String? = null
-    private var profileUri: Uri? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentDashboardPartnerHomeBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentDashboardPartnerBusinessBinding.inflate(layoutInflater, container, false)
         return binding.root
 
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,16 +47,14 @@ class DashboardHomeFragment(var dashboardPartner: DashboardPartnerActivity) : Fr
         initComponent()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-    override fun onResume() {
-        super.onResume()
-    }
     private fun initComponent() {
 
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+    }
+
 
 
 }

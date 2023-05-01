@@ -42,7 +42,7 @@
             app:civ_border_color="@color/color_blue_1"
             app:civ_border_width="5sp"
             android:contentDescription="Profile Picture"
-            android:src="@drawable/vector_profile" />
+            android:src="@drawable/icon_logo" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

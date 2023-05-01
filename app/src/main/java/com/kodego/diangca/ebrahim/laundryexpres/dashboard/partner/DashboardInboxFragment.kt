@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardInboxBinding
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardPartnerInboxBinding
 
 class DashboardInboxFragment(var dashboardPartner: DashboardPartnerActivity) : Fragment() {
 
-    private var _binding: FragmentDashboardInboxBinding? = null
+    private var _binding: FragmentDashboardPartnerInboxBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,7 +21,7 @@ class DashboardInboxFragment(var dashboardPartner: DashboardPartnerActivity) : F
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentDashboardInboxBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentDashboardPartnerInboxBinding.inflate(layoutInflater, container, false)
         return binding.root
 
     }

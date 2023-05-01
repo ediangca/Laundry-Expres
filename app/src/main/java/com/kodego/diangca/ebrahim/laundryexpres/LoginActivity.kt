@@ -2,7 +2,6 @@ package com.kodego.diangca.ebrahim.laundryexpres
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -63,7 +62,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var loadingDialog: Dialog
 
     private lateinit var userBuilder: AlertDialog.Builder
-    private lateinit var userDialogInterface: DialogInterface
+    private lateinit var userDialog: Dialog
 
 
     private lateinit var dialogForgotPassword: Dialog
@@ -220,7 +219,7 @@ class LoginActivity : AppCompatActivity() {
                 binding.passwordLayout.isPasswordVisibilityToggleEnabled = false
                 binding.password.error = "Please enter a password."
             }
-            if (!isValidEmail(username)) {
+            if (!ValidEmail(username)) {
                 binding.username.error = "Please enter an email or a valid email."
             }
             Toast.makeText(this, "Please check following error(s)!", Toast.LENGTH_SHORT).show()
@@ -245,13 +244,15 @@ class LoginActivity : AppCompatActivity() {
 
     private fun btnRegisterOnClickListener() {
         userBuilder = AlertDialog.Builder(this)
-        userBuilder.setCancelable(true)
+        userBuilder.setCancelable(false)
         userBuilder.setView(getUserTypeView("Register"))
-        userBuilder.create()
-        this.userDialogInterface = userBuilder.show()
+        userDialog = userBuilder.create()
+
+        userDialog.show()
+
     }
 
-    private fun isValidEmail(email: String): Boolean {
+    private fun ValidEmail(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
@@ -304,6 +305,9 @@ class LoginActivity : AppCompatActivity() {
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
+
+
+
                         this@LoginActivity.userType =
                             snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
                                 .getValue(String::class.java).toString()
@@ -403,14 +407,17 @@ class LoginActivity : AppCompatActivity() {
             userPartner.setOnClickListener {
                 userType = "Partner"
                 showRegistrationActivity()
+                userDialog.dismiss()
             }
             userRider.setOnClickListener {
                 userType = "Rider"
                 showRegistrationActivity()
+                userDialog.dismiss()
             }
             userCustomer.setOnClickListener {
                 userType = "Customer"
                 showRegistrationActivity()
+                userDialog.dismiss()
             }
         }
         return dialogUserTypeBinding.root

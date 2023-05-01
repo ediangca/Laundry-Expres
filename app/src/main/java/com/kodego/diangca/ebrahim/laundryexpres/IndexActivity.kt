@@ -11,18 +11,19 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartnerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityIndexBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
+import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import com.kodego.diangca.ebrahim.laundryexpres.registration.RegisterCustomerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.registration.partner.RegisterPartnerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.registration.rider.RegisterRiderActivity
@@ -42,9 +43,13 @@ class IndexActivity : AppCompatActivity() {
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
+    private var user: User? = null
     private var userType = "UNKNOWN"
     private var displayName: String? = null
     private var profileUri: Uri? = null
+
+    private lateinit var loadingBuilder: AlertDialog.Builder
+    private lateinit var loadingDialog: Dialog
 
     fun getDatabaseReference(): DatabaseReference {
         return firebaseDatabaseReference
@@ -62,22 +67,44 @@ class IndexActivity : AppCompatActivity() {
     }
 
     private fun initComponent() {
-        /* if (firebaseAuth.currentUser==null) {
-             mainFragment = MainFragment(this)
-             mainFrame = supportFragmentManager.beginTransaction()
-             mainFrame.replace(R.id.mainFrame, mainFragment)
-             mainFrame.commit()
-         }*/
+        window.decorView.apply {
+            // Hide both the navigation bar and the status bar.
+            // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
+            // a general rule, you should design your app to hide the status bar whenever you
+            // hide the navigation bar.
+            systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
+        }
+
     }
 
     override fun onStart() {
         super.onStart()
-        showLoadingDialog()
-//        showProgressBar(true)
-        Handler(Looper.getMainLooper()).postDelayed({
             if (FirebaseAuth.getInstance().currentUser!=null) {
-                firebaseDatabaseReference.child("users").addListenerForSingleValueEvent(object :
-                    ValueEventListener {
+                val databaseRef = firebaseDatabase.reference.child("users")
+                    .child(firebaseAuth.currentUser!!.uid)
+
+                databaseRef.get().addOnCompleteListener { dataSnapshot ->
+                    if (dataSnapshot.isSuccessful) {
+                        user = dataSnapshot.result.getValue(User::class.java)
+                        if (user!=null) {
+                            userType = user!!.type!!
+                            val isVerified = user!!.isVerified!!
+                            if ((userType!="Customer") && !isVerified) {
+                                Log.d("SIGN_OUT_USER", "UNVERIFIED_ACCOUNT")
+                                firebaseAuth.signOut()
+                                showMain()
+                            } else {
+                                goToDashboard()
+                            }
+                        }
+                    } else {
+                        Log.d("SIGN_OUT_USER", "WITH_AUTH_BUT_NOT_REGISTERED")
+                        firebaseAuth.signOut()
+                        showMain()
+                    }
+                }
+/*
+                firebaseDatabaseReference.child("users").addListenerForSingleValueEvent(object :ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         dismissLoadingDialog()
 //                        showProgressBar(false)
@@ -89,7 +116,7 @@ class IndexActivity : AppCompatActivity() {
                             val isVerified: Boolean =
                                 snapshot.child(firebaseAuth.currentUser!!.uid).child("verified")
                                     .getValue(Boolean::class.java)!!
-                            if((userType!="Customer") && !isVerified) {
+                            if ((userType!="Customer") && !isVerified) {
                                 Log.d("SIGN_OUT_USER", "UNVERIFIED_ACCOUNT")
                                 firebaseAuth.signOut()
                                 showMain()
@@ -111,42 +138,46 @@ class IndexActivity : AppCompatActivity() {
                     }
 
                 })
+                */
             } else {
-                dismissLoadingDialog()
-//            showProgressBar(false)
                 showMain()
             }
-
-        }, 3000) // 3000 is the delayed time in milliseconds.
     }
 
     private fun showMain() {
-        mainFragment = MainFragment(this)
-        mainFrame = supportFragmentManager.beginTransaction()
-        mainFrame.replace(R.id.mainFrame, mainFragment)
-        mainFrame.commit()
+        showLoadingDialog()
+        Handler(Looper.getMainLooper()).postDelayed({
+            dismissLoadingDialog()
+            mainFragment = MainFragment(this)
+            mainFrame = supportFragmentManager.beginTransaction()
+            mainFrame.replace(R.id.mainFrame, mainFragment)
+            mainFrame.commit()
+        }, 3000) // 3000 is the delayed time in milliseconds.
     }
 
 
     private fun goToDashboard() {
-//        showProgressBar(false)
-        when (userType) {
-            "Customer" -> {
-                startActivity((Intent(this, DashboardCustomerActivity::class.java)))
-                finish()
-            }
-            "Partner" -> {
-                startActivity((Intent(this, DashboardPartnerActivity::class.java)))
-                finish()
-            }
-            "Rider" -> {
-                startActivity((Intent(this, DashboardRiderActivity::class.java)))
-                finish()
-            }
-            else -> {
+        showLoadingDialog()
+        Handler(Looper.getMainLooper()).postDelayed({
+            dismissLoadingDialog()
+            when (userType) {
+                "Customer" -> {
+                    startActivity((Intent(this, DashboardCustomerActivity::class.java)))
+                    finish()
+                }
+                "Partner" -> {
+                    startActivity((Intent(this, DashboardPartnerActivity::class.java)))
+                    finish()
+                }
+                "Rider" -> {
+                    startActivity((Intent(this, DashboardRiderActivity::class.java)))
+                    finish()
+                }
+                else -> {
 
+                }
             }
-        }
+        }, 3000) // 3000 is the delayed time in milliseconds.
     }
 
     private fun showProgressBar(visible: Boolean) {
@@ -190,21 +221,24 @@ class IndexActivity : AppCompatActivity() {
         finish()
     }
 
-    private lateinit var loadingBuilder: AlertDialog.Builder
-    private lateinit var loadingDialog: Dialog
-    private fun showLoadingDialog() {
+    fun showLoadingDialog() {
         val loadingBinding = DialogLoadingBinding.inflate(this.layoutInflater)
-
         firebaseAuth.currentUser?.let {
             for (profile in it.providerData) {
                 displayName = profile.displayName
                 profileUri = profile.photoUrl
             }
-        }
-        if (profileUri!=null) {
-            Log.d("profilePic", "$profileUri")
-            val profileView: ImageView = loadingBinding.imageView
-            Picasso.with(applicationContext).load(profileUri).into(profileView);
+            if (profileUri!=null) {
+                Log.d("USER_PROFILE_FROM_PROVIDER", "$profileUri")
+                val profileView: ImageView = loadingBinding.imageView
+                Picasso.with(applicationContext).load(profileUri).into(profileView);
+            } else {
+                if (user!!.photoUri!=null) {
+                    Log.d("USER_PROFILE_FROM_USER", "$profileUri")
+                    val profileView: ImageView = loadingBinding.imageView
+                    Picasso.with(applicationContext).load(user!!.photoUri).into(profileView);
+                }
+            }
         }
 
         loadingBuilder = AlertDialog.Builder(this)
@@ -218,7 +252,7 @@ class IndexActivity : AppCompatActivity() {
         loadingDialog.show()
     }
 
-    private fun dismissLoadingDialog() {
+    fun dismissLoadingDialog() {
         loadingDialog.dismiss()
     }
 

@@ -53,7 +53,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
 
     private fun initComponent() {
 
-//        shop = dashboardCustomer.getShop()
+        shop = dashboardCustomer.getShop()
         val bundle = this.arguments
         if (bundle!=null) {
             val shopFromBundle = bundle.getParcelable<Shop>("shop")!!

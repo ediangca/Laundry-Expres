@@ -3,6 +3,7 @@ package com.kodego.diangca.ebrahim.laundryexpres.registration
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -39,6 +40,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
+import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityRegisterCustomerBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
@@ -48,7 +50,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.OutputStream
 import java.util.*
-import java.util.regex.Pattern
 
 class RegisterCustomerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterCustomerBinding
@@ -72,6 +73,8 @@ class RegisterCustomerActivity : AppCompatActivity() {
     private val CAMERA_PROFILE_CODE = 2
     private var profileImageUri: Uri? = null
     var profileImageBytes:String? = null
+
+    private lateinit var profileOptionDialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,13 +105,34 @@ class RegisterCustomerActivity : AppCompatActivity() {
         binding.btnLocation.setOnClickListener {
             btnLocationOnClickListener()
         }
-        binding.btnCaptureProfile.setOnClickListener {
-            btnCaptureProfileOnClickListener()
-        }
-        binding.btnBrowseProfile.setOnClickListener {
-            btnBrowseProfileOnClickListener()
+        binding.profilePic.setOnClickListener {
+            showOptionProfile()
         }
     }
+
+    private fun showOptionProfile() {
+        profileOptionDialog = Dialog(this)
+
+        val loadingBuilder = AlertDialog.Builder(this)
+        loadingBuilder.setTitle("PROFILE")
+        loadingBuilder.setCancelable(false)
+        loadingBuilder.setMessage("Please select an option")
+        loadingBuilder.setNeutralButton("BROWSE GALLERY") { _, _ ->
+            btnBrowseProfileOnClickListener()
+        }
+        loadingBuilder.setNegativeButton("TAKE PHOTO") { _, _ ->
+            btnCaptureProfileOnClickListener()
+        }
+        loadingBuilder.setPositiveButton("CANCEL") { _, _ ->
+            profileOptionDialog.dismiss()
+        }
+        profileOptionDialog = loadingBuilder.create()
+        if (profileOptionDialog.window!=null) {
+            profileOptionDialog.window!!.setBackgroundDrawableResource(R.color.color_light_3)
+        }
+        profileOptionDialog.show()
+    }
+
     private fun btnBrowseProfileOnClickListener() {
         val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
         startActivityForResult(gallery, PICK_PROFILE_CODE)
@@ -164,11 +188,11 @@ class RegisterCustomerActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode==RESULT_OK) {
+        if (resultCode==AppCompatActivity.RESULT_OK) {
             when (requestCode) {
                 PICK_PROFILE_CODE -> {
                     profileImageUri = data?.data
-                    binding.profileFileName.visibility = View.VISIBLE
+                    binding.profilePic.visibility = View.VISIBLE
                     binding.profileFileName.text = getFileName(profileImageUri, this)
                     Log.d("IMAGE_URI", "BUSINESS BIR: $profileImageUri")
 
@@ -178,31 +202,27 @@ class RegisterCustomerActivity : AppCompatActivity() {
                     myBitmap.compress(Bitmap.CompressFormat.PNG, 100,stream)
                     val bytes = stream.toByteArray()
                     profileImageBytes = Base64.encodeToString(bytes, Base64.DEFAULT)
-                    binding.profilePic.setImageBitmap(myBitmap)
-                    inputStream!!.close()
-                    Toast.makeText(this,"Image Selected for BIR", Toast.LENGTH_SHORT).show()
+
+                    val profileView: ImageView = binding.profilePic
+                    loadBitmapByPicasso(this, myBitmap, profileView)
 
                 }
 
                 CAMERA_PROFILE_CODE -> {
                     try {
-                        if(data != null) {
+                        if (data!=null) {
                             //we are using coroutine image loader (coil)
-                            val bitmap = data.extras?.get("data") as Bitmap
+                            val myBitmap = data.extras?.get("data") as Bitmap
 
-                            val byteArrayOutputStream = ByteArrayOutputStream()
-                            bitmap.compress(
-                                Bitmap.CompressFormat.PNG,
-                                100,
-                                byteArrayOutputStream
-                            )
-                            val bytes = byteArrayOutputStream.toByteArray()
+                            val stream = ByteArrayOutputStream()
+                            myBitmap.compress(Bitmap.CompressFormat.PNG,100,stream)
+                            val bytes = stream.toByteArray()
                             profileImageBytes = Base64.encodeToString(bytes, Base64.DEFAULT)
 
                             val profileView: ImageView = binding.profilePic
-                            loadBitmapByPicasso(this, bitmap, profileView)
+                            loadBitmapByPicasso(this, myBitmap, profileView)
                         }
-                    }catch (e: Exception){
+                    } catch (e: Exception) {
                         Log.d("CAMERA", e.toString())
                         e.printStackTrace()
                     }
@@ -218,6 +238,8 @@ class RegisterCustomerActivity : AppCompatActivity() {
             pBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
             outputStream!!.close()
             Picasso.with(this).load(profileImageUri).into(pImageView)
+            Toast.makeText(this, "Great Profile!", Toast.LENGTH_SHORT)
+                .show()
         } catch (e: java.lang.Exception) {
             Log.e("LoadBitmapByPicasso", e.message!!)
         }
@@ -363,6 +385,28 @@ class RegisterCustomerActivity : AppCompatActivity() {
         }
     }
 
+    private fun isValidAddress(address: String): Boolean {
+        var addresses: List<Address>? = null
+        var locality: String? = null
+        val trap = false
+        if (address.isNotEmpty()) {
+            var geocoder = Geocoder(binding.root.context)
+            try {
+                addresses = geocoder.getFromLocationName(address, 1)
+            } catch (e: Exception) {
+                Log.d("SEARCH_GEO_LOCATION", "${e.message}")
+            }
+
+            if (addresses!=null && addresses.isNotEmpty()) {
+                locality = addresses[0].locality
+                Log.d("SEARCH_GEO_LOCATION > $address", addresses[0].getAddressLine(0))
+            } else {
+                Log.d("CITY AVAILABILITY", "NO AVAILABLE FROM SELECTED > $address")
+            }
+        }
+        return addresses!!.isEmpty()
+    }
+
     private fun btnSubmitOnClickListener() {
         val mobileNo = binding.mobileNo.text.toString()
         val firstName = binding.firstName.text.toString()
@@ -382,7 +426,15 @@ class RegisterCustomerActivity : AppCompatActivity() {
 
         var trap: Boolean = false
 
-        if (email.isEmpty() || mobileNo.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || binding.sex.selectedItemPosition ==0 || street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty()) {
+        if (email.isEmpty() || !validEmail(email) || mobileNo.isEmpty() || mobileNo.length!=13 || firstName.isEmpty() || lastName.isEmpty() || binding.sex.selectedItemPosition ==0 || street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty()
+            || isValidAddress(street)
+            || isValidAddress(city)
+            || isValidAddress(state)
+            || isValidAddress(country)) {
+
+            if (email.isEmpty() || !validEmail(email)) {
+                binding.email.error = "Please enter an email or a valid email."
+            }
             if (mobileNo.isEmpty()) {
                 binding.mobileNo.error = "Please enter your Mobile No."
                 trap =  true
@@ -399,23 +451,20 @@ class RegisterCustomerActivity : AppCompatActivity() {
             if (binding.sex.selectedItemPosition ==0) {
                 (binding.sex.selectedView as TextView).error = "Please select your sex."
             }
-            if (street.isEmpty()) {
+            if (street.isEmpty() || isValidAddress(street)) {
                 binding.address.error = "Please enter your Street."
             }
-            if (city.isEmpty()) {
-                binding.address.error = "Please enter your City."
+            if (city.isEmpty() || isValidAddress(city)) {
+                binding.city.error = "Please enter your City."
             }
-            if (state.isEmpty()) {
-                binding.city.error = "Please enter your State."
+            if (state.isEmpty() || isValidAddress(state)) {
+                binding.state.error = "Please enter your State."
             }
             if (zipCode.isEmpty()) {
                 binding.zipCode.error = "Please enter your Zip Code."
             }
             if (country.isEmpty()) {
                 binding.country.error = "Please enter your Country."
-            }
-            if (email.isEmpty() || !email.isEmailValid()) {
-                binding.email.error = "Please enter an email or a valid email."
             }
 
             Toast.makeText(this, "Please check empty fields!", Toast.LENGTH_SHORT).show()
@@ -462,7 +511,6 @@ class RegisterCustomerActivity : AppCompatActivity() {
                                     val databaseRef = firebaseDatabase.reference.child("users")
                                         .child(firebaseAuth.currentUser!!.uid)
 
-
                                     val user = User(
                                         firebaseAuth.currentUser!!.uid,
                                         email,
@@ -497,7 +545,7 @@ class RegisterCustomerActivity : AppCompatActivity() {
                             }
 
                             override fun onCancelled(error: DatabaseError) {
-                                Log.d("ListenerForSingleValueEvent", "${it.exception!!.message}")
+                                Log.d("ListenerForSingleValueEvent", error.message)
                             }
 
                         })
@@ -581,7 +629,10 @@ class RegisterCustomerActivity : AppCompatActivity() {
         }
     }
 
-    fun String.isEmailValid() =
+    private fun validEmail(email: String): Boolean {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+   /* fun String.isEmailValid() =
         Pattern.compile(
             "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
                     "\\@" +
@@ -591,7 +642,7 @@ class RegisterCustomerActivity : AppCompatActivity() {
                     "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
                     ")+"
         ).matcher(this).matches()
-
+*/
     private fun isValidEmail(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }

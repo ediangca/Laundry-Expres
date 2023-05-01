@@ -78,39 +78,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
-                    android:text="Filename"
+                    android:text="PROFILE PICTUR3"
                     android:textAlignment="center"
                     android:textColor="@android:color/holo_red_dark"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/profilePic" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnCaptureProfile"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/button_primary"
-                    android:text="Capture"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toStartOf="@id/btnBrowseProfile"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/profileFileName" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnBrowseProfile"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/button_secondary"
-                    android:text="Browse"
-                    android:textColor="@color/color_blue_1"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/btnCaptureProfile"
-                    app:layout_constraintTop_toBottomOf="@id/profileFileName" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

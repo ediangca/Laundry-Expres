@@ -1,24 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/vector_laundry"
-    android:backgroundTint="@color/color_light_3"
-    android:backgroundTintMode="add"
+    android:background="@android:color/transparent"
     tools:context=".dashboard.partner.DashboardHomeFragment">
 
-    <TextView
-        android:id="@+id/userDisplayName"
+
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="20dp"
-        android:padding="20dp"
-        android:textAlignment="center"
-        android:background="@drawable/button_primary"
-        android:text="Home"
-        android:textColor="@color/color_light_3"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:weightSum="12"
+        tools:context=".MainActivity">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/profileLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/box_style"
+            android:backgroundTint="@color/white"
+            android:orientation="horizontal"
+            android:padding="15dp"
+            android:weightSum="12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/pageTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_weight="9"
+                android:text="Over View"
+                android:textAlignment="center"
+                android:textAllCaps="true"
+                android:textColor="@color/color_blue_1"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:background="@color/color_light_3"
+            android:contentDescription="@string/app_name"
+            app:tabIndicatorGravity="top"
+            app:tabTextColor="@color/white" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="11" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </FrameLayout>

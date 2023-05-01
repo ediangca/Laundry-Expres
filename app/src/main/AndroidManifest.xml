@@ -18,11 +18,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LaundryExpress"
         tools:targetApi="31">
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAzofW3ZdxI6l6Jz7C16Z_iHHLH_KMmIWY" />
-
-        <!--REGISTRATION-->
+            android:value="AIzaSyAzofW3ZdxI6l6Jz7C16Z_iHHLH_KMmIWY" /> <!-- REGISTRATION -->
         <activity
             android:name=".registration.RegisterPersonalInfoActivity"
             android:exported="false"
@@ -38,12 +37,12 @@
         <activity
             android:name=".registration.RegisterCustomerActivity"
             android:exported="false"
-            android:theme="@style/Theme.LaundryExpress.NoActionBar" />
-        <!--DASHBOARD-->
+            android:theme="@style/Theme.LaundryExpress.NoActionBar" /> <!-- DASHBOARD -->
         <activity
             android:name=".dashboard.partner.DashboardPartnerActivity"
+            android:theme="@style/Theme.LaundryExpress"
             android:exported="false"
-            android:theme="@style/Theme.LaundryExpress.NoActionBar" />
+            tools:ignore="LockedOrientationActivity"/>
         <activity
             android:name=".dashboard.customer.DashboardCustomerActivity"
             android:exported="false"
@@ -51,14 +50,11 @@
         <activity
             android:name=".dashboard.rider.DashboardRiderActivity"
             android:exported="false"
-            android:theme="@style/Theme.LaundryExpress.NoActionBar" />
-        <!--LOGIN-->
+            android:theme="@style/Theme.LaundryExpress.NoActionBar" /> <!-- LOGIN -->
         <activity
             android:name=".LoginActivity"
             android:exported="false"
-            android:theme="@style/Theme.LaundryExpress.NoActionBar" />
-
-        <!--INDEX-->
+            android:theme="@style/Theme.LaundryExpress.NoActionBar" /> <!-- INDEX -->
         <activity
             android:name=".IndexActivity"
             android:exported="true"
@@ -68,20 +64,15 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!--SPLASH-->
+        </activity> <!-- SPLASH -->
         <activity
             android:name=".SplashScreen"
             android:exported="false"
-            android:theme="@style/Theme.LaundryExpress.NoActionBar">
-        </activity>
-
+            android:theme="@style/Theme.LaundryExpress.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="false"
             android:theme="@style/Theme.LaundryExpress.NoActionBar" />
-
     </application>
 
 </manifest>

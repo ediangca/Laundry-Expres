@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_partner"
+    app:startDestination="@id/navPartnerHome1">
+
+    <fragment
+        android:id="@+id/navPartnerHome1"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardHomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_dashboard_partner_home" >
+    </fragment>
+    <fragment
+        android:id="@+id/navPartnerOrder"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardOrdersFragment"
+        android:label="Orders"
+        tools:layout="@layout/fragment_dashboard_partner_orders" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/navPartnerUpdates"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardNotificationFragment"
+        android:label="Notification"
+        tools:layout="@layout/fragment_dashboard_partner_notification" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/navPartnerInbox"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardInboxFragment"
+        android:label="Inbox"
+        tools:layout="@layout/fragment_dashboard_partner_inbox" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/navPartnerAccountPersonal"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardAccountFragment"
+        android:label="Account"
+        tools:layout="@layout/fragment_dashboard_partner_account" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/navPartnerAccountBusiness"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardAccountFragment"
+        android:label="Account"
+        tools:layout="@layout/fragment_dashboard_partner_account" >
+    </fragment>
+
+</navigation>
