@@ -52,7 +52,7 @@
             android:layout_marginRight="20dp"
             android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
@@ -68,25 +68,19 @@
                     android:layout_gravity="center"
                     android:src="@drawable/icon_logo"
                     app:civ_border_color="@color/color_blue_1"
-                    app:civ_border_width="5sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:civ_border_width="5sp" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/profileFileName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
-                    android:text="PROFILE PICTUR3"
+                    android:text="PROFILE PICTURE"
                     android:textAlignment="center"
-                    android:textColor="@android:color/holo_red_dark"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/profilePic" />
+                    android:textColor="@android:color/holo_red_dark" />
 
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
 
             <TextView
@@ -115,6 +109,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Username/Email"
                     android:inputType="textEmailAddress"
                     android:textSize="12sp" />
@@ -133,6 +128,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Password"
                     android:inputType="textPassword"
                     android:textSize="12sp" />
@@ -151,6 +147,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Confirm Password"
                     android:inputType="textPassword"
                     android:textSize="12sp" />
@@ -185,6 +182,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Phone Number"
                     android:inputType="text|phone"
                     android:textSize="12sp" />
@@ -203,6 +201,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Firstname"
                     android:inputType="textCapWords"
                     android:textSize="12sp" />
@@ -221,6 +220,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Lastname"
                     android:inputType="textCapWords"
                     android:textSize="12sp" />
@@ -266,6 +266,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Street"
                     android:inputType="textCapWords"
                     android:textSize="12sp" />
@@ -283,6 +284,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*City"
                     android:inputType="textCapWords"
                     android:textSize="12sp" />
@@ -300,6 +302,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*State"
                     android:inputType="textCapWords"
                     android:textSize="12sp" />

@@ -3,6 +3,7 @@ package com.kodego.diangca.ebrahim.laundryexpres
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -28,6 +30,7 @@ import com.kodego.diangca.ebrahim.laundryexpres.registration.RegisterCustomerAct
 import com.kodego.diangca.ebrahim.laundryexpres.registration.partner.RegisterPartnerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.registration.rider.RegisterRiderActivity
 import com.squareup.picasso.Picasso
+import java.io.File
 
 
 class IndexActivity : AppCompatActivity() {
@@ -46,7 +49,7 @@ class IndexActivity : AppCompatActivity() {
     private var user: User? = null
     private var userType = "UNKNOWN"
     private var displayName: String? = null
-    private var profileUri: Uri? = null
+    private var profileImageUri: Uri? = null
 
     private lateinit var loadingBuilder: AlertDialog.Builder
     private lateinit var loadingDialog: Dialog
@@ -103,42 +106,6 @@ class IndexActivity : AppCompatActivity() {
                         showMain()
                     }
                 }
-/*
-                firebaseDatabaseReference.child("users").addListenerForSingleValueEvent(object :ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        dismissLoadingDialog()
-//                        showProgressBar(false)
-                        if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
-                            userType =
-                                snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
-                                    .getValue(String::class.java).toString()
-
-                            val isVerified: Boolean =
-                                snapshot.child(firebaseAuth.currentUser!!.uid).child("verified")
-                                    .getValue(Boolean::class.java)!!
-                            if ((userType!="Customer") && !isVerified) {
-                                Log.d("SIGN_OUT_USER", "UNVERIFIED_ACCOUNT")
-                                firebaseAuth.signOut()
-                                showMain()
-                                return
-                            }
-                            goToDashboard()
-                        } else {
-                            Log.d("SIGN_OUT_USER", "WITH_AUTH_BUT_NOT_REGISTERED")
-                            firebaseAuth.signOut()
-                            showMain()
-                        }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        dismissLoadingDialog()
-//                        showProgressBar(false)
-                        Toast.makeText(applicationContext, error.message, Toast.LENGTH_SHORT)
-                            .show()
-                    }
-
-                })
-                */
             } else {
                 showMain()
             }
@@ -223,20 +190,43 @@ class IndexActivity : AppCompatActivity() {
 
     fun showLoadingDialog() {
         val loadingBinding = DialogLoadingBinding.inflate(this.layoutInflater)
+        val profileView: ImageView = loadingBinding.imageView
         firebaseAuth.currentUser?.let {
             for (profile in it.providerData) {
                 displayName = profile.displayName
-                profileUri = profile.photoUrl
+                profileImageUri = profile.photoUrl
             }
-            if (profileUri!=null) {
-                Log.d("USER_PROFILE_FROM_PROVIDER", "$profileUri")
-                val profileView: ImageView = loadingBinding.imageView
-                Picasso.with(applicationContext).load(profileUri).into(profileView);
+            if (profileImageUri!=null) {
+                Log.d("USER_PROFILE_FROM_PROVIDER", "$profileImageUri")
+                Picasso.with(applicationContext).load(profileImageUri).into(profileView);
             } else {
                 if (user!!.photoUri!=null) {
-                    Log.d("USER_PROFILE_FROM_USER", "$profileUri")
-                    val profileView: ImageView = loadingBinding.imageView
-                    Picasso.with(applicationContext).load(user!!.photoUri).into(profileView);
+                    profileImageUri = Uri.parse(user!!.photoUri)
+                    val filename = "profile_${user!!.uid}"
+                    val firebaseStorageReference =
+                        FirebaseStorage.getInstance().reference.child("profile/$filename")
+                    Log.d("PROFILE_FILENAME", filename)
+                    Log.d("PROFILE_URI", profileImageUri!!.toString())
+                    val localFile = File.createTempFile("temp_profile", ".jpg", this.cacheDir)
+                    firebaseStorageReference.getFile(localFile)
+                        .addOnSuccessListener {
+                            profileView.setImageBitmap(BitmapFactory.decodeFile(localFile.absolutePath))
+                            Log.d(
+                                "USER_PROFILE_PIC",
+                                "User Profile has been successfully load!"
+                            )
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(
+                                applicationContext,
+                                "User Profile failed to load! > ${it.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            Log.d("USER_PROFILE_PIC", "User Profile failed to load!")
+                        }
+                    Log.d("profilePic_user", "$profileImageUri")
+                    Picasso.with(applicationContext).load(profileImageUri)
+                        .into(profileView);
                 }
             }
         }

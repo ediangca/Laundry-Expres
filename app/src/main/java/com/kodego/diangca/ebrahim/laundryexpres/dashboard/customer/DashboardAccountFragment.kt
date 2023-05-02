@@ -31,6 +31,7 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -43,6 +44,7 @@ import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.OutputStream
+import java.util.*
 
 
 class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity) : Fragment() {
@@ -86,7 +88,6 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
 
         initComponent()
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
     }
@@ -136,7 +137,9 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
     }
 
     private fun btnBrowseProfileOnClickListener() {
-        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        val gallery = Intent()
+        gallery.type = "image/*"
+        gallery.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(gallery, PICK_PROFILE_CODE)
     }
 
@@ -361,156 +364,202 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
             Toast.makeText(dashboardCustomer, "Please check empty fields!", Toast.LENGTH_SHORT)
                 .show()
             return
-        }else {
+        } else {
 
-            val databaseRef = firebaseDatabase.reference.child("users")
-                .child(firebaseAuth.currentUser!!.uid)
+        dashboardCustomer.showLoadingDialog()
+        val databaseRef = firebaseDatabase.reference.child("users")
+            .child(firebaseAuth.currentUser!!.uid)
 
-            this.user = User(
-                firebaseAuth.currentUser!!.uid,
-                email,
-                userType,
-                firstName,
-                lastName,
-                sex,
-                street,
-                city,
-                state,
-                zipCode,
-                country,
-                mobileNo,
-                profileImageUri.toString(),
-                false,
+        user = User(
+            firebaseAuth.currentUser!!.uid,
+            email,
+            userType,
+            firstName,
+            lastName,
+            sex,
+            street,
+            city,
+            state,
+            zipCode,
+            country,
+            mobileNo,
+            profileImageUri.toString(),
+            false,
+
             )
-            databaseRef.setValue(this.user).addOnCompleteListener(dashboardCustomer) { task ->
-                if (task.isSuccessful) {
-                    setUserDetails(this.user)
-                    this.user = dashboardCustomer.refreshUser()
-                    Toast.makeText(
-                        context,
-                        "User has been successfully Updated!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    Log.d("USER_UPDATE_SUCCESS", "User has been successfully Updated!")
+        databaseRef.setValue(user).addOnCompleteListener(dashboardCustomer) { task ->
+            if (task.isSuccessful) {
+                val filename = "profile_${user!!.uid}"
+                profileImageUri = Uri.parse(user!!.photoUri)
+                Log.d("USER_PHOTO_URI", "${user!!.photoUri} = ${this.user!!.photoUri}")
+                val firebaseStorageReference = FirebaseStorage.getInstance().getReference("profile/$filename")
+                Log.d("PROFILE_FILENAME", filename)
+                Log.d("PROFILE_URI", profileImageUri!!.toString())
+                firebaseStorageReference.putFile(profileImageUri!!)
+                    .addOnSuccessListener {
+                        Log.d("SAVING_PROFILE", "SUCCESS SAVING PROFILE $filename")
+                        Toast.makeText(
+                            context,
+                            "User has been successfully Updated!",
+                            Toast.LENGTH_SHORT
+                        ).show()
 
-
-                } else {
-                    Log.d("USER_UPDATE_FAILED", "${task.exception}")
-                    Toast.makeText(
-                        context,
-                        "Sorry! ${task.exception}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                }
-            }
-        }
-    }
-
-    private fun isValidAddress(address: String): Boolean {
-        var addresses: List<Address>? = null
-        var locality: String? = null
-        val trap = false
-        if (address.isNotEmpty()) {
-            var geocoder = Geocoder(binding.root.context)
-            try {
-                addresses = geocoder.getFromLocationName(address, 1)
-            } catch (e: Exception) {
-                Log.d("SEARCH_GEO_LOCATION", "${e.message}")
-            }
-
-            if (addresses!=null && addresses.isNotEmpty()) {
-                locality = addresses[0].locality
-                Log.d("SEARCH_GEO_LOCATION > $address", addresses[0].getAddressLine(0))
-            } else {
-                Log.d("CITY AVAILABILITY", "NO AVAILABLE FROM SELECTED > $address")
-            }
-        }
-        return addresses!!.isEmpty()
-    }
-
-    private fun validEmail(email: String): Boolean {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-
-    private fun btnLogoutOnClickListener() {
-        var loadingDialog: Dialog = Dialog(dashboardCustomer)
-
-        val loadingBuilder = AlertDialog.Builder(context)
-        loadingBuilder.setTitle("LOGOUT")
-        loadingBuilder.setMessage("Do you really want to Logout?")
-        loadingBuilder.setPositiveButton("Yes") { _, _ ->
-            dashboardCustomer.showLoadingDialog()
-            Handler(Looper.getMainLooper()).postDelayed({
-                firebaseAuth.signOut()
-                dashboardCustomer.signOut()
-                dashboardCustomer.dismissLoadingDialog()
-            }, 3000) // 3000 is the delayed time in milliseconds.
-        }
-        loadingBuilder.setNegativeButton("Cancel") { _, _ ->
-            loadingDialog.dismiss()
-        }
-        loadingDialog = loadingBuilder.create()
-        if (loadingDialog.window!=null) {
-            loadingDialog.window!!.setBackgroundDrawableResource(R.color.color_light_3)
-        }
-        loadingDialog.show()
-
-    }
-
-    private fun setUserDetails(user: User?) {
-        firebaseAuth.currentUser?.let {
-            for (profile in it.providerData) {
-                displayName = profile.displayName
-                profileImageUri = profile.photoUrl
-            }
-
-            if (!displayName.isNullOrEmpty()) {
-                Log.d("displayUserName", "Hi ${displayName}, Good Day!")
-                binding.userDisplayName.text = displayName
-            } else {
-                if (user!=null) {
-                    displayName = "${user!!.firstname} ${user!!.lastname}"
-                    binding.userDisplayName.text = displayName
-                }
-            }
-
-            val profileView: ImageView = binding.profilePicture
-//        profileView.setImageResource(R.drawable.icon_logo)
-            if (profileImageUri!=null) {
-                Log.d("profilePic_profileData", "$profileImageUri")
-                Picasso.with(context).load(profileImageUri).into(profileView);
-            } else {
-                if (user!!.photoUri!=null) {
-                    profileImageUri = Uri.parse(user!!.photoUri)
-                    Log.d("profilePic_user", "$profileImageUri")
-                    Picasso.with(context).load(profileImageUri).into(profileView);
-                }
-            }
-
-            if (user!=null) {
-                userType = user!!.type
-                binding.apply {
-                    userAddress.text = user!!.address
-                    email.setText(user!!.email)
-                    phoneNo.setText(user!!.phone)
-                    firstName.setText(user!!.firstname)
-                    lastName.setText(user!!.lastname)
-                    val sexList = resources.getStringArray(R.array.sex)
-                    for ((index, value) in sexList.withIndex()) {
-                        if (value.equals(user!!.sex, true)) {
-                            sex.setSelection(index)
-                        }
+                        dashboardCustomer.dismissLoadingDialog()
+                        Log.d("USER_UPDATE_SUCCESS", "User has been successfully Updated!")
+                        setUserDetails(user)
+                        dashboardCustomer.setUser(user)
                     }
-//                profileImageUri = Uri.parse(user!!.photoUri)
-                    address.setText(user!!.address)
-                    city.setText(user!!.city)
-                    state.setText(user!!.state)
-                    zipCode.setText(user!!.zipCode)
-                    country.setText(user!!.country)
-                }
+                    .addOnFailureListener {
+                        Toast.makeText(
+                            context,
+                            "FAILED SAVING PROFILE > ${it.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Log.d("SAVING_PROFILE", "FAILED SAVING PROFILE $filename > ${it.message}")
+                    }
+            } else {
+                dashboardCustomer.dismissLoadingDialog()
+                Log.d("USER_UPDATE_FAILED", "${task.exception}")
+                Toast.makeText(
+                    context,
+                    "Sorry! ${task.exception}",
+                    Toast.LENGTH_SHORT
+                ).show()
+
             }
         }
     }
+}
+
+private fun isValidAddress(address: String): Boolean {
+    var addresses: List<Address>? = null
+    var locality: String? = null
+    val trap = false
+    if (address.isNotEmpty()) {
+        var geocoder = Geocoder(binding.root.context)
+        try {
+            addresses = geocoder.getFromLocationName(address, 1)
+        } catch (e: Exception) {
+            Log.d("SEARCH_GEO_LOCATION", "${e.message}")
+        }
+
+        if (addresses!=null && addresses.isNotEmpty()) {
+            locality = addresses[0].locality
+            Log.d("SEARCH_GEO_LOCATION > $address", addresses[0].getAddressLine(0))
+        } else {
+            Log.d("CITY AVAILABILITY", "NO AVAILABLE FROM SELECTED > $address")
+        }
+    }
+    return addresses!!.isEmpty()
+}
+
+private fun validEmail(email: String): Boolean {
+    return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+}
+
+private fun btnLogoutOnClickListener() {
+    var loadingDialog: Dialog = Dialog(dashboardCustomer)
+
+    val loadingBuilder = AlertDialog.Builder(context)
+    loadingBuilder.setTitle("LOGOUT")
+    loadingBuilder.setMessage("Do you really want to Logout?")
+    loadingBuilder.setPositiveButton("Yes") { _, _ ->
+        dashboardCustomer.showLoadingDialog()
+        Handler(Looper.getMainLooper()).postDelayed({
+            firebaseAuth.signOut()
+            dashboardCustomer.signOut()
+            dashboardCustomer.dismissLoadingDialog()
+        }, 3000) // 3000 is the delayed time in milliseconds.
+    }
+    loadingBuilder.setNegativeButton("Cancel") { _, _ ->
+        loadingDialog.dismiss()
+    }
+    loadingDialog = loadingBuilder.create()
+    if (loadingDialog.window!=null) {
+        loadingDialog.window!!.setBackgroundDrawableResource(R.color.color_light_3)
+    }
+    loadingDialog.show()
+
+}
+
+private fun setUserDetails(user: User?) {
+    firebaseAuth.currentUser?.let {
+        for (profile in it.providerData) {
+            displayName = profile.displayName
+            profileImageUri = profile.photoUrl
+        }
+
+        if (!displayName.isNullOrEmpty()) {
+            Log.d("displayUserName", "Hi ${displayName}, Good Day!")
+            binding.userDisplayName.text = displayName
+        } else {
+            if (user!=null) {
+                displayName = "${user!!.firstname} ${user!!.lastname}"
+                binding.userDisplayName.text = displayName
+            }
+        }
+
+        val profileView: ImageView = binding.profilePicture
+//        profileView.setImageResource(R.drawable.icon_logo)
+        if (profileImageUri!=null) {
+            Log.d("profilePic_profileData", "$profileImageUri")
+            Picasso.with(context).load(profileImageUri).into(profileView);
+        } else {
+            if (user!!.photoUri!=null) {
+                val filename = "profile_${user!!.uid}"
+                profileImageUri = Uri.parse(user!!.photoUri)
+                val firebaseStorageReference =
+                    FirebaseStorage.getInstance().reference.child("profile/$filename")
+                Log.d("PROFILE_FILENAME", filename)
+                Log.d("PROFILE_URI", profileImageUri!!.toString())
+                val localFile = File.createTempFile("temp_profile", ".jpg", dashboardCustomer.cacheDir)
+                firebaseStorageReference.getFile(localFile)
+                    .addOnSuccessListener {
+                        profileView.setImageBitmap(BitmapFactory.decodeFile(localFile.absolutePath))
+                        Log.d(
+                            "USER_PROFILE_PIC",
+                            "User Profile has been successfully load!"
+                        )
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(
+                            context,
+                            "User Profile failed to load!> ${it.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Log.d("USER_PROFILE_PIC", "User Profile failed to load!")
+                    }
+                Log.d("profilePic_user", "$profileImageUri")
+                Picasso.with(context).load(profileImageUri)
+                    .into(profileView);
+            }
+        }
+
+        if (user!=null) {
+            userType = user.type
+            binding.apply {
+                userAddress.text = user.address
+                email.setText(user.email)
+                phoneNo.setText(user.phone)
+                firstName.setText(user.firstname)
+                lastName.setText(user.lastname)
+                val sexList = resources.getStringArray(R.array.sex)
+                for ((index, value) in sexList.withIndex()) {
+                    if (value.equals(user.sex, true)) {
+                        sex.setSelection(index)
+                    }
+                }
+                if(user.photoUri!=null) {
+                    profileImageUri = Uri.parse(user.photoUri)
+                }
+                address.setText(user.address)
+                city.setText(user.city)
+                state.setText(user.state)
+                zipCode.setText(user.zipCode)
+                country.setText(user.country)
+            }
+        }
+    }
+}
 
 }

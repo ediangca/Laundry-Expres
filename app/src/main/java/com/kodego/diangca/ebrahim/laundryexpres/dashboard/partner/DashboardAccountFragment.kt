@@ -25,9 +25,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -55,6 +57,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
     private var user: User? = null
     private var userType: String? = null
     private var displayName: String? = null
+    private var isVerified: Boolean? = null
 
     private val PICK_PROFILE_CODE = 100
     private val CAMERA_PROFILE_CODE = 2
@@ -77,18 +80,6 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        user = dashboardPartner.getUser()
-        val bundle = this.arguments
-        if (bundle!=null) {
-            user = bundle.getParcelable<User>("user")!!
-            Log.d("ON_RESUME_FETCH_USER", user.toString())
-        }
-        setUserDetails(user)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -98,13 +89,13 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
 
     private fun initComponent() {
 
-        user = dashboardPartner.getUser()
-        val bundle = this.arguments
+        val bundle = arguments
         if (bundle!=null) {
             user = bundle.getParcelable<User>("user")!!
             Log.d("ON_RESUME_FETCH_USER", user.toString())
+        }else{
+            user = dashboardPartner.getUser()
         }
-        setUserDetails(user)
 
         binding.btnLogout.setOnClickListener {
             btnLogoutOnClickListener()
@@ -118,6 +109,8 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
         binding.btnAccSubmit.setOnClickListener {
             btnAccSubmitOnClickListener()
         }
+
+        setUserDetails(user)
     }
 
     private fun showOptionProfile() {
@@ -144,7 +137,11 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
     }
 
     private fun btnBrowseProfileOnClickListener() {
-        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        /*val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        startActivityForResult(gallery, PICK_PROFILE_CODE)*/
+        val gallery = Intent()
+        gallery.type = "image/*"
+        gallery.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(gallery, PICK_PROFILE_CODE)
     }
 
@@ -371,10 +368,11 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
             return
         } else {
 
+            dashboardPartner.showLoadingDialog()
             val databaseRef = firebaseDatabase.reference.child("users")
                 .child(firebaseAuth.currentUser!!.uid)
 
-            this.user = User(
+            user = User(
                 firebaseAuth.currentUser!!.uid,
                 email,
                 userType,
@@ -388,21 +386,42 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
                 country,
                 mobileNo,
                 profileImageUri.toString(),
-                false,
+                isVerified,
             )
             databaseRef.setValue(this.user).addOnCompleteListener(dashboardPartner) { task ->
                 if (task.isSuccessful) {
-                    setUserDetails(this.user)
-                    this.user = dashboardPartner.refreshUser()
-                    Toast.makeText(
-                        context,
-                        "User has been successfully Updated!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    Log.d("USER_UPDATE_SUCCESS", "User has been successfully Updated!")
+                    val filename = "profile_${user!!.uid}"
+                    profileImageUri = Uri.parse(user!!.photoUri)
+                    val firebaseStorageReference =
+                        FirebaseStorage.getInstance().getReference("profile/$filename")
+                    firebaseStorageReference.putFile(profileImageUri!!)
+                        .addOnSuccessListener {
+                            Log.d("SAVING_PROFILE", "SUCCESS SAVING PROFILE $filename")
+                            Toast.makeText(
+                                context,
+                                "User has been successfully Updated!",
+                                Toast.LENGTH_SHORT
+                            ).show()
 
-
+                            dashboardPartner.dismissLoadingDialog()
+                            Log.d("USER_UPDATE_SUCCESS", "User has been successfully Updated!")
+                            setUserDetails(user)
+                            dashboardPartner.setUser(user)
+                            dashboardPartner.setUserDetails(user)
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(
+                                context,
+                                "FAILED SAVING PROFILE > ${it.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            Log.d(
+                                "SAVING_PROFILE",
+                                "FAILED SAVING PROFILE $filename > ${it.message}"
+                            )
+                        }
                 } else {
+                    dashboardPartner.dismissLoadingDialog()
                     Log.d("USER_UPDATE_FAILED", "${task.exception}")
                     Toast.makeText(
                         context,
@@ -446,6 +465,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
     }
 
     private fun setUserDetails(user: User?) {
+        dashboardPartner.showLoadingDialog()
         firebaseAuth.currentUser?.let {
             for (profile in it.providerData) {
                 displayName = profile.displayName
@@ -469,34 +489,69 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
                 Picasso.with(context).load(profileImageUri).into(profileView);
             } else {
                 if (user!!.photoUri!=null) {
+                    val filename = "profile_${user.uid}"
                     profileImageUri = Uri.parse(user!!.photoUri)
+                    val firebaseStorageReference =
+                        FirebaseStorage.getInstance().reference.child("profile/$filename")
+                    Log.d("PROFILE_FILENAME", filename)
+                    Log.d("PROFILE_URI", profileImageUri!!.toString())
+                    val localFile = File.createTempFile("temp_profile", ".jpg")
+                    firebaseStorageReference.getFile(localFile)
+                        .addOnSuccessListener {
+                            profileView.setImageBitmap(BitmapFactory.decodeFile(localFile.absolutePath))
+                            Log.d(
+                                "USER_PROFILE_PIC",
+                                "User Profile has been successfully load!"
+                            )
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(
+                                context,
+                                "User Profile failed to load! > ${it.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            Log.d("USER_PROFILE_PIC", "User Profile failed to load!")
+                        }
                     Log.d("profilePic_user", "$profileImageUri")
-                    Picasso.with(context).load(profileImageUri).into(profileView);
+                    Picasso.with(context).load(profileImageUri)
+                        .into(profileView);
                 }
             }
 
             if (user!=null) {
-                userType = user!!.type
+                userType = user.type
+                isVerified = user.isVerified
                 binding.apply {
-                    userAddress.text = user!!.address
-                    email.setText(user!!.email)
-                    phoneNo.setText(user!!.phone)
-                    firstName.setText(user!!.firstname)
-                    lastName.setText(user!!.lastname)
+                    userAddress.text = user.address
+                    email.setText(user.email)
+                    phoneNo.setText(user.phone)
+                    firstName.setText(user.firstname)
+                    lastName.setText(user.lastname)
                     val sexList = resources.getStringArray(R.array.sex)
                     for ((index, value) in sexList.withIndex()) {
-                        if (value.equals(user!!.sex, true)) {
+                        if (value.equals(user.sex, true)) {
                             sex.setSelection(index)
                         }
                     }
-//                profileImageUri = Uri.parse(user!!.photoUri)
-                    address.setText(user!!.address)
-                    city.setText(user!!.city)
-                    state.setText(user!!.state)
-                    zipCode.setText(user!!.zipCode)
-                    country.setText(user!!.country)
+                    if(user.photoUri!=null) {
+                        profileImageUri = Uri.parse(user.photoUri)
+                    }
+                    address.setText(user.address)
+                    city.setText(user.city)
+                    state.setText(user.state)
+                    zipCode.setText(user.zipCode)
+                    country.setText(user.country)
+
+                    if(isVerified!!){
+                        btnVerified.text = "VERIFIED"
+                        btnVerified.background = ContextCompat.getDrawable(dashboardPartner, R.drawable.button_success)
+                    }else{
+                        btnVerified.text = "NOT VERIFIED"
+                        btnVerified.background = ContextCompat.getDrawable(dashboardPartner, R.drawable.button_danger)
+                    }
                 }
             }
+            dashboardPartner.dismissLoadingDialog()
         }
     }
 

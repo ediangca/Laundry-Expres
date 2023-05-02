@@ -15,20 +15,20 @@ data class Shop(
     var businessAddress: String? = null,
     var mondayFrom: String? = null,
     var mondayTo: String? = null,
-    var TuesdayFrom: String? = null,
-    var TuesdayTo: String? = null,
+    var tuesdayFrom: String? = null,
+    var tuesdayTo: String? = null,
     var wednesdayFrom: String? = null,
     var wednesdayTo: String? = null,
     var thursdayFrom: String? = null,
     var thursdayTo: String? = null,
     var fridayFrom: String? = null,
     var fridayTo: String? = null,
-    var SaturdayFrom: String? = null,
-    var SaturdayTo: String? = null,
-    var SundayFrom: String? = null,
-    var SundayTo: String? = null,
-    var HolidayFrom: String? = null,
-    var HolidayTo: String? = null,
+    var saturdayFrom: String? = null,
+    var saturdayTo: String? = null,
+    var sundayFrom: String? = null,
+    var sundayTo: String? = null,
+    var holidayFrom: String? = null,
+    var holidayTo: String? = null,
     var bankName: String? = null,
     var bankAccountName: String? = null,
     var bankAccountNumber: String? = null,
@@ -85,20 +85,20 @@ data class Shop(
         parcel.writeString(businessAddress)
         parcel.writeString(mondayFrom)
         parcel.writeString(mondayTo)
-        parcel.writeString(TuesdayFrom)
-        parcel.writeString(TuesdayTo)
+        parcel.writeString(tuesdayFrom)
+        parcel.writeString(tuesdayTo)
         parcel.writeString(wednesdayFrom)
         parcel.writeString(wednesdayTo)
         parcel.writeString(thursdayFrom)
         parcel.writeString(thursdayTo)
         parcel.writeString(fridayFrom)
         parcel.writeString(fridayTo)
-        parcel.writeString(SaturdayFrom)
-        parcel.writeString(SaturdayTo)
-        parcel.writeString(SundayFrom)
-        parcel.writeString(SundayTo)
-        parcel.writeString(HolidayFrom)
-        parcel.writeString(HolidayTo)
+        parcel.writeString(saturdayFrom)
+        parcel.writeString(saturdayTo)
+        parcel.writeString(sundayFrom)
+        parcel.writeString(sundayTo)
+        parcel.writeString(holidayFrom)
+        parcel.writeString(holidayTo)
         parcel.writeString(bankName)
         parcel.writeString(bankAccountName)
         parcel.writeString(bankAccountNumber)
@@ -111,7 +111,7 @@ data class Shop(
     }
 
     override fun toString(): String {
-        return "Shop(uid=$uid, businessLogo=$businessLogo, businessName=$businessName, businessLegalName=$businessLegalName, businessEmail=$businessEmail, businessPhoneNumber=$businessPhoneNumber, businessBIRImage=$businessBIRImage, businessAddress=$businessAddress, mondayFrom=$mondayFrom, mondayTo=$mondayTo, TuesdayFrom=$TuesdayFrom, TuesdayTo=$TuesdayTo, wednesdayFrom=$wednesdayFrom, wednesdayTo=$wednesdayTo, thursdayFrom=$thursdayFrom, thursdayTo=$thursdayTo, fridayFrom=$fridayFrom, fridayTo=$fridayTo, SaturdayFrom=$SaturdayFrom, SaturdayTo=$SaturdayTo, SundayFrom=$SundayFrom, SundayTo=$SundayTo, HolidayFrom=$HolidayFrom, HolidayTo=$HolidayTo, bankName=$bankName, bankAccountName=$bankAccountName, bankAccountNumber=$bankAccountNumber, bankAccountBIC=$bankAccountBIC, bankProofImage=$bankProofImage)"
+        return "Shop(uid=$uid, businessLogo=$businessLogo, businessName=$businessName, businessLegalName=$businessLegalName, businessEmail=$businessEmail, businessPhoneNumber=$businessPhoneNumber, businessBIRImage=$businessBIRImage, businessAddress=$businessAddress, mondayFrom=$mondayFrom, mondayTo=$mondayTo, TuesdayFrom=$tuesdayFrom, TuesdayTo=$tuesdayTo, wednesdayFrom=$wednesdayFrom, wednesdayTo=$wednesdayTo, thursdayFrom=$thursdayFrom, thursdayTo=$thursdayTo, fridayFrom=$fridayFrom, fridayTo=$fridayTo, SaturdayFrom=$saturdayFrom, SaturdayTo=$saturdayTo, SundayFrom=$sundayFrom, SundayTo=$sundayTo, HolidayFrom=$holidayFrom, HolidayTo=$holidayTo, bankName=$bankName, bankAccountName=$bankAccountName, bankAccountNumber=$bankAccountNumber, bankAccountBIC=$bankAccountBIC, bankProofImage=$bankProofImage)"
     }
 
     companion object CREATOR : Parcelable.Creator<Shop> {

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -23,6 +24,7 @@ import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogSchedulePicker
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardHomeBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import com.squareup.picasso.Picasso
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -40,7 +42,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
     private var user: User? = null
     private var displayName: String? = null
-    private var profileUri: Uri? = null
+    private var profileImageUri: Uri? = null
 
     private var selectedService: String? = null
 
@@ -77,7 +79,9 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             user = bundle.getParcelable<User>("user")!!
             Log.d("ON_RESUME_FETCH_USER", user.toString())
         }
-        setUserDetails()
+        if (user!=null) {
+            setUserDetails(user!!)
+        }
     }
 
     private fun initComponent() {
@@ -88,7 +92,9 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             user = bundle.getParcelable<User>("user")!!
             Log.d("ON_RESUME_FETCH_USER", user.toString())
         }
-        setUserDetails()
+        if (user!=null) {
+            setUserDetails(user!!)
+        }
 
         binding.btnLaundryShop.setOnClickListener {
             btnLaundryShopOnClickListener()
@@ -112,41 +118,64 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     }
 
     @SuppressLint("SetTextI18n")
-    private fun setUserDetails() {
+    private fun setUserDetails(user: User) {
+        dashboardCustomer.showLoadingDialog()
         firebaseAuth.currentUser?.let {
             for (profile in it.providerData) {
                 displayName = profile.displayName
-                profileUri = profile.photoUrl
+                profileImageUri = profile.photoUrl
             }
-        }
 
-        if (profileUri!=null) {
-            Log.d("profilePic", "$profileUri")
-            val profileView: ImageView = binding.profilePic
-            Picasso.with(context).load(profileUri).into(profileView);
-        }
+            binding.apply {
 
-        if (!displayName.isNullOrEmpty()) {
-            Log.d("displayUserName", "Hi ${displayName}, Good Day!")
-            binding.userDisplayName.text = "Hi ${displayName}, Good Day!"
-        } else {
-            if (user!=null) {
-                displayName = "${user!!.firstname} ${user!!.lastname}"
-                binding.userDisplayName.text = "Hi ${displayName}, Good Day!"
+                val profileView: ImageView = binding.profilePic
+
+                if (!displayName.isNullOrEmpty()) {
+                    Log.d("displayUserName", "Hi ${displayName}, Good Day!")
+                    userDisplayName.text = displayName
+                }
+
+                if (profileImageUri!=null) {
+                    Log.d("profilePic_profileData", "$profileImageUri")
+                    Picasso.with(context).load(profileImageUri)
+                        .into(profileView);
+                } else {
+                    if (user!!.photoUri!=null) {
+                        val filename = "profile_${user!!.uid}"
+                        profileImageUri = Uri.parse(user!!.photoUri)
+                        val firebaseStorageReference =
+                            FirebaseStorage.getInstance().reference.child("profile/$filename")
+                        Log.d("PROFILE_FILENAME", filename)
+                        Log.d("PROFILE_URI", profileImageUri!!.toString())
+                        val localFile = File.createTempFile("temp_profile", ".jpg")
+                        firebaseStorageReference.getFile(localFile)
+                            .addOnSuccessListener {
+                                profileView.setImageBitmap(BitmapFactory.decodeFile(localFile.absolutePath))
+                                Log.d(
+                                    "USER_PROFILE_PIC",
+                                    "User Profile has been successfully load!"
+                                )
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(
+                                    context,
+                                    "User Profile failed to load!> ${it.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                Log.d("USER_PROFILE_PIC", "User Profile failed to load!")
+                            }
+                        Log.d("profilePic_user", "$profileImageUri")
+                        Picasso.with(context).load(profileImageUri)
+                            .into(profileView);
+                    }
+                }
+
+                if (user!=null) {
+                    Log.d("displayUserName", "Hi ${user.firstname} ${user.lastname}, Good Day!")
+                    userDisplayName.text = "Hi ${user.firstname} ${user.lastname}, Good Day!"
+                }
             }
-        }
-
-        val profileView: ImageView = binding.profilePic
-//        profileView.setImageResource(R.drawable.icon_logo)
-        if (profileUri!=null) {
-            Log.d("profilePic_profileData", "$profileUri")
-            Picasso.with(context).load(profileUri).into(profileView);
-        } else {
-            if (user!!.photoUri!=null) {
-                profileUri = Uri.parse(user!!.photoUri)
-                Log.d("profilePic_user", "$profileUri")
-                Picasso.with(context).load(profileUri).into(profileView);
-            }
+            dashboardCustomer.dismissLoadingDialog()
         }
 
     }
@@ -260,44 +289,5 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         textInputEditText.setText("$monthOfYear/$dayOfMonth/$year")
     }
 
-
-    private fun displayUserName() {
-        firebaseAuth.currentUser?.let {
-            for (profile in it.providerData) {
-                displayName = profile.displayName
-                profileUri = profile.photoUrl
-            }
-        }
-
-        if (profileUri!=null) {
-            Log.d("profilePic", "$profileUri")
-            val profileView: ImageView = binding.profilePic
-            Picasso.with(context).load(profileUri).into(profileView);
-        }
-
-        if (!displayName.isNullOrEmpty()) {
-            Log.d("displayUserName", "Hi ${displayName}, Good Day!")
-            binding.userDisplayName.text = "Hi ${displayName}, Good Day!"
-        } else {
-            firebaseDatabaseReference.child("users")
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
-                            val firstname = snapshot.child(firebaseAuth.currentUser!!.uid)
-                                .child("firstname").value.toString()
-                            binding.userDisplayName.text = "Hi $firstname, Good Day!"
-                        }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        Toast.makeText(
-                            dashboardCustomer,
-                            "${error.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                })
-        }
-    }
 
 }

@@ -371,6 +371,7 @@ class LoginActivity : AppCompatActivity() {
     private fun checkIfVerified(isVerified: Boolean) {
         Handler(Looper.getMainLooper()).postDelayed({
             dismissLoadingDialog()
+
             if((userType!="Customer") && !isVerified) {
                 Log.d(
                     "ACCOUNT",

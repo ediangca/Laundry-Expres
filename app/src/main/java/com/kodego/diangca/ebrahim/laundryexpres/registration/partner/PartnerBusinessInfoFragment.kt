@@ -277,11 +277,17 @@ class PartnerBusinessInfoFragment(var registerPartnerActivity: RegisterPartnerAc
         startActivityForResult(intent, code)
     }
     private fun btnBrowseBusinessBIROnClickListener() {
-        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        val gallery = Intent()
+        gallery.type = "image/*"
+        gallery.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(gallery, PICK_BUSINESS_CODE)
     }
     private fun btnBrowseBankSlipOnClickListener() {
-        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+//        val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+//        startActivityForResult(gallery, PICK_BANK_CODE)
+        val gallery = Intent()
+        gallery.type = "image/*"
+        gallery.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(gallery, PICK_BANK_CODE)
     }
 
@@ -521,6 +527,5 @@ class PartnerBusinessInfoFragment(var registerPartnerActivity: RegisterPartnerAc
             registerPartnerActivity.saveInfoToFirebase()
         }
     }
-
 
 }

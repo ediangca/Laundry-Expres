@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -21,6 +22,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityDashboardPartnerBinding
@@ -29,6 +31,7 @@ import com.kodego.diangca.ebrahim.laundryexpres.databinding.NavHeaderPartnerBind
 import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import com.squareup.picasso.Picasso
+import java.io.File
 
 class DashboardPartnerActivity : AppCompatActivity() {
 
@@ -64,7 +67,7 @@ class DashboardPartnerActivity : AppCompatActivity() {
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(R.style.Theme_LaundryExpress) // change the theme/app background to pink
+        setTheme(R.style.Theme_LaundryExpress_Drawer) // change the theme/app background to pink
         binding = ActivityDashboardPartnerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -155,7 +158,7 @@ class DashboardPartnerActivity : AppCompatActivity() {
     }
 
     private fun retrieveUserDetails() {
-        val databaseRef = firebaseDatabase.reference.child("users")
+        var databaseRef = firebaseDatabase.reference.child("users")
             .child(firebaseAuth.currentUser!!.uid)
 
         databaseRef.get().addOnCompleteListener { dataSnapshot ->
@@ -174,12 +177,24 @@ class DashboardPartnerActivity : AppCompatActivity() {
         }
     }
 
+    private fun retrieveShop(){
+        val databaseRef = firebaseDatabase.reference.child("shop")
+            .child(firebaseAuth.currentUser!!.uid)
+
+        databaseRef.get().addOnCompleteListener { dataSnapshot ->
+            if (dataSnapshot.isSuccessful) {
+                shop = dataSnapshot.result.getValue(Shop::class.java)
+            } else {
+                Log.d("USER_DETAILS_NOT_FOUND", "USER NOT FOUND")
+            }
+        }
+    }
+
     @SuppressLint("SetTextI18n")
-    private fun setUserDetails(user: User?) {
+    fun setUserDetails(user: User?) {
         val navHeaderPartnerBinding: NavHeaderPartnerBinding =
             NavHeaderPartnerBinding.bind(binding.navView.getHeaderView(0))
 
-        val profileView: ImageView = navHeaderPartnerBinding.profilePicture
 /*
         val navHeader = navView.getHeaderView(0);
         val profileView: ImageView = navHeader.findViewById(R.id.profilePicture)
@@ -189,6 +204,9 @@ class DashboardPartnerActivity : AppCompatActivity() {
 */
 
         navHeaderPartnerBinding.apply {
+
+            val profileView: ImageView = profilePicture
+
             firebaseAuth.currentUser?.let {
                 for (profile in it.providerData) {
                     displayName = profile.displayName
@@ -202,13 +220,33 @@ class DashboardPartnerActivity : AppCompatActivity() {
 
                 if (profileImageUri!=null) {
                     Log.d("profilePic_profileData", "$profileImageUri")
-                    Picasso.with(this@DashboardPartnerActivity).load(profileImageUri)
+                    Picasso.with(applicationContext).load(profileImageUri)
                         .into(profileView);
                 } else {
                     if (user!!.photoUri!=null) {
+                        val filename = "profile_${user.uid}"
                         profileImageUri = Uri.parse(user!!.photoUri)
+                        val firebaseStorageReference =
+                            FirebaseStorage.getInstance().reference.child("profile/$filename")
+                        val localFile = File.createTempFile("temp_profile", ".jpg")
+                        firebaseStorageReference.getFile(localFile)
+                            .addOnSuccessListener {
+                                profileView.setImageBitmap(BitmapFactory.decodeFile(localFile.absolutePath))
+                                Log.d(
+                                    "USER_PROFILE_PIC",
+                                    "User Profile has been successfully load!"
+                                )
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(
+                                    applicationContext,
+                                    "User Profile failed to load! > ${it.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                Log.d("USER_PROFILE_PIC", "User Profile failed to load!")
+                            }
                         Log.d("profilePic_user", "$profileImageUri")
-                        Picasso.with(this@DashboardPartnerActivity).load(profileImageUri)
+                        Picasso.with(applicationContext).load(profileImageUri)
                             .into(profileView);
                     }
                 }
@@ -218,34 +256,30 @@ class DashboardPartnerActivity : AppCompatActivity() {
                     userDisplayName.text = "Hi ${user.firstname} ${user.lastname}, Good Day!"
                     textEmail.text = user.email
                     textMobileNo.text = user.phone
+
+                    retrieveShop()
                 }
             }
         }
     }
 
+    fun setShop(shop: Shop?) {
+        this.shop = shop
+    }
+
     @JvmName("getShop1")
-    fun getShop(): Shop {
+    fun getShop(): Shop? {
         return shop!!
+    }
+
+    fun setUser(user: User?) {
+        this.user = user
     }
 
     fun getUser(): User? {
         return user!!
     }
 
-    fun refreshUser(): User {
-        val databaseRef = firebaseDatabase.reference.child("users")
-            .child(firebaseAuth.currentUser!!.uid)
-
-        databaseRef.get().addOnCompleteListener { dataSnapshot ->
-            if (dataSnapshot.isSuccessful) {
-                this.user = dataSnapshot.result.getValue(User::class.java)!!
-                Log.d("USER_DETAILS_REFRESH", "USER FOUND")
-            } else {
-                Log.d("USER_DETAILS_NOT_FOUND", "USER NOT FOUND")
-            }
-        }
-        return this.user!!
-    }
 
     fun signOut() {
         val loadingBuilder = AlertDialog.Builder(this)
@@ -288,6 +322,8 @@ class DashboardPartnerActivity : AppCompatActivity() {
     fun dismissLoadingDialog() {
         loadingDialog.dismiss()
     }
+
+
 
 }
 

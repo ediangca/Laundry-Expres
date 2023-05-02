@@ -54,10 +54,11 @@
     <string name="nav_updates">Updates</string>
     <string name="nav_inbox">Inbox</string>
     <string name="nav_menu_account">Account</string>
-    <string name="nav_personal_info">Personal Info</string>
-    <string name="nav_business_info">Business Info</string>
+    <string name="nav_personal_info">Personal</string>
+    <string name="nav_business_info">Business</string>
     <string name="title_activity_partner_drawer">PartnerDrawerActivity</string>
     <string name="logout">Logout</string>
+    <string name="rate">Rates</string>
 
 
 </resources>

@@ -41,6 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Username/Email"
                 android:inputType="textEmailAddress"
                 android:textSize="12sp" />
@@ -59,6 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Password"
                 android:inputType="textPassword"
                 android:textSize="12sp" />
@@ -77,6 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Confirm Password"
                 android:inputType="textPassword"
                 android:textSize="12sp" />
@@ -111,6 +114,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Phone Number"
                 android:inputType="text|phone"
                 android:textSize="12sp" />
@@ -128,6 +132,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Firstname"
                 android:inputType="textCapWords"
                 android:textSize="12sp" />
@@ -145,6 +150,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Lastname"
                 android:inputType="textCapWords"
                 android:textSize="12sp" />
@@ -189,6 +195,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Street"
                 android:inputType="textCapWords"
                 android:textSize="12sp" />
@@ -206,6 +213,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*City"
                 android:inputType="textCapWords"
                 android:textSize="12sp" />
@@ -223,6 +231,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*State"
                 android:inputType="textCapWords"
                 android:textSize="12sp" />
@@ -240,6 +249,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Zip code"
                 android:inputType="textCapWords"
                 android:textSize="12sp" />
@@ -257,6 +267,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Country"
                 android:inputType="textCapWords"
                 android:textSize="12sp" />

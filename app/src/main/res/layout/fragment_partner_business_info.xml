@@ -42,6 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Business Name"
                 android:inputType="textCapWords"
                 android:textSize="12sp" />
@@ -60,6 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Legal Name"
                 android:inputType="textCapWords"
                 android:textSize="12sp" />
@@ -78,6 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Business email"
                 android:inputType="textCapWords"
                 android:textSize="12sp" />
@@ -98,6 +101,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Business Phone Number"
                 android:inputType="text|phone"
                 android:textSize="12sp" />
@@ -118,6 +122,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Business Address"
                 android:inputType="textMultiLine"
                 android:textSize="12sp" />
@@ -233,6 +238,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="5"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:editable="false"
                     android:hint="*Monday From"
                     android:inputType="text|number"
@@ -261,6 +267,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Monday To"
                     android:inputType="text|number"
                     android:textSize="12sp" />
@@ -294,6 +301,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Tuesday From"
                     android:inputType="text"
                     android:textSize="12sp" />
@@ -319,6 +327,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Tuesday To"
                     android:inputType="text"
                     android:textSize="12sp" />
@@ -353,6 +362,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Wednesday From"
                     android:inputType="text|number"
                     android:textSize="12sp" />
@@ -378,6 +388,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Wednesday To"
                     android:inputType="text|number"
                     android:textSize="12sp" />
@@ -413,6 +424,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Thursday From"
                     android:inputType="text|number"
                     android:textSize="12sp" />
@@ -439,6 +451,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Thursday To"
                     android:inputType="text|number"
                     android:textSize="12sp" />
@@ -473,6 +486,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Friday From"
                     android:inputType="text|number"
                     android:textSize="12sp" />
@@ -498,6 +512,7 @@
                     android:id="@+id/toFriday"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:textColor="@color/color_blue_1"
                     android:background="@color/white"
                     android:hint="*Friday To"
                     android:inputType="text|number"
@@ -532,6 +547,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Saturday From"
                     android:inputType="text|number"
                     android:textSize="12sp" />
@@ -557,6 +573,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Saturday To"
                     android:inputType="text|number"
                     android:textSize="12sp" />
@@ -590,6 +607,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Sunday From"
                     android:inputType="text|number"
                     android:textSize="12sp" />
@@ -615,6 +633,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Sunday To"
                     android:inputType="text|number"
                     android:textSize="12sp" />
@@ -648,6 +667,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Holiday From"
                     android:inputType="text|number"
                     android:textSize="12sp" />
@@ -673,6 +693,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
                     android:hint="*Holiday To"
                     android:inputType="text|number"
                     android:textSize="12sp" />
@@ -714,6 +735,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Bank Name"
                 android:inputType="textCapWords"
                 android:textSize="12sp" />
@@ -732,6 +754,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Bank Account Holder Name"
                 android:inputType="textCapWords"
                 android:textSize="12sp" />
@@ -752,6 +775,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*Bank Account Number"
                 android:inputType="number"
                 android:textSize="12sp" />
@@ -772,6 +796,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
+                android:textColor="@color/color_blue_1"
                 android:hint="*BIC"
                 android:inputType="number"
                 android:textSize="12sp" />

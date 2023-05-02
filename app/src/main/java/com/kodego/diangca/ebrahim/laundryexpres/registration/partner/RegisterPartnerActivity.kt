@@ -250,7 +250,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
             val businessSignatureUri = "E-Signature URI"
 
             if (businessName!!.isEmpty() || businessLegalName!!.isEmpty() || businessEmail!!.isEmpty() || !validEmail(businessEmail!!) || businessPhone!!.isEmpty() || businessPhone!!.length!=13 ||businessAddress!!.isEmpty() ||
-                isValidAddress(businessAddress!!) || businessBankName!!.isEmpty() || businessBankAccountName!!.isEmpty() || businessBankAccNo!!.isEmpty() || businessBankBIC!!.isEmpty()
+                !validEmail(businessAddress!!) || businessBankName!!.isEmpty() || businessBankAccountName!!.isEmpty() || businessBankAccNo!!.isEmpty() || businessBankBIC!!.isEmpty()
             ) {
                 if (businessName!!.isEmpty()) {
                     bindingBusinessInfo.businessName.error = "Please enter your Business Name."

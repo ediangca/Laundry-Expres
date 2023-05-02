@@ -7,21 +7,949 @@
     android:background="@android:color/transparent"
     tools:context=".dashboard.partner.DashboardBusinessFragment">
 
-
-    <TextView
-        android:id="@+id/userDisplayName"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/bannerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:background="@drawable/button_primary"
-        android:padding="20dp"
-        android:text="Business"
-        android:textAlignment="center"
-        android:textColor="@color/color_light_3"
-        android:textSize="16sp"
-        android:textStyle="bold"
+        android:layout_height="150dp"
+        android:background="@drawable/laundry_banner"
+        android:orientation="vertical"
+        android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profilePic"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_logo"
+            app:civ_border_color="@color/color_blue_1"
+            app:civ_border_width="5sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/profileFileName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PROFILE PICTURE"
+            android:textAlignment="center"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/titleView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_white_2"
+            android:fontFamily="sans-serif-black"
+            android:layout_marginTop="5dp"
+            android:text="LAUNDRY SHOP"
+            android:textAlignment="center"
+            android:textColor="@color/color_blue_1"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/subTitleView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_white_2"
+            android:fontFamily="sans-serif-black"
+            android:text="LAUNDRY SHOP"
+            android:padding="5dp"
+            android:textAlignment="center"
+            android:textColor="@color/color_blue_1"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bannerView"
+        app:layout_constraintVertical_bias="1.0">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/linear1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/box_style"
+            android:backgroundTint="@color/color_white_2"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/rounded_rectangle"
+                android:backgroundTint="@color/color_light_3"
+                android:fontFamily="sans-serif-smallcaps"
+                android:padding="10dp"
+                android:text="Business Information"
+                android:textAlignment="center"
+                android:textColor="@color/color_blue_1"
+                android:textSize="24sp"
+                android:textStyle="bold|italic" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/businessNameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/businessName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:hint="*Business Name"
+                    android:inputType="textCapWords"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/businessLegalNameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/businessLegalName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:hint="*Legal Name"
+                    android:inputType="textCapWords"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/businessEmailLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/businessEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:hint="*Business email"
+                    android:inputType="textCapWords"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/businessPhoneLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text"
+                app:helperText="Kindly input number without space, Follow format country code +XX then followed by your number. (+639123456789)"
+                app:helperTextTextColor="@android:color/holo_red_dark">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/businessPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:hint="*Business Phone Number"
+                    android:inputType="text|phone"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/businessAddressLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text"
+                app:helperText="Kindly input with this format (City, Province)"
+                app:helperTextTextColor="@android:color/holo_red_dark">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/businessAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:hint="*Business Address"
+                    android:inputType="textMultiLine"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_secondary"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/businessBIRNote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Please browse or take a picture of your BIR 2303 / Certificate of Registration ."
+                    android:textAlignment="center"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="12sp"
+                    android:textStyle="bold|italic"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/businessBIRImageUri"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="Filename"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/businessBIRNote" />
+
+                <ImageView
+                    android:id="@+id/businessBIRImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toBottomOf="@id/businessBIRImageUri" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnCaptureBusinessBIR"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="Capture"
+                    android:textColor="@color/color_blue_1"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/btnBrowseBusinessBIR"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/businessBIRImage" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnBrowseBusinessBIR"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="Browse"
+                    android:textColor="@color/color_blue_1"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/btnCaptureBusinessBIR"
+                    app:layout_constraintTop_toBottomOf="@id/businessBIRImage" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/rounded_rectangle"
+                android:backgroundTint="@color/color_light_3"
+                android:fontFamily="sans-serif-smallcaps"
+                android:padding="10dp"
+                android:text="Business Hours"
+                android:textAlignment="center"
+                android:textColor="@color/color_blue_1"
+                android:textSize="24sp"
+                android:textStyle="bold|italic" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Leave it empty if Closed."
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="12sp"
+                android:textStyle="bold|italic" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="12">
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/fromMonday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="5"
+                        android:background="@color/white"
+                        android:editable="false"
+                        android:hint="*Monday From"
+                        android:inputType="text|number"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp"
+                        tools:ignore="Deprecated" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/fromMondayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/toMonday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Monday To"
+                        android:inputType="text|number"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/toMondayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="12">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/fromTuesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Tuesday From"
+                        android:inputType="text"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/fromTuesdayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/toTuesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Tuesday To"
+                        android:inputType="text"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/toTuesdayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="12">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/fromWednesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Wednesday From"
+                        android:inputType="text|number"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/fromWednesdayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/toWednesday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Wednesday To"
+                        android:inputType="text|number"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/toWednesdayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="12">
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/fromThursday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Thursday From"
+                        android:inputType="text|number"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/fromThursdayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/toThursday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Thursday To"
+                        android:inputType="text|number"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/toThursdayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="12">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/fromFriday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Friday From"
+                        android:inputType="text|number"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/fromFridayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/toFriday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Friday To"
+                        android:inputType="text|number"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/toFridayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="12">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/fromSaturday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Saturday From"
+                        android:inputType="text|number"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/fromSaturdayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/toSaturday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Saturday To"
+                        android:inputType="text|number"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/toSaturdayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="12">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/fromSunday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Sunday From"
+                        android:inputType="text|number"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/fromSundayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/toSunday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Sunday To"
+                        android:inputType="text|number"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/toSundayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="12">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/fromHoliday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Holiday From"
+                        android:inputType="text|number"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/fromHolidayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="5"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/toHoliday"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:hint="*Holiday To"
+                        android:inputType="text|number"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="12sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/toHolidayBut"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/vector_time" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/rounded_rectangle"
+                android:backgroundTint="@color/color_light_3"
+                android:fontFamily="sans-serif-smallcaps"
+                android:padding="10dp"
+                android:text="Bank Information"
+                android:textAlignment="center"
+                android:textColor="@color/color_blue_1"
+                android:textSize="24sp"
+                android:textStyle="bold|italic" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/bankNameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/bankName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:hint="*Bank Name"
+                    android:inputType="textCapWords"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/bankAccNameHolderLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/bankAccNameHolder"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:hint="*Bank Account Holder Name"
+                    android:inputType="textCapWords"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/bankNoAccLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text"
+                app:helperText="Kindly input number without space, 10-16 digits."
+                app:helperTextTextColor="@android:color/holo_red_dark">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/bankAccNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:hint="*Bank Account Number"
+                    android:inputType="number"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/bankBICLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text"
+                app:helperText="Swift Code to be entered, Kindly input number without space."
+                app:helperTextTextColor="@android:color/holo_red_dark">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/bankBIC"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:hint="*BIC"
+                    android:inputType="number"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_secondary"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/bankSlipNote"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Please browse or take a picture of your proof Slip."
+                    android:textAlignment="center"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:textSize="12sp"
+                    android:textStyle="bold|italic"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/bankSlipImageUri"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="Filename"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toBottomOf="@id/bankSlipNote" />
+
+                <ImageView
+                    android:id="@+id/bankSlipImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toBottomOf="@id/bankSlipImageUri" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnCaptureBankSlip"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="Capture"
+                    android:textColor="@color/color_blue_1"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/btnBrowseBankSlip"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/bankSlipImage" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnBrowseBankSlip"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="Browse"
+                    android:textColor="@color/color_blue_1"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/btnCaptureBankSlip"
+                    app:layout_constraintTop_toBottomOf="@id/bankSlipImage" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSubmit"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:background="@drawable/button_primary"
+                android:text="SUBMIT"
+                android:textColor="@color/color_light_3"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ScrollView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

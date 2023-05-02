@@ -75,6 +75,22 @@ class DashboardCustomerActivity : AppCompatActivity() {
         }
     }
 
+    @JvmName("getShop1")
+    fun setShop(shop: Shop) {
+        this.shop = shop
+    }
+    @JvmName("getShop1")
+    fun getShop(): Shop {
+        return shop!!
+    }
+
+    fun setUser(user: User?){
+        this.user = user
+    }
+    fun getUser(): User? {
+        return user!!
+    }
+
     private fun retrieveUserDetails() {
         val databaseRef = firebaseDatabase.reference.child("users")
             .child(firebaseAuth.currentUser!!.uid)
@@ -101,20 +117,6 @@ class DashboardCustomerActivity : AppCompatActivity() {
         }
     }
 
-    fun refreshUser(): User{
-        val databaseRef = firebaseDatabase.reference.child("users")
-            .child(firebaseAuth.currentUser!!.uid)
-
-        databaseRef.get().addOnCompleteListener{dataSnapshot ->
-            if (dataSnapshot.isSuccessful) {
-                this.user = dataSnapshot.result.getValue(User::class.java)!!
-                Log.d("USER_DETAILS_REFRESH", "USER FOUND")
-            }else{
-                Log.d("USER_DETAILS_NOT_FOUND", "USER NOT FOUND")
-            }
-        }
-        return this.user!!
-    }
 
     private fun navMenuOnItemSelectedListener(it: MenuItem?): Boolean {
         if (it==null) {
@@ -227,15 +229,6 @@ class DashboardCustomerActivity : AppCompatActivity() {
         var loginIntent = Intent(this, LoginActivity::class.java)
         startActivity(Intent(loginIntent))
         finish()
-    }
-
-    @JvmName("getShop1")
-    fun getShop(): Shop {
-        return shop!!
-    }
-
-    fun getUser(): User? {
-        return user!!
     }
 
     fun showLoadingDialog() {

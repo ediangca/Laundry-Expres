@@ -40,7 +40,7 @@
             android:theme="@style/Theme.LaundryExpress.NoActionBar" /> <!-- DASHBOARD -->
         <activity
             android:name=".dashboard.partner.DashboardPartnerActivity"
-            android:theme="@style/Theme.LaundryExpress"
+            android:theme="@style/Theme.LaundryExpress.Drawer"
             android:exported="false"
             tools:ignore="LockedOrientationActivity"/>
         <activity

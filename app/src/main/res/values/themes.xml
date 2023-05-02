@@ -11,9 +11,11 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:iconTint" tools:ignore="NewApi">@color/color_blue_1</item>
+        <!-- Customize your theme here. -->
         <item name="android:titleTextColor">@color/color_white_1</item>
         <item name="android:actionMenuTextColor">@color/color_light_3</item>
-        <!-- Customize your theme here. -->
+        <item name="android:textColorPrimary">@color/color_blue_1</item>
         <item name="android:windowSplashScreenBackground" tools:ignore="NewApi">
             @android:color/transparent
         </item>
@@ -40,17 +42,30 @@
 
     </style>
 
+
     //Theme for Navigation Drawer
-    <style name="coolBlueNav" parent="Theme.MaterialComponents.Light">
-        <item name="colorPrimary">@color/white</item>
-        <item name="colorPrimaryVariant">@color/black</item>
-        <item name="colorOnPrimary">@color/black</item>
+    <style name="Theme.LaundryExpress.Drawer" parent="Theme.MaterialComponents.DayNight">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/color_blue_1</item>
+        <item name="colorPrimaryVariant">@color/color_light_3</item>
+        <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorSecondary">@color/color_blue_1</item>
+        <item name="colorSecondaryVariant">@color/color_blue_2</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetAPI = "l">@color/color_blue_1</item>
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:titleTextColor">@color/color_white_1</item>
+        <item name="android:actionMenuTextColor">@color/color_light_3</item>
+        <!-- Customize your theme here. -->
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:windowSplashScreenBackground" tools:ignore="NewApi">
+            @android:color/transparent
+        </item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:ignore="NewApi">
+            @drawable/icon_logo
+        </item>
+        <item name="android:windowSplashScreenAnimationDuration" tools:ignore="NewApi">1000</item>
     </style>
 
     <style name="Theme.LaundryExpres.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

@@ -202,6 +202,7 @@ class RegisterCustomerActivity : AppCompatActivity() {
                     myBitmap.compress(Bitmap.CompressFormat.PNG, 100,stream)
                     val bytes = stream.toByteArray()
                     profileImageBytes = Base64.encodeToString(bytes, Base64.DEFAULT)
+                    inputStream!!.close()
 
                     val profileView: ImageView = binding.profilePic
                     loadBitmapByPicasso(this, myBitmap, profileView)
