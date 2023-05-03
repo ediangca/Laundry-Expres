@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profilePic"
+            android:id="@+id/shopLogo"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_gravity="center"
@@ -70,7 +70,6 @@
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bannerView"
         app:layout_constraintVertical_bias="1.0">
@@ -111,6 +110,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:enabled="false"
                     android:hint="*Business Name"
                     android:inputType="textCapWords"
                     android:textColor="@color/color_blue_1"
@@ -130,6 +130,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:enabled="false"
                     android:hint="*Legal Name"
                     android:inputType="textCapWords"
                     android:textColor="@color/color_blue_1"
@@ -149,6 +150,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
+                    android:enabled="false"
                     android:hint="*Business email"
                     android:inputType="textCapWords"
                     android:textColor="@color/color_blue_1"

@@ -457,7 +457,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
         }
     }
 
-    fun showProgressBar(visible: Boolean) {
+    private fun showProgressBar(visible: Boolean) {
         if (visible) {
             binding.progressBar.visibility = View.VISIBLE
         } else {

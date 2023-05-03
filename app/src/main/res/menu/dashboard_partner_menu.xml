@@ -31,14 +31,14 @@
                 android:icon="@drawable/vector_laundry"
                 android:title="@string/nav_business_info" />
             <item
-                android:id="@+id/navServices"
+                android:id="@+id/navPartnerRates"
                 android:icon="@drawable/vector_price"
                 android:title="@string/rate" />
         </menu>
     </item>
 
     <item
-        android:id="@+id/navLogout"
+        android:id="@+id/navPartnerLogout"
         android:icon="@drawable/vector_logout"
         android:title="@string/logout" />
 

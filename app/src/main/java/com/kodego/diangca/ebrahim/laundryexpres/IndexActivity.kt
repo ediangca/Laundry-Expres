@@ -91,7 +91,9 @@ class IndexActivity : AppCompatActivity() {
                         user = dataSnapshot.result.getValue(User::class.java)
                         if (user!=null) {
                             userType = user!!.type!!
-                            val isVerified = user!!.isVerified!!
+
+                            val isVerified = user!!.verified!=null
+
                             if ((userType!="Customer") && !isVerified) {
                                 Log.d("SIGN_OUT_USER", "UNVERIFIED_ACCOUNT")
                                 firebaseAuth.signOut()

@@ -244,7 +244,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun btnRegisterOnClickListener() {
         userBuilder = AlertDialog.Builder(this)
-        userBuilder.setCancelable(false)
+//        userBuilder.setCancelable(false)
         userBuilder.setView(getUserTypeView("Register"))
         userDialog = userBuilder.create()
 

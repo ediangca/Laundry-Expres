@@ -44,6 +44,7 @@ import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.OutputStream
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -94,13 +95,14 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
 
     private fun initComponent() {
 
-        user = dashboardCustomer.getUser()
         val bundle = arguments
         if (bundle!=null) {
             user = bundle.getParcelable<User>("user")!!
             Log.d("ON_RESUME_FETCH_USER", user.toString())
-            setUserDetails(user)
+        }else{
+            user = dashboardCustomer.getUser()
         }
+        setUserDetails(user)
 
         binding.btnLogout.setOnClickListener {
             btnLogoutOnClickListener()
@@ -308,6 +310,7 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun btnAccSubmitOnClickListener() {
         val mobileNo = binding.phoneNo.text.toString()
         val firstName = binding.firstName.text.toString()
@@ -385,7 +388,8 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
             mobileNo,
             profileImageUri.toString(),
             false,
-
+            this.user!!.datetimeCreated,
+            SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
             )
         databaseRef.setValue(user).addOnCompleteListener(dashboardCustomer) { task ->
             if (task.isSuccessful) {

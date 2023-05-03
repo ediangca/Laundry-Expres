@@ -28,6 +28,7 @@ import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityDashboardPartnerBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.NavHeaderPartnerBinding
+import com.kodego.diangca.ebrahim.laundryexpres.model.Rates
 import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import com.squareup.picasso.Picasso
@@ -54,12 +55,14 @@ class DashboardPartnerActivity : AppCompatActivity() {
     private lateinit var dashboardInboxFragment: DashboardInboxFragment
     private lateinit var dashboardAccountFragment: DashboardAccountFragment
     private lateinit var dashboardBusinessFragment: DashboardBusinessFragment
+    private lateinit var dashboardRatesFragment: DashboardRatesFragment
 
     private lateinit var loadingBuilder: AlertDialog.Builder
     private lateinit var loadingDialog: Dialog
 
     private var user: User? = null
     private var shop: Shop? = null
+    private var rates: Rates? = null
     private var bundle = Bundle()
     private var displayName: String? = null
     private var profileImageUri: Uri? = null
@@ -97,6 +100,7 @@ class DashboardPartnerActivity : AppCompatActivity() {
         dashboardInboxFragment = DashboardInboxFragment(this)
         dashboardAccountFragment = DashboardAccountFragment(this)
         dashboardBusinessFragment = DashboardBusinessFragment(this)
+        dashboardRatesFragment = DashboardRatesFragment(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -123,7 +127,6 @@ class DashboardPartnerActivity : AppCompatActivity() {
         when (it.itemId) {
             R.id.navPartnerHome -> {
                 mainFrame.replace(R.id.fragmentPartnerDashboard, dashboardHomeFragment);
-
             }
             R.id.navPartnerOrder -> {
                 mainFrame.replace(R.id.fragmentPartnerDashboard, dashboardOrdersFragment);
@@ -137,22 +140,29 @@ class DashboardPartnerActivity : AppCompatActivity() {
             R.id.navPartnerAccountPersonal -> {
                 mainFrame.replace(R.id.fragmentPartnerDashboard, dashboardAccountFragment);
             }
-            R.id.navLogout -> {
+            R.id.navPartnerAccountBusiness -> {
+                mainFrame.replace(R.id.fragmentPartnerDashboard, dashboardBusinessFragment);
+            }
+            R.id.navPartnerRates -> {
+                mainFrame.replace(R.id.fragmentPartnerDashboard, dashboardRatesFragment);
+            }
+            R.id.navPartnerLogout -> {
                 signOut()
             }
             else -> {
-                mainFrame.replace(R.id.fragmentPartnerDashboard, dashboardBusinessFragment);
+                mainFrame.replace(R.id.fragmentPartnerDashboard, dashboardHomeFragment);
             }
 
         }
-        mainFrame.addToBackStack(null)
-        mainFrame.commit();
-
 
         // Set action bar title
         title = it.title
         // Close the navigation drawer
         drawerLayout.closeDrawers()
+
+        mainFrame.addToBackStack(null)
+        mainFrame.commit();
+
 
         return true
     }
@@ -185,7 +195,19 @@ class DashboardPartnerActivity : AppCompatActivity() {
             if (dataSnapshot.isSuccessful) {
                 shop = dataSnapshot.result.getValue(Shop::class.java)
             } else {
-                Log.d("USER_DETAILS_NOT_FOUND", "USER NOT FOUND")
+                Log.d("SHOP_DETAILS_NOT_FOUND", "SHOP NOT FOUND")
+            }
+        }
+    }
+    private fun retrieveRates(){
+        val databaseRef = firebaseDatabase.reference.child("rates")
+            .child(firebaseAuth.currentUser!!.uid)
+
+        databaseRef.get().addOnCompleteListener { dataSnapshot ->
+            if (dataSnapshot.isSuccessful) {
+                rates = dataSnapshot.result.getValue(Rates::class.java)
+            } else {
+                Log.d("RATES_DETAILS_NOT_FOUND", "RATES NOT FOUND")
             }
         }
     }
@@ -258,6 +280,7 @@ class DashboardPartnerActivity : AppCompatActivity() {
                     textMobileNo.text = user.phone
 
                     retrieveShop()
+                    retrieveRates()
                 }
             }
         }
@@ -270,6 +293,12 @@ class DashboardPartnerActivity : AppCompatActivity() {
     @JvmName("getShop1")
     fun getShop(): Shop? {
         return shop!!
+    }
+    fun setRates(rates: Rates) {
+        this.rates = rates
+    }
+    fun getRates(): Rates? {
+        return rates
     }
 
     fun setUser(user: User?) {

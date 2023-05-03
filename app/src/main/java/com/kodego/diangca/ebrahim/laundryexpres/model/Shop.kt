@@ -5,7 +5,7 @@ import android.os.Parcelable
 import android.util.Log
 
 data class Shop(
-    var uid: String? = null,
+    val uid: String? = null,
     var businessLogo:String? = null,
     var businessName: String? = null,
     var businessLegalName: String? = null,

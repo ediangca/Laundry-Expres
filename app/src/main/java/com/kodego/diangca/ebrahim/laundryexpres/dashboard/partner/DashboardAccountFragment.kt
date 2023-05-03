@@ -42,6 +42,8 @@ import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.OutputStream
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) : Fragment() {
@@ -96,6 +98,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
         }else{
             user = dashboardPartner.getUser()
         }
+        setUserDetails(user)
 
         binding.btnLogout.setOnClickListener {
             btnLogoutOnClickListener()
@@ -110,7 +113,6 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
             btnAccSubmitOnClickListener()
         }
 
-        setUserDetails(user)
     }
 
     private fun showOptionProfile() {
@@ -387,6 +389,8 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
                 mobileNo,
                 profileImageUri.toString(),
                 isVerified,
+                this.user!!.datetimeCreated,
+                SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
             )
             databaseRef.setValue(this.user).addOnCompleteListener(dashboardPartner) { task ->
                 if (task.isSuccessful) {
@@ -465,7 +469,8 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
     }
 
     private fun setUserDetails(user: User?) {
-        dashboardPartner.showLoadingDialog()
+
+
         firebaseAuth.currentUser?.let {
             for (profile in it.providerData) {
                 displayName = profile.displayName
@@ -520,7 +525,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
 
             if (user!=null) {
                 userType = user.type
-                isVerified = user.isVerified
+                val isVerified = user.verified!=null
                 binding.apply {
                     userAddress.text = user.address
                     email.setText(user.email)
@@ -551,8 +556,8 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
                     }
                 }
             }
-            dashboardPartner.dismissLoadingDialog()
         }
+
     }
 
 }

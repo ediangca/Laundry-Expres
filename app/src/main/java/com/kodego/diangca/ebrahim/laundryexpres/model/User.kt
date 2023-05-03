@@ -9,20 +9,20 @@ import java.util.*
 
 @SuppressLint("SimpleDateFormat")
 data class User(
-    var uid: String? = null,
-    var email: String? = null,
-    var type: String? = null,
-    var firstname: String? = null,
-    var lastname: String? = null,
-    var sex: String? = null,
-    var address: String? = null,
-    var city: String? = null,
-    var state: String? = null,
-    var zipCode: String? = null,
-    var country: String? = null,
-    var phone: String? = null,
+    val uid: String? = null,
+    val email: String? = null,
+    val type: String? = null,
+    val firstname: String? = null,
+    val lastname: String? = null,
+    val sex: String? = null,
+    val address: String? = null,
+    val city: String? = null,
+    val state: String? = null,
+    val zipCode: String? = null,
+    val country: String? = null,
+    val phone: String? = null,
     val photoUri: String? = null,
-    var isVerified: Boolean? = null,
+    val verified: Boolean? = null,
     val datetimeCreated: String? = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date()),
     val datetimeUpdated: String? = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date()),
 ): Parcelable {
@@ -66,7 +66,7 @@ data class User(
         parcel.writeString(country)
         parcel.writeString(phone)
         parcel.writeString(photoUri)
-        parcel.writeValue(isVerified)
+        parcel.writeValue(verified)
         parcel.writeString(datetimeCreated)
         parcel.writeString(datetimeUpdated)
     }
@@ -76,7 +76,7 @@ data class User(
     }
 
     override fun toString(): String {
-        return "User(uid=$uid, email=$email, type=$type, firstname=$firstname, lastname=$lastname, sex=$sex, address=$address, city=$city, state=$state, zipCode=$zipCode, country=$country, phone=$phone, photoUrl=$photoUri, isVerified=$isVerified, datetimeCreated=$datetimeCreated, datetimeUpdated=$datetimeUpdated)"
+        return "User(uid=$uid, email=$email, type=$type, firstname=$firstname, lastname=$lastname, sex=$sex, address=$address, city=$city, state=$state, zipCode=$zipCode, country=$country, phone=$phone, photoUrl=$photoUri, isVerified=$verified, datetimeCreated=$datetimeCreated, datetimeUpdated=$datetimeUpdated)"
     }
 
     companion object CREATOR : Parcelable.Creator<User> {

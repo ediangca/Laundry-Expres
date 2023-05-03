@@ -72,9 +72,9 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
     private var businessBIRUri: Uri? = null
     private var bankImageUri: Uri? = null
 
-    var businessImageBytes:String? = null
-    var businessBIRBytes:String? = null
-    var bankImageBytes:String? = null
+    var businessImageBytes: String? = null
+    var businessBIRBytes: String? = null
+    var bankImageBytes: String? = null
 
     private val PICK_BUSINESS_CODE = 100
     private val CAMERA_BUSINESS_CODE = 1
@@ -138,17 +138,16 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
     private fun initComponent() {
 
 
-
         val bundle = arguments
         if (bundle!=null) {
             shop = bundle.getParcelable<Shop>("shop")!!
             Log.d("ON_RESUME_FETCH_USER", shop.toString())
-        }else{
+        } else {
             shop = dashboardPartner.getShop()
         }
         setShopDetails(shop)
 
-        binding.profilePic.setOnClickListener {
+        binding.shopLogo.setOnClickListener {
             showOptionProfile()
         }
         binding.fromMonday.setOnClickListener {
@@ -278,76 +277,118 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
 
     private fun setShopDetails(shop: Shop?) {
         if (shop!=null) {
-            binding.apply {
+            val businessImageFilename = "business_${shop.uid}"
+            val businessBIRFilename = "BIR_Cert_${shop.uid}"
+            val businessBankFilename = "bank_proof_${shop.uid}"
 
-                if(shop.businessLogo!=null) {
+            binding.apply {
+                if (shop.businessLogo!=null) {
                     businessImageUri = Uri.parse(shop.businessLogo)
+                    val businessLogo: ImageView = binding.shopLogo
+                    retrieveImageFromFirebaseStorage(businessImageFilename, businessImageUri, businessLogo)
                 }
+                titleView.text = shop.businessName
+                subTitleView.text = shop.businessEmail
+
                 businessName.setText(shop.businessName)
                 businessLegalName.setText(shop.businessLegalName)
                 businessEmail.setText(shop.businessEmail)
                 businessPhone.setText(shop.businessPhoneNumber)
                 businessAddress.setText(shop.businessAddress)
-                if(shop.businessBIRImage!=null){
-                    businessBIRUri =  Uri.parse(shop.businessBIRImage)
+                if (shop.businessBIRImage!=null) {
+                    businessBIRUri = Uri.parse(shop.businessBIRImage)
+                    retrieveImageFromFirebaseStorage(businessBIRFilename, businessBIRUri, binding.businessBIRImage)
                 }
-                if(!shop.mondayFrom.equals("Closed")){
+                if (!shop.mondayFrom.equals("Closed")) {
                     fromMonday.setText(shop.mondayFrom)
                 }
-                if(!shop.mondayTo.equals("Closed")){
+                if (!shop.mondayTo.equals("Closed")) {
                     toMonday.setText(shop.mondayTo)
                 }
-                if(!shop.tuesdayFrom.equals("Closed")){
+                if (!shop.tuesdayFrom.equals("Closed")) {
                     fromTuesday.setText(shop.tuesdayFrom)
                 }
-                if(!shop.tuesdayTo.equals("Closed")){
+                if (!shop.tuesdayTo.equals("Closed")) {
                     toTuesday.setText(shop.tuesdayTo)
                 }
-                if(!shop.wednesdayFrom.equals("Closed")){
+                if (!shop.wednesdayFrom.equals("Closed")) {
                     fromWednesday.setText(shop.wednesdayFrom)
                 }
-                if(!shop.wednesdayTo.equals("Closed")){
+                if (!shop.wednesdayTo.equals("Closed")) {
                     toWednesday.setText(shop.wednesdayTo)
                 }
-                if(!shop.thursdayFrom.equals("Closed")){
+                if (!shop.thursdayFrom.equals("Closed")) {
                     fromThursday.setText(shop.thursdayFrom)
                 }
-                if(!shop.thursdayTo.equals("Closed")){
+                if (!shop.thursdayTo.equals("Closed")) {
                     toThursday.setText(shop.thursdayTo)
                 }
-                if(!shop.fridayFrom.equals("Closed")){
+                if (!shop.fridayFrom.equals("Closed")) {
                     fromFriday.setText(shop.fridayFrom)
                 }
-                if(!shop.fridayTo.equals("Closed")){
+                if (!shop.fridayTo.equals("Closed")) {
                     toFriday.setText(shop.fridayTo)
                 }
-                if(!shop.saturdayFrom.equals("Closed")){
+                if (!shop.saturdayFrom.equals("Closed")) {
                     fromSaturday.setText(shop.saturdayFrom)
                 }
-                if(!shop.saturdayTo.equals("Closed")){
+                if (!shop.saturdayTo.equals("Closed")) {
                     toSaturday.setText(shop.saturdayTo)
                 }
-                if(!shop.sundayFrom.equals("Closed")){
+                if (!shop.sundayFrom.equals("Closed")) {
                     fromSunday.setText(shop.sundayFrom)
                 }
-                if(!shop.sundayTo.equals("Closed")){
+                if (!shop.sundayTo.equals("Closed")) {
                     toSunday.setText(shop.sundayTo)
                 }
-                if(!shop.holidayFrom.equals("Closed")){
+                if (!shop.holidayFrom.equals("Closed")) {
                     fromHoliday.setText(shop.holidayFrom)
                 }
-                if(!shop.holidayTo.equals("Closed")){
+                if (!shop.holidayTo.equals("Closed")) {
                     toHoliday.setText(shop.holidayTo)
                 }
                 bankName.setText(shop.bankName)
                 bankAccNameHolder.setText(shop.bankAccountName)
                 bankAccNo.setText(shop.bankAccountNumber)
                 bankBIC.setText(shop.bankAccountBIC)
-                if(shop.bankProofImage!=null){
+                if (shop.bankProofImage!=null) {
                     bankImageUri = Uri.parse(shop.bankProofImage)
+                    retrieveImageFromFirebaseStorage(businessBankFilename, bankImageUri, binding.bankSlipImage)
                 }
             }
         }
+
+    }
+
+    private fun retrieveImageFromFirebaseStorage(
+        filename: String,
+        imageUri: Uri?,
+        imageView: ImageView,
+    ) {
+        val firebaseStorageReference =
+            FirebaseStorage.getInstance().reference.child("shop/${shop!!.uid}/$filename")
+        Log.d("PROFILE_FILENAME", filename)
+        Log.d("PROFILE_URI", imageUri!!.toString())
+        val localFile = File.createTempFile("temp_$filename", ".jpg")
+        firebaseStorageReference.getFile(localFile)
+            .addOnSuccessListener {
+                imageView.setImageBitmap(BitmapFactory.decodeFile(localFile.absolutePath))
+                Log.d(
+                    "IMAGE_$filename",
+                    "$filename has been successfully load!"
+                )
+            }
+            .addOnFailureListener {
+                Toast.makeText(
+                    context,
+                    "IMAGE_$filename > ${it.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Log.d("IMAGE_$filename", "$filename failed to load!")
+            }
+        Log.d("IMAGE_$filename", "$imageUri")
+        Picasso.with(context).load(imageUri)
+            .into(imageView);
     }
 
     private fun showOptionProfile() {
@@ -372,19 +413,24 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
         }
         profileOptionDialog.show()
     }
+
     private fun btnCaptureProfileOnClickListener() {
         cameraCheckPermission(CAMERA_BUSINESS_CODE)
     }
+
     private fun btnCaptureBusinessBIROnClickListener() {
         cameraCheckPermission(CAMERA_BIR_CODE)
     }
+
     private fun btnCaptureBankSlipOnClickListener() {
         cameraCheckPermission(CAMERA_BANK_CODE)
     }
-    private fun camera(code : Int) {
+
+    private fun camera(code: Int) {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         startActivityForResult(intent, code)
     }
+
     private fun btnBrowseProfileOnClickListener() {
         val gallery = Intent()
         gallery.type = "image/*"
@@ -398,6 +444,7 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
         gallery.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(gallery, PICK_BIR_CODE)
     }
+
     private fun btnBrowseBankSlipOnClickListener() {
         val gallery = Intent()
         gallery.type = "image/*"
@@ -411,7 +458,8 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
         Dexter.withContext(context)
             .withPermissions(
                 android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                android.Manifest.permission.CAMERA).withListener(
+                android.Manifest.permission.CAMERA
+            ).withListener(
 
                 object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
@@ -419,7 +467,7 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
 
                             if (report.areAllPermissionsGranted()) {
                                 camera(code)
-                            }else{
+                            } else {
                                 toast(it.toString())
                             }
 
@@ -439,8 +487,10 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
 
     private fun showRotationalDialogForPermission() {
         AlertDialog.Builder(context)
-            .setMessage("It looks like you have turned off permissions"
-                    + "required for this feature. It can be enable under App settings!!!")
+            .setMessage(
+                "It looks like you have turned off permissions"
+                        + "required for this feature. It can be enable under App settings!!!"
+            )
 
             .setPositiveButton("Go TO SETTINGS") { _, _ ->
 
@@ -480,33 +530,36 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
                     binding.profileFileName.text = getFileName(businessImageUri, dashboardPartner)
                     Log.d("IMAGE_URI", "BUSINESS PROFILE: $businessImageUri")
 
-                    val inputStream = dashboardPartner.contentResolver.openInputStream(businessImageUri!!)
+                    val inputStream =
+                        dashboardPartner.contentResolver.openInputStream(businessImageUri!!)
                     val myBitmap = BitmapFactory.decodeStream(inputStream)
                     val stream = ByteArrayOutputStream()
-                    myBitmap.compress(Bitmap.CompressFormat.PNG, 100,stream)
+                    myBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
                     val bytes = stream.toByteArray()
                     businessImageBytes = Base64.encodeToString(bytes, Base64.DEFAULT)
                     inputStream!!.close()
 
-                    val imageView: ImageView = binding.profilePic
+                    val imageView: ImageView = binding.shopLogo
                     businessImageUri = loadBitmapByPicasso(dashboardPartner, myBitmap, imageView)
 
                 }
 
                 CAMERA_BUSINESS_CODE -> {
                     try {
-                        if(data != null) {
+                        if (data!=null) {
                             val myBitmap = data.extras?.get("data") as Bitmap
 
                             val byteArrayOutputStream = ByteArrayOutputStream()
-                            myBitmap.compress(Bitmap.CompressFormat.PNG, 100,byteArrayOutputStream)
+                            myBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
                             val bytes = byteArrayOutputStream.toByteArray()
                             businessImageBytes = Base64.encodeToString(bytes, Base64.DEFAULT)
                             Log.d("IMAGE_URI", "BUSINESS PROFILE: $businessImageUri")
 
-                            val imageView: ImageView = binding.profilePic
-                            businessImageUri = loadBitmapByPicasso(dashboardPartner, myBitmap, imageView)                       }
-                    }catch (e: Exception){
+                            val imageView: ImageView = binding.shopLogo
+                            businessImageUri =
+                                loadBitmapByPicasso(dashboardPartner, myBitmap, imageView)
+                        }
+                    } catch (e: Exception) {
                         Log.d("CAMERA", e.toString())
                         e.printStackTrace()
                     }
@@ -517,10 +570,11 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
                     binding.businessBIRImageUri.text = getFileName(businessBIRUri, dashboardPartner)
                     Log.d("IMAGE_URI", "BUSINESS BIR: $businessBIRUri")
 
-                    val inputStream = dashboardPartner.contentResolver.openInputStream(businessBIRUri!!)
+                    val inputStream =
+                        dashboardPartner.contentResolver.openInputStream(businessBIRUri!!)
                     val myBitmap = BitmapFactory.decodeStream(inputStream)
                     val stream = ByteArrayOutputStream()
-                    myBitmap.compress(Bitmap.CompressFormat.PNG, 100,stream)
+                    myBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
                     val bytes = stream.toByteArray()
                     businessBIRBytes = Base64.encodeToString(bytes, Base64.DEFAULT)
                     inputStream!!.close()
@@ -531,17 +585,19 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
 
                 CAMERA_BIR_CODE -> {
                     try {
-                        if(data != null) {
+                        if (data!=null) {
                             val myBitmap = data.extras?.get("data") as Bitmap
 
                             val byteArrayOutputStream = ByteArrayOutputStream()
-                            myBitmap.compress(Bitmap.CompressFormat.PNG, 100,byteArrayOutputStream)
+                            myBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
                             val bytes = byteArrayOutputStream.toByteArray()
                             businessBIRBytes = Base64.encodeToString(bytes, Base64.DEFAULT)
 
                             val imageView: ImageView = binding.businessBIRImage
-                            businessBIRUri = loadBitmapByPicasso(dashboardPartner, myBitmap, imageView)                       }
-                    }catch (e: Exception){
+                            businessBIRUri =
+                                loadBitmapByPicasso(dashboardPartner, myBitmap, imageView)
+                        }
+                    } catch (e: Exception) {
                         Log.d("CAMERA", e.toString())
                         e.printStackTrace()
                     }
@@ -553,10 +609,11 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
                     binding.bankSlipImageUri.text = getFileName(bankImageUri, dashboardPartner)
                     Log.d("IMAGE_URI", "BANK SLIP: $bankImageUri")
 
-                    val inputStream = dashboardPartner.contentResolver.openInputStream(bankImageUri!!)
+                    val inputStream =
+                        dashboardPartner.contentResolver.openInputStream(bankImageUri!!)
                     val myBitmap = BitmapFactory.decodeStream(inputStream)
                     val stream = ByteArrayOutputStream()
-                    myBitmap.compress(Bitmap.CompressFormat.PNG, 100,stream)
+                    myBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
                     val bytes = stream.toByteArray()
                     bankImageBytes = Base64.encodeToString(bytes, Base64.DEFAULT)
                     inputStream!!.close()
@@ -568,12 +625,13 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
 
                 CAMERA_BANK_CODE -> {
                     try {
-                        if(data != null) {
+                        if (data!=null) {
                             //we are using coroutine image loader (coil)
                             val myBitmap = data.extras?.get("data") as Bitmap
 
                             val byteArrayOutputStream = ByteArrayOutputStream()
-                            myBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream
+                            myBitmap.compress(
+                                Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream
                             )
                             val bytes = byteArrayOutputStream.toByteArray()
                             bankImageBytes = Base64.encodeToString(bytes, Base64.DEFAULT)
@@ -581,7 +639,7 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
                             val bankView: ImageView = binding.bankSlipImage
                             bankImageUri = loadBitmapByPicasso(dashboardPartner, myBitmap, bankView)
                         }
-                    }catch (e: Exception){
+                    } catch (e: Exception) {
                         Log.d("CAMERA", e.toString())
                         e.printStackTrace()
                     }
@@ -590,7 +648,12 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
             }
         }
     }
-    private fun loadBitmapByPicasso(pContext: Context, pBitmap: Bitmap, pImageView: ImageView): Uri? {
+
+    private fun loadBitmapByPicasso(
+        pContext: Context,
+        pBitmap: Bitmap,
+        pImageView: ImageView,
+    ): Uri? {
         var imageUri: Uri? = null
         try {
             imageUri = Uri.fromFile(File.createTempFile("temp_profile", ".jpg", pContext.cacheDir))
@@ -611,26 +674,26 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
     private fun getFileName(imageUri: Uri?, context: Context): String? {
         var filename: String? = null
         if (imageUri!!.scheme.equals("content")) {
-            val cursor = context.contentResolver.query(imageUri, null, null,null, null)
+            val cursor = context.contentResolver.query(imageUri, null, null, null, null)
             try {
-                if(cursor != null && cursor.moveToFirst()){
+                if (cursor!=null && cursor.moveToFirst()) {
                     filename = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
                 }
-            }finally {
+            } finally {
                 cursor!!.close()
             }
 
-            if(filename == null){
+            if (filename==null) {
                 filename = imageUri.path
                 val cut: Int = filename!!.lastIndexOf('/')
-                if(cut != -1){
-                    filename = filename.substring(cut +1)
+                if (cut!=-1) {
+                    filename = filename.substring(cut + 1)
                 }
 
             }
 
         }
-        return  filename
+        return filename
     }
 
     private fun setTime(view: View) {
@@ -697,7 +760,6 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
     }
 
     private fun btnSubmitOnClickListener() {
-        setDataBusinessInfo()
         if (errorFields()) {
             Toast.makeText(
                 context,
@@ -706,7 +768,7 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
             ).show()
             return
         } else {
-            saveBusinessInfo()
+            getDataFromFields()
         }
     }
 
@@ -714,6 +776,7 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
     private fun validEmail(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
+
     private fun isValidAddress(address: String): Boolean {
         var addresses: List<Address>? = null
         var locality: String? = null
@@ -736,7 +799,7 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
         return addresses!!.isEmpty()
     }
 
-    private fun setDataBusinessInfo() {
+    private fun getDataFromFields() {
         val bindingBusinessInfo = binding
         businessName = bindingBusinessInfo.businessName.text.toString()
         businessLegalName = bindingBusinessInfo.businessLegalName.text.toString()
@@ -766,12 +829,13 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
         businessBankAccNo = bindingBusinessInfo.bankAccNo.text.toString()
         businessBankBIC = bindingBusinessInfo.bankBIC.text.toString()
 
+        saveBusinessInfo()
     }
 
     private fun closeIfEmpty(text: String): String? {
-        return if(text.isEmpty()){
+        return if (text.isEmpty()) {
             "Closed"
-        }else{
+        } else {
             text
         }
     }
@@ -782,8 +846,10 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
         var invalid = false
         val bindingBusinessInfo = binding
 
-        if (businessName!!.isEmpty() || businessLegalName!!.isEmpty() || businessEmail!!.isEmpty() || !validEmail(businessEmail!!) || businessPhone!!.isEmpty() ||
-            businessPhone!!.length!=13 ||businessAddress!!.isEmpty() || businessBankName!!.isEmpty() || businessBankAccountName!!.isEmpty() ||
+        if (businessName!!.isEmpty() || businessLegalName!!.isEmpty() || businessEmail!!.isEmpty() || !validEmail(
+                businessEmail!!
+            ) || businessPhone!!.isEmpty() ||
+            businessPhone!!.length!=13 || businessAddress!!.isEmpty() || businessBankName!!.isEmpty() || businessBankAccountName!!.isEmpty() ||
             businessBankAccNo!!.isEmpty() || businessBankBIC!!.isEmpty()
         ) {
             Log.d("EMPTY_VALIDATION", "PLEASE CHECK EMTPY FIELDS")
@@ -805,8 +871,9 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
             }
             if (businessAddress!!.isEmpty()) {
                 bindingBusinessInfo.businessAddress.error = "Please enter your Business Address."
-                if(isValidAddress(businessAddress!!)){
-                    bindingBusinessInfo.businessAddress.error = "Please enter a valid Business Address."
+                if (isValidAddress(businessAddress!!)) {
+                    bindingBusinessInfo.businessAddress.error =
+                        "Please enter a valid Business Address."
                 }
             }
 
@@ -938,7 +1005,7 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
             businessBIRUri.toString(),
             businessAddress,
             businessHoursMondayFrom,
-            businessHoursMondayTo ,
+            businessHoursMondayTo,
             businessHoursTuesdayFrom,
             businessHoursTuesdayTo,
             businessHoursWednesdayFrom,
@@ -963,27 +1030,30 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
 
         databaseRef.setValue(shop).addOnCompleteListener(dashboardPartner) { task ->
             if (task.isSuccessful) {
-                if(businessImageUri!=null){
+                if (businessImageUri!=null) {
                     val businessImageFilename = "business_${shop!!.uid}"
-                    saveFileToFirebaseStorage("shop/${shop!!.uid}/$businessImageFilename", businessImageFilename,
+                    saveFileToFirebaseStorage(
+                        "shop/${shop!!.uid}/$businessImageFilename", businessImageFilename,
                         businessImageUri!!
                     )
                 }
-                if(businessBIRUri!=null){
+                if (businessBIRUri!=null) {
                     val businessBIRFilename = "BIR_Cert_${shop!!.uid}"
-                    saveFileToFirebaseStorage("shop/${shop!!.uid}/$businessBIRFilename", businessBIRFilename,
+                    saveFileToFirebaseStorage(
+                        "shop/${shop!!.uid}/$businessBIRFilename", businessBIRFilename,
                         businessBIRUri!!
                     )
                 }
-                if(bankImageUri!=null){
+                if (bankImageUri!=null) {
                     val businessBankFilename = "bank_proof_${shop!!.uid}"
-                    saveFileToFirebaseStorage("shop/${shop!!.uid}/$businessBankFilename", businessBankFilename,
+                    saveFileToFirebaseStorage(
+                        "shop/${shop!!.uid}/$businessBankFilename", businessBankFilename,
                         bankImageUri!!
                     )
                 }
 
-                setShopDetails(shop)
                 dashboardPartner.setShop(shop)
+                setShopDetails(shop)
                 dashboardPartner.dismissLoadingDialog()
                 Log.d("BUSINESS_UPDATE_SUCCESS", "Business has been successfully Updated!")
                 Toast.makeText(
@@ -998,10 +1068,11 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
 
         }
     }
+
     private fun saveFileToFirebaseStorage(
         location: String,
         ImageFilename: String,
-        ImageUri: Uri
+        ImageUri: Uri,
     ) {
         val firebaseStorageReference = FirebaseStorage.getInstance().getReference(location)
         firebaseStorageReference.putFile(ImageUri)
