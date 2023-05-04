@@ -39,10 +39,10 @@
             android:layout_width="0dp"
             android:layout_height="80dp"
             android:layout_weight="3"
-            app:civ_border_color="@color/color_blue_1"
-            app:civ_border_width="5sp"
             android:contentDescription="Profile Picture"
-            android:src="@drawable/icon_logo" />
+            android:src="@drawable/icon_logo"
+            app:civ_border_color="@color/color_blue_1"
+            app:civ_border_width="5sp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -63,33 +63,53 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="Please select a laundry shop"
+            android:text="Please select schedule"
             android:textAlignment="center"
             android:textAllCaps="true"
             android:textColor="@color/color_blue_1"
             android:textStyle="bold" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/menuButLayout"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editPickupLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:endIconMode="clear_text">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnLaundryShop"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editPickup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_secondary"
+                android:backgroundTint="@color/white"
+                android:drawableStart="@drawable/vector_calendar"
+                android:drawableTint="@color/color_blue_1"
+                android:hint="PICK-UP DATE"
+                android:textAlignment="textStart"
+                android:textColor="@color/color_white_3" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editDeliveryLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:endIconMode="clear_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editDelivery"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:padding="10dp"
                 android:background="@drawable/button_secondary"
-                android:drawableStart="@drawable/vector_laundry"
+                android:backgroundTint="@color/white"
+                android:drawableStart="@drawable/vector_calendar"
                 android:drawableTint="@color/color_blue_1"
-                android:textColor="@color/color_blue_1"
-                android:text="SELECT LAUNDRY SHOP"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:hint="DELIVERY DATE"
+                android:textAlignment="textStart"
+                android:textColor="@color/color_white_3" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
@@ -97,69 +117,19 @@
             android:layout_margin="10dp"
             app:dividerColor="@color/color_blue_1" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/scheduleLayout"
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnLaundryShop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/editPickupLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                app:endIconMode="clear_text">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editPickup"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/button_secondary"
-                    android:backgroundTint="@color/white"
-                    android:drawableStart="@drawable/vector_calendar"
-                    android:drawableTint="@color/color_blue_1"
-                    android:hint="PICK-UP DATE"
-                    android:textAlignment="textStart"
-                    android:textColor="@color/color_white_3" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/editDeliveryLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                app:endIconMode="clear_text">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editDelivery"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/button_secondary"
-                    android:backgroundTint="@color/white"
-                    android:drawableStart="@drawable/vector_calendar"
-                    android:drawableTint="@color/color_blue_1"
-                    android:hint="DELIVERY DATE"
-                    android:textAlignment="textStart"
-                    android:textColor="@color/color_white_3" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnBook"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/button_primary"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:text="Book Now!"
-                android:textAllCaps="true"
-                android:textColor="@color/white" />
-
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
+            android:layout_margin="5dp"
+            android:background="@drawable/button_secondary"
+            android:drawableStart="@drawable/vector_book"
+            android:drawableTint="@color/color_blue_1"
+            android:padding="10dp"
+            android:text="BOOK NOW!"
+            android:textColor="@color/color_blue_1"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>

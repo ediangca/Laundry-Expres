@@ -43,7 +43,7 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
     private var address: String? = null
     private var shopArrayList: ArrayList<Shop> = ArrayList()
-
+    private var shopAdapter = ShopAdapter(this, shopArrayList)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -70,6 +70,10 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         if (address!=null) {
             binding.address.setText(address)
             showShop()
+            Log.d("SHOP", "shopArrayList.size -> ${shopArrayList.size}")
+            if (shopArrayList.size > 0) {
+                Log.d("SHOP", shopArrayList[0].toString())
+            }
         }
     }
 
@@ -120,11 +124,19 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun initComponent() {
+        shopArrayList.clear()
+
+        shopAdapter = ShopAdapter(this, shopArrayList)
+        binding.shopList.layoutManager = LinearLayoutManager(dashboardCustomer)
+        binding.shopList.adapter = shopAdapter
+        binding.shopList.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            onPropertyStateChanged()
+        }
+        shopAdapter.notifyDataSetChanged()
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(dashboardCustomer)
-
-        shopArrayList.clear()
 
         binding.btnBack.setOnClickListener {
             btnBankOnClickListener()
@@ -133,6 +145,7 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         binding.btnCurrentLocation.setOnClickListener {
             btnCurrentLocationOnClickListener()
         }
+
     }
 
     private fun btnCurrentLocationOnClickListener() {
@@ -143,6 +156,7 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         dashboardCustomer.showHome()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showShop() {
         shopArrayList.clear()
 
@@ -152,32 +166,47 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                 if (dataSnapshot.exists()) {
                     for (postSnapshot in dataSnapshot.children) {
                         val shop = postSnapshot.getValue(Shop::class.java)
-
                         if (shop!=null) {
                             val shopCity = getCity(shop.businessAddress!!) //if null -> n/a
                             Log.d("SHOP_CITY ${shop.uid}", shopCity)
                             val customerCity = getCity(address!!) //if null -> n/a
                             Log.d("CUSTOMER_CITY", customerCity)
 
+
                             if (shopCity==customerCity) {
-                                shopArrayList.add(shop)
+                                Log.d("SHOP_RATES", "CHECK SHOP RATES ${shop.uid}")
+
+                                //Check if the shop had added Rates
+                                firebaseDatabase.reference.child("rates")
+                                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                                        override fun onDataChange(snapshot: DataSnapshot) {
+                                            if (snapshot.hasChild(shop.uid!!)) {
+                                                shopArrayList.add(shop)
+                                                Log.d(
+                                                    "SHOP_RATES",
+                                                    "RATES FOUND @ ${shop.uid} -> ${shop.businessName}"
+                                                )
+                                                shopAdapter.notifyDataSetChanged()
+                                            } else {
+                                                Log.d(
+                                                    "SHOP_RATES",
+                                                    "${shop.uid} -> RATES NOT FOUND"
+                                                )
+                                            }
+                                        }
+
+                                        override fun onCancelled(error: DatabaseError) {
+                                            Log.d("SHOP_RATES", error.message)
+                                        }
+                                    })
                             }
                         }
+                        dashboardCustomer.dismissLoadingDialog()
                     }
-
-                    Log.d("SHOP", "shopArrayList.size -> ${shopArrayList.size}")
-                    if (shopArrayList.size > 0) {
-                        Log.d("SHOP", shopArrayList[0].toString())
-                    }
-
-                    dashboardCustomer.dismissLoadingDialog()
-                    setShopAdapter()
-
                 } else {
                     Log.d("SHOP_ON_DATA_CHANGE", "NO SHOP YET AVAILABLE IN RECORD")
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 // Getting Post failed, log a message
                 dashboardCustomer.dismissLoadingDialog()
@@ -189,16 +218,9 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                 ).show()
             }
         })
+
     }
 
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun setShopAdapter() {
-        val shopAdapter = ShopAdapter(this, shopArrayList)
-        binding.shopList.layoutManager = LinearLayoutManager(dashboardCustomer)
-        binding.shopList.adapter = shopAdapter
-        shopAdapter.notifyDataSetChanged()
-    }
 
     private fun getCity(address: String): String {
         var addresses: List<Address>? = null
@@ -297,6 +319,14 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             ),
             permissionId
         )
+    }
+
+    fun onPropertyStateChanged() {
+        if(shopAdapter.itemCount <= 0){
+            binding.promptView.visibility = View.VISIBLE
+        }else{
+            binding.promptView.visibility = View.GONE
+        }
     }
 
 

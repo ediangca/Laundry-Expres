@@ -23,6 +23,7 @@ import android.util.Base64
 import android.util.Log
 import android.util.Patterns
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -86,6 +87,8 @@ class RegisterCustomerActivity : AppCompatActivity() {
 
     private fun initComponent() {
 
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
         if (firebaseAuth.currentUser!=null) {
             binding.passwordLayout.visibility = View.GONE
             binding.confirmPasswordLayout.visibility = View.GONE
@@ -93,7 +96,9 @@ class RegisterCustomerActivity : AppCompatActivity() {
             binding.email.setText(firebaseAuth.currentUser!!.email)
         }
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        val adapter = ArrayAdapter.createFromResource(this, R.array.sex, R.layout.spinner_item)
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        binding.sex.adapter = adapter
 
         binding.btnBack.setOnClickListener {
             btnBackOnClickListener()

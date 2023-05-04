@@ -12,12 +12,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
+import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentPartnerBasicInfoBinding
 import java.util.*
 
@@ -60,6 +62,8 @@ class PartnerBasicInfoFragment(private var registerPartnerActivity: RegisterPart
     @SuppressLint("SetTextI18n")
     private fun initComponent() {
 
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(registerPartnerActivity)
+
         if(firebaseAuth.currentUser!=null){
             binding.passwordLayout.visibility = View.GONE
             binding.confirmPasswordLayout.visibility = View.GONE
@@ -67,7 +71,9 @@ class PartnerBasicInfoFragment(private var registerPartnerActivity: RegisterPart
             binding.email.setText(firebaseAuth.currentUser!!.email)
         }
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(registerPartnerActivity)
+        val adapter = ArrayAdapter.createFromResource(registerPartnerActivity, R.array.sex, R.layout.spinner_item)
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        binding.sex.adapter = adapter
 
         if(firebaseAuth.currentUser == null) {
             binding.btnSubmit.text = "Next"

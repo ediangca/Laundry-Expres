@@ -311,7 +311,7 @@ class LoginActivity : AppCompatActivity() {
                                 .getValue(String::class.java).toString()
                         val isVerified: Boolean =
                             snapshot.child(firebaseAuth.currentUser!!.uid).child("verified")
-                                .getValue(Boolean::class.java)!=null
+                                .getValue(Boolean::class.java)!!
                         checkIfVerified(isVerified)
                     } else {
                         dismissLoadingDialog()

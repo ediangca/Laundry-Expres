@@ -163,6 +163,7 @@
             android:layout_height="48dp"
             android:background="@color/white"
             android:entries="@array/sex"
+            android:spinnerMode="dialog"
             />
 
         <androidx.appcompat.widget.AppCompatButton

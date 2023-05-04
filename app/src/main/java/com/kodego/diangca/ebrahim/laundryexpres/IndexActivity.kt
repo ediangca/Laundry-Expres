@@ -2,13 +2,18 @@ package com.kodego.diangca.ebrahim.laundryexpres
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.drawable.ColorDrawable
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -79,9 +84,53 @@ class IndexActivity : AppCompatActivity() {
         }
 
     }
-
+    private fun isNetworkAvailable(context: Context?): Boolean {
+        if (context == null) return false
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                when {
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
+                        return true
+                    }
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
+                        return true
+                    }
+                    capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
+                        return true
+                    }
+                }
+            }
+        } else {
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            if (activeNetworkInfo != null && activeNetworkInfo.isConnected) {
+                return true
+            }
+        }
+        return false
+    }
     override fun onStart() {
         super.onStart()
+        if(!isNetworkAvailable(this)){
+            Log.d("NETWORK", "NO NETWORK AVAILABLE ")
+            var verifyDialog: Dialog = Dialog(this)
+            val builder = AlertDialog.Builder(this)
+            builder.setCancelable(false)
+            builder.setTitle("INTERNET CONNECTIVITY REQUIRED")
+            builder.setMessage("PLEASE TURN ON YOU WIFI OR DATA TO USE THIS APP.")
+            builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                startActivity(Intent(Settings.ACTION_WIFI_SETTINGS));
+                verifyDialog.dismiss()
+            }
+            verifyDialog = builder.create()
+            if(verifyDialog.window != null){
+                verifyDialog.window!!.setBackgroundDrawableResource(R.color.color_light_3)
+            }
+            verifyDialog.show()
+//            Toast.makeText(this, "NO NETWORK AVAILABLE", Toast.LENGTH_LONG).show()
+            return
+        }
             if (FirebaseAuth.getInstance().currentUser!=null) {
                 val databaseRef = firebaseDatabase.reference.child("users")
                     .child(firebaseAuth.currentUser!!.uid)
@@ -92,9 +141,9 @@ class IndexActivity : AppCompatActivity() {
                         if (user!=null) {
                             userType = user!!.type!!
 
-                            val isVerified = user!!.verified!=null
+                            val isVerified = user!!.verified
 
-                            if ((userType!="Customer") && !isVerified) {
+                            if ((userType!="Customer") && !isVerified!!) {
                                 Log.d("SIGN_OUT_USER", "UNVERIFIED_ACCOUNT")
                                 firebaseAuth.signOut()
                                 showMain()

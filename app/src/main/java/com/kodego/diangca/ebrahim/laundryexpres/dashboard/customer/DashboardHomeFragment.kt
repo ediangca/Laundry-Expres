@@ -111,9 +111,6 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         binding.editDelivery.setOnClickListener {
             setSchedule(it, "Delivery")
         }
-        binding.btnBook.setOnClickListener {
-            btnBookOnClickListener()
-        }
 
     }
 
@@ -181,10 +178,6 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     }
 
     private fun btnLaundryShopOnClickListener() {
-        dashboardCustomer.showShopList()
-    }
-
-    private fun btnBookOnClickListener() {
         val pickUp = binding.editPickup.text.toString()
         val delivery = binding.editDelivery.text.toString()
         if (pickUp.isEmpty() || delivery.isEmpty()) {
@@ -195,15 +188,11 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             if (delivery.isEmpty()) {
                 binding.editDelivery.error = "Please select delivery schedule."
             }
-
-            val builder = AlertDialog.Builder(dashboardCustomer)
-            builder.setTitle("UNVERIFIED ACCOUNT")
-            builder.setMessage("Please wait for your verification. We will notify you within 24-72hours. Thank you!")
-            builder.setPositiveButton(android.R.string.yes) { dialog, which ->
-            }
             return
         }
+        dashboardCustomer.showShopList(binding.editPickup.text.toString(), binding.editDelivery.text.toString())
     }
+
 
     private fun btnServiceRegularOnClickListener() {
         setService("Regular Wash")

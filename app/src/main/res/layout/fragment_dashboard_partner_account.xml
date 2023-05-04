@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".dashboard.partner.DashboardAccountFragment">
 
-        <TextView
-            android:id="@+id/titleView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:padding="15dp"
-            android:background="@drawable/button_secondary"
-            android:text="Account"
-            android:textColor="@color/color_blue_1"
-            android:textSize="20sp"
-            android:textAlignment="center"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/titleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/button_secondary"
+        android:padding="15dp"
+        android:text="Account"
+        android:textAlignment="center"
+        android:textColor="@color/color_blue_1"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnLogout"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/button_primary"
-            android:padding="5dp"
-            android:text="Logout"
-            android:textColor="@color/color_light_3"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/titleView"
-            app:layout_constraintEnd_toEndOf="@id/titleView"
-            app:layout_constraintTop_toTopOf="@id/titleView" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/button_primary"
+        android:padding="5dp"
+        android:text="Logout"
+        android:textColor="@color/color_light_3"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/titleView"
+        app:layout_constraintEnd_toEndOf="@id/titleView"
+        app:layout_constraintTop_toTopOf="@id/titleView" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnVerified"
@@ -47,324 +47,334 @@
         android:text="Verified"
         android:textColor="@color/color_light_3"
         android:textStyle="bold"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/titleView"
         app:layout_constraintStart_toStartOf="@id/titleView"
-        app:layout_constraintTop_toTopOf="@id/titleView"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toTopOf="@id/titleView" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/linearAccount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/box_style"
-            android:backgroundTint="@color/color_white_2"
-            android:padding="5dp"
-            app:layout_constraintBottom_toTopOf="@id/scroll"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearAccount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/box_style"
+        android:backgroundTint="@color/color_white_2"
+        android:padding="5dp"
+        app:layout_constraintBottom_toTopOf="@id/scroll"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleView">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profilePicture"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_logo"
+            app:civ_border_color="@color/color_blue_1"
+            app:civ_border_width="5sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/titleView">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profilePicture"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:src="@drawable/icon_logo"
-                app:civ_border_color="@color/color_blue_1"
-                app:civ_border_width="5sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/userDisplayName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:padding="10dp"
+            android:text="DISPLAY NAME"
+            android:textAlignment="center"
+            android:textColor="@color/color_blue_1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/profilePicture"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/userDisplayName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="DISPLAY NAME"
-                android:textAlignment="center"
-                android:textColor="@color/color_blue_1"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:maxLines="2"
-                app:layout_constraintBottom_toTopOf="@id/divider"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/profilePicture"
-                app:layout_constraintTop_toTopOf="parent" />
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="5dp"
+            app:dividerColor="@color/color_blue_1"
+            app:layout_constraintBottom_toTopOf="@id/userAddress"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/profilePicture"
+            app:layout_constraintTop_toBottomOf="@id/userDisplayName" />
 
-            <com.google.android.material.divider.MaterialDivider
-                android:id="@+id/divider"
-                android:layout_width="0dp"
-                android:layout_height="5dp"
-                app:dividerColor="@color/color_blue_1"
-                app:layout_constraintBottom_toTopOf="@id/userAddress"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/profilePicture"
-                app:layout_constraintTop_toBottomOf="@id/userDisplayName" />
-
-            <TextView
-                android:id="@+id/userAddress"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginTop="5dp"
-                android:inputType="textMultiLine"
-                android:lines="2"
-                android:maxLines="3"
-                android:text="USER Address"
-                android:textAlignment="center"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/profilePicture"
-                app:layout_constraintTop_toBottomOf="@id/divider" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <ScrollView
-            android:id="@+id/scroll"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/userAddress"
+            android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:inputType="textMultiLine"
+            android:lines="2"
+            android:maxLines="3"
+            android:text="USER Address"
+            android:textAlignment="center"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/linearAccount">
-
-            <!--Header-->
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:id="@+id/linear1"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/box_style"
-                android:orientation="vertical"
-                android:padding="10dp">
-
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-smallcaps"
-                    android:padding="5dp"
-                    android:text="Security Information"
-                    android:textAlignment="center"
-                    android:textColor="@color/color_blue_1"
-                    android:textSize="24sp"
-                    android:textStyle="bold|italic" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    app:endIconMode="clear_text">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/email"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textColor="@color/color_blue_1"
-                        android:hint="*Username/Email"
-                        android:enabled="false"
-                        android:inputType="textEmailAddress"
-                        android:textSize="12sp" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-smallcaps"
-                    android:padding="5dp"
-                    android:text="Personal Information"
-                    android:textAlignment="center"
-                    android:textColor="@color/color_blue_1"
-                    android:textSize="24sp"
-                    android:textStyle="bold|italic" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/mobileNoLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    app:endIconMode="clear_text">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/phoneNo"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textColor="@color/color_blue_1"
-                        android:hint="*Phone Number"
-                        android:inputType="text|phone"
-                        android:textSize="12sp" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    app:endIconMode="clear_text">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/firstName"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textColor="@color/color_blue_1"
-                        android:hint="*Firstname"
-                        android:inputType="textCapWords"
-                        android:textSize="12sp" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    app:endIconMode="clear_text">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/lastName"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textColor="@color/color_blue_1"
-                        android:hint="*Lastname"
-                        android:inputType="textCapWords"
-                        android:textSize="12sp" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <Spinner
-                    android:id="@+id/sex"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_margin="5dp"
-                    android:background="@color/white"
-                    android:entries="@array/sex" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnLocation"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/button_primary"
-                    android:drawableStart="@drawable/vector_location"
-                    android:padding="5dp"
-                    android:text="Get Current Location"
-                    android:textAlignment="center"
-                    android:textColor="@color/color_light_3"
-                    android:textSize="20sp"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-smallcaps"
-                    android:padding="5dp"
-                    android:text="Address"
-                    android:textAlignment="center"
-                    android:textColor="@color/color_blue_1"
-                    android:textSize="24sp"
-                    android:textStyle="bold|italic" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    app:endIconMode="clear_text">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/address"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textColor="@color/color_blue_1"
-                        android:hint="*Street"
-                        android:inputType="textCapWords"
-                        android:textSize="12sp" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    app:endIconMode="clear_text">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/city"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textColor="@color/color_blue_1"
-                        android:hint="*City"
-                        android:inputType="textCapWords"
-                        android:textSize="12sp" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    app:endIconMode="clear_text">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/state"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textColor="@color/color_blue_1"
-                        android:hint="*State"
-                        android:inputType="textCapWords"
-                        android:textSize="12sp" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    app:endIconMode="clear_text">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/zipCode"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textColor="@color/color_blue_1"
-                        android:hint="*Zip code"
-                        android:inputType="textCapWords"
-                        android:textSize="12sp" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    app:endIconMode="clear_text">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/country"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textColor="@color/color_blue_1"
-                        android:hint="*Country"
-                        android:inputType="textCapWords"
-                        android:textSize="12sp" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnAccSubmit"
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/button_primary"
-                    android:text="SAVE"
-                    android:textColor="@color/color_light_3"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
-        </ScrollView>
+            app:layout_constraintStart_toEndOf="@id/profilePicture"
+            app:layout_constraintTop_toBottomOf="@id/divider" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearAccount">
+
+        <!--Header-->
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/linear1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/box_style"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-smallcaps"
+                android:padding="5dp"
+                android:text="Security Information"
+                android:textAlignment="center"
+                android:textColor="@color/color_blue_1"
+                android:textSize="24sp"
+                android:textStyle="bold|italic" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:enabled="false"
+                    android:hint="*Username/Email"
+                    android:inputType="textEmailAddress"
+                    android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-smallcaps"
+                android:padding="5dp"
+                android:text="Personal Information"
+                android:textAlignment="center"
+                android:textColor="@color/color_blue_1"
+                android:textSize="24sp"
+                android:textStyle="bold|italic" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/mobileNoLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/phoneNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="*Phone Number"
+                    android:inputType="text|phone"
+                    android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/firstName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="*Firstname"
+                    android:inputType="textCapWords"
+                    android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/lastName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="*Lastname"
+                    android:inputType="textCapWords"
+                    android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Spinner
+                android:id="@+id/sex"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_margin="5dp"
+                android:background="@color/white"
+                android:entries="@array/sex"
+                android:spinnerMode="dialog" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/button_primary"
+                android:drawableStart="@drawable/vector_location"
+                android:padding="5dp"
+                android:text="Get Current Location"
+                android:textAlignment="center"
+                android:textColor="@color/color_light_3"
+                android:textSize="20sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-smallcaps"
+                android:padding="5dp"
+                android:text="Address"
+                android:textAlignment="center"
+                android:textColor="@color/color_blue_1"
+                android:textSize="24sp"
+                android:textStyle="bold|italic" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/address"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="*Street"
+                    android:inputType="textCapWords"
+                    android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/city"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="*City"
+                    android:inputType="textCapWords"
+                    android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/state"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="*State"
+                    android:inputType="textCapWords"
+                    android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/zipCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="*Zip code"
+                    android:inputType="textCapWords"
+                    android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/country"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="*Country"
+                    android:inputType="textCapWords"
+                    android:background="@color/white"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="12sp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnAccSubmit"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:background="@drawable/button_primary"
+                android:text="SAVE"
+                android:textColor="@color/color_light_3"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

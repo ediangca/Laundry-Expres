@@ -234,7 +234,8 @@
                 android:layout_margin="5dp"
                 android:background="@color/white"
                 android:entries="@array/sex"
-                android:nestedScrollingEnabled="true" />
+                android:nestedScrollingEnabled="true"
+                android:spinnerMode="dialog"/>
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnLocation"

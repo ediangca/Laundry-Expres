@@ -23,6 +23,7 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -61,6 +62,7 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
     private var user: User? = null
     private var userType: String? = null
     private var displayName: String? = null
+    private var isVerified: Boolean? = null
 
     private val PICK_PROFILE_CODE = 100
     private val CAMERA_PROFILE_CODE = 2
@@ -94,6 +96,10 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
     }
 
     private fun initComponent() {
+
+        val adapter = ArrayAdapter.createFromResource(dashboardCustomer, R.array.sex, R.layout.spinner_item)
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        binding.sex.adapter = adapter
 
         val bundle = arguments
         if (bundle!=null) {
@@ -387,7 +393,7 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
             country,
             mobileNo,
             profileImageUri.toString(),
-            false,
+            isVerified,
             this.user!!.datetimeCreated,
             SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
             )
@@ -541,6 +547,7 @@ private fun setUserDetails(user: User?) {
 
         if (user!=null) {
             userType = user.type
+            this.isVerified = user.verified
             binding.apply {
                 userAddress.text = user.address
                 email.setText(user.email)

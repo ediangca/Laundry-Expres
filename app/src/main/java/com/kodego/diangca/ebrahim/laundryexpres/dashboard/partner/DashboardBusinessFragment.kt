@@ -282,11 +282,20 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
             val businessBankFilename = "bank_proof_${shop.uid}"
 
             binding.apply {
-                if (shop.businessLogo!=null) {
-                    businessImageUri = Uri.parse(shop.businessLogo)
-                    val businessLogo: ImageView = binding.shopLogo
-                    retrieveImageFromFirebaseStorage(businessImageFilename, businessImageUri, businessLogo)
+                val businessLogo: ImageView = binding.shopLogo
+                if (businessImageUri!=null) {
+                    businessLogo.setImageURI(businessImageUri)
+                }else{
+                    if(shop.businessLogo!=null){
+                        businessImageUri = Uri.parse(shop.businessLogo)
+                        retrieveImageFromFirebaseStorage(
+                            businessImageFilename,
+                            businessImageUri,
+                            businessLogo
+                        )
+                    }
                 }
+
                 titleView.text = shop.businessName
                 subTitleView.text = shop.businessEmail
 
@@ -295,10 +304,21 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
                 businessEmail.setText(shop.businessEmail)
                 businessPhone.setText(shop.businessPhoneNumber)
                 businessAddress.setText(shop.businessAddress)
-                if (shop.businessBIRImage!=null) {
-                    businessBIRUri = Uri.parse(shop.businessBIRImage)
-                    retrieveImageFromFirebaseStorage(businessBIRFilename, businessBIRUri, binding.businessBIRImage)
+
+                if (businessBIRUri!=null) {
+                    binding.businessBIRImage.setImageURI(businessBIRUri)
+                }else{
+                    if (shop.businessBIRImage!=null) {
+                        businessBIRUri = Uri.parse(shop.businessBIRImage)
+                        retrieveImageFromFirebaseStorage(
+                            businessBIRFilename,
+                            businessBIRUri,
+                            binding.businessBIRImage
+                        )
+                    }
+
                 }
+
                 if (!shop.mondayFrom.equals("Closed")) {
                     fromMonday.setText(shop.mondayFrom)
                 }
@@ -351,9 +371,18 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
                 bankAccNameHolder.setText(shop.bankAccountName)
                 bankAccNo.setText(shop.bankAccountNumber)
                 bankBIC.setText(shop.bankAccountBIC)
-                if (shop.bankProofImage!=null) {
-                    bankImageUri = Uri.parse(shop.bankProofImage)
-                    retrieveImageFromFirebaseStorage(businessBankFilename, bankImageUri, binding.bankSlipImage)
+
+                if (bankImageUri!=null) {
+                    binding.bankSlipImage.setImageURI(bankImageUri)
+                } else {
+                    if (shop.bankProofImage!=null) {
+                        bankImageUri = Uri.parse(shop.bankProofImage)
+                        retrieveImageFromFirebaseStorage(
+                            businessBankFilename,
+                            bankImageUri,
+                            binding.bankSlipImage
+                        )
+                    }
                 }
             }
         }
@@ -760,6 +789,7 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
     }
 
     private fun btnSubmitOnClickListener() {
+        getDataFromFields()
         if (errorFields()) {
             Toast.makeText(
                 context,
@@ -768,7 +798,7 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
             ).show()
             return
         } else {
-            getDataFromFields()
+            saveBusinessInfo()
         }
     }
 
@@ -829,7 +859,6 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
         businessBankAccNo = bindingBusinessInfo.bankAccNo.text.toString()
         businessBankBIC = bindingBusinessInfo.bankBIC.text.toString()
 
-        saveBusinessInfo()
     }
 
     private fun closeIfEmpty(text: String): String? {
@@ -1030,42 +1059,54 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
 
         databaseRef.setValue(shop).addOnCompleteListener(dashboardPartner) { task ->
             if (task.isSuccessful) {
-                if (businessImageUri!=null) {
-                    val businessImageFilename = "business_${shop!!.uid}"
-                    saveFileToFirebaseStorage(
-                        "shop/${shop!!.uid}/$businessImageFilename", businessImageFilename,
-                        businessImageUri!!
-                    )
-                }
-                if (businessBIRUri!=null) {
-                    val businessBIRFilename = "BIR_Cert_${shop!!.uid}"
-                    saveFileToFirebaseStorage(
-                        "shop/${shop!!.uid}/$businessBIRFilename", businessBIRFilename,
-                        businessBIRUri!!
-                    )
-                }
-                if (bankImageUri!=null) {
-                    val businessBankFilename = "bank_proof_${shop!!.uid}"
-                    saveFileToFirebaseStorage(
-                        "shop/${shop!!.uid}/$businessBankFilename", businessBankFilename,
-                        bankImageUri!!
-                    )
-                }
-
-                dashboardPartner.setShop(shop)
-                setShopDetails(shop)
-                dashboardPartner.dismissLoadingDialog()
                 Log.d("BUSINESS_UPDATE_SUCCESS", "Business has been successfully Updated!")
+                saveLogo()
+                saveBIRImage()
+                saveBankImage()
+                dashboardPartner.dismissLoadingDialog()
                 Toast.makeText(
                     context,
                     "Business has been successfully Updated!",
                     Toast.LENGTH_SHORT
                 ).show()
+                dashboardPartner.setShop(shop)
+                setShopDetails(shop)
             } else {
                 dashboardPartner.dismissLoadingDialog()
                 Log.d("BUSINESS -> addOnCompleteListener", task.exception!!.message!!)
             }
 
+        }
+    }
+
+    private fun saveLogo() {
+        if (businessImageUri!=null) {
+            val businessImageFilename = "business_${shop!!.uid}"
+            saveFileToFirebaseStorage(
+                "shop/${shop!!.uid}/$businessImageFilename", businessImageFilename,
+                businessImageUri!!
+            )
+        }
+    }
+
+    private fun saveBIRImage() {
+        if (businessBIRUri!=null) {
+            val businessBIRFilename = "BIR_Cert_${shop!!.uid}"
+            saveFileToFirebaseStorage(
+                "shop/${shop!!.uid}/$businessBIRFilename", businessBIRFilename,
+                businessBIRUri!!
+            )
+        }
+        saveBankImage()
+    }
+
+    private fun saveBankImage() {
+        if (bankImageUri!=null) {
+            val businessBankFilename = "bank_proof_${shop!!.uid}"
+            saveFileToFirebaseStorage(
+                "shop/${shop!!.uid}/$businessBankFilename", businessBankFilename,
+                bankImageUri!!
+            )
         }
     }
 
@@ -1089,3 +1130,4 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
             }
     }
 }
+

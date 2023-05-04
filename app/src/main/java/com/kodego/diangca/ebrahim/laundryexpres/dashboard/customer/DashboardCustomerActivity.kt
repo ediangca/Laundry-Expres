@@ -43,7 +43,10 @@ class DashboardCustomerActivity : AppCompatActivity() {
     private var user: User? = null
     private var shop: Shop? = null
 
-    private var bundle = Bundle()
+    private var pickUpDatetime: String? = null
+    private var deliveryDatetime:String? = null
+
+            private var bundle = Bundle()
 
     private lateinit var loadingBuilder: AlertDialog.Builder
     private lateinit var loadingDialog: Dialog
@@ -79,14 +82,16 @@ class DashboardCustomerActivity : AppCompatActivity() {
     fun setShop(shop: Shop) {
         this.shop = shop
     }
+
     @JvmName("getShop1")
     fun getShop(): Shop {
         return shop!!
     }
 
-    fun setUser(user: User?){
+    fun setUser(user: User?) {
         this.user = user
     }
+
     fun getUser(): User? {
         return user!!
     }
@@ -95,10 +100,10 @@ class DashboardCustomerActivity : AppCompatActivity() {
         val databaseRef = firebaseDatabase.reference.child("users")
             .child(firebaseAuth.currentUser!!.uid)
 
-        databaseRef.get().addOnCompleteListener{dataSnapshot ->
+        databaseRef.get().addOnCompleteListener { dataSnapshot ->
             if (dataSnapshot.isSuccessful) {
                 user = dataSnapshot.result.getValue(User::class.java)
-                if(user!=null){
+                if (user!=null) {
                     Log.d("USER_DETAILS_FOUND", user.toString())
                     bundle = Bundle()
                     bundle.putParcelable("user", user)
@@ -111,7 +116,7 @@ class DashboardCustomerActivity : AppCompatActivity() {
                     mainFrame.addToBackStack(null);
                     mainFrame.commit();
                 }
-            }else{
+            } else {
                 Log.d("USER_DETAILS_NOT_FOUND", "USER NOT FOUND")
             }
         }
@@ -203,9 +208,14 @@ class DashboardCustomerActivity : AppCompatActivity() {
         mainFrame.commit();
     }
 
-    fun showShopList() {
+
+    //
+    fun showShopList(pickUpDatetime: String, deliveryDatetime: String) {
         binding.dashboardNav.visibility = View.GONE
+        this.pickUpDatetime = pickUpDatetime
+        this.deliveryDatetime = deliveryDatetime
         dashboardShopFragment = DashboardShopFragment(this)
+        dashboardShopFragment.arguments = bundle
         mainFrame = supportFragmentManager.beginTransaction()
         mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardShopFragment);
         mainFrame.addToBackStack(null);
@@ -213,9 +223,11 @@ class DashboardCustomerActivity : AppCompatActivity() {
     }
 
     fun showOrderForm(shop: Shop) {
-        this.shop = shop
+        setShop(shop)
         bundle = Bundle()
         bundle.putParcelable("shop", shop)
+        bundle.putString("pickUpDatetime", pickUpDatetime)
+        bundle.putString("deliveryDatetime", pickUpDatetime)
         dashboardOrderFormFragment = DashboardOrderFormFragment(this)
         dashboardOrderFormFragment.arguments = bundle
         mainFrame = supportFragmentManager.beginTransaction()
@@ -245,6 +257,14 @@ class DashboardCustomerActivity : AppCompatActivity() {
 
     fun dismissLoadingDialog() {
         loadingDialog.dismiss()
+    }
+
+    fun showOrder() {
+        binding.dashboardNav.visibility = View.VISIBLE
+        mainFrame = supportFragmentManager.beginTransaction()
+        mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardOrdersFragment);
+        mainFrame.addToBackStack(null);
+        mainFrame.commit();
     }
 
 

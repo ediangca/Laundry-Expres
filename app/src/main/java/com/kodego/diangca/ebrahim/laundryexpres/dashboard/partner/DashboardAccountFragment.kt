@@ -21,6 +21,7 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -91,11 +92,16 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
 
     private fun initComponent() {
 
+        val adapter =
+            ArrayAdapter.createFromResource(dashboardPartner, R.array.sex, R.layout.spinner_item)
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        binding.sex.adapter = adapter
+
         val bundle = arguments
         if (bundle!=null) {
             user = bundle.getParcelable<User>("user")!!
             Log.d("ON_RESUME_FETCH_USER", user.toString())
-        }else{
+        } else {
             user = dashboardPartner.getUser()
         }
         setUserDetails(user)
@@ -312,6 +318,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun btnAccSubmitOnClickListener() {
         val mobileNo = binding.phoneNo.text.toString()
         val firstName = binding.firstName.text.toString()
@@ -392,7 +399,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
                 this.user!!.datetimeCreated,
                 SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
             )
-            databaseRef.setValue(this.user).addOnCompleteListener(dashboardPartner) { task ->
+            databaseRef.setValue(user).addOnCompleteListener(dashboardPartner) { task ->
                 if (task.isSuccessful) {
                     val filename = "profile_${user!!.uid}"
                     profileImageUri = Uri.parse(user!!.photoUri)
@@ -470,7 +477,6 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
 
     private fun setUserDetails(user: User?) {
 
-
         firebaseAuth.currentUser?.let {
             for (profile in it.providerData) {
                 displayName = profile.displayName
@@ -525,7 +531,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
 
             if (user!=null) {
                 userType = user.type
-                val isVerified = user.verified!=null
+                this.isVerified = user.verified
                 binding.apply {
                     userAddress.text = user.address
                     email.setText(user.email)
@@ -538,7 +544,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
                             sex.setSelection(index)
                         }
                     }
-                    if(user.photoUri!=null) {
+                    if (user.photoUri!=null) {
                         profileImageUri = Uri.parse(user.photoUri)
                     }
                     address.setText(user.address)
@@ -547,12 +553,14 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
                     zipCode.setText(user.zipCode)
                     country.setText(user.country)
 
-                    if(isVerified!!){
+                    if (isVerified!!) {
                         btnVerified.text = "VERIFIED"
-                        btnVerified.background = ContextCompat.getDrawable(dashboardPartner, R.drawable.button_success)
-                    }else{
+                        btnVerified.background =
+                            ContextCompat.getDrawable(dashboardPartner, R.drawable.button_success)
+                    } else {
                         btnVerified.text = "NOT VERIFIED"
-                        btnVerified.background = ContextCompat.getDrawable(dashboardPartner, R.drawable.button_danger)
+                        btnVerified.background =
+                            ContextCompat.getDrawable(dashboardPartner, R.drawable.button_danger)
                     }
                 }
             }

@@ -59,6 +59,19 @@
     <string name="title_activity_partner_drawer">PartnerDrawerActivity</string>
     <string name="logout">Logout</string>
     <string name="rate">Rates</string>
+    <string name="user_agreement">*\t By using our laundry services, you agree to our terms and conditions.
+        \n*\t You are responsible for ensuring that your items are clean and labeled with any special washing instructions.
+        \n*\tPayment must be made in full at the time of pickup or delivery.
+        \n*\t Our intellectual property is our own and cannot be used without our permission.
+        \n*\t We collect personal information but will not sell or share it without your consent.
+        \n*\t Any disputes will be resolved in accordance with the laws of our state or country.
+        \n*\t We may modify this agreement at any time and will notify you of any changes.</string>
+    <string name="user_acknowledgement">"By accepting this user agreement, you
+        acknowledge and agree that you are responsible for double-checking all information and confirmations provided to you through our platform or services.
+        \n You understand that once a confirmation is made or a statement is provided, it cannot be changed.
+        \n Therefore, it is your responsibility to ensure that all information provided
+ to us is accurate and complete before making any confirmations or relying on any statements."
+    </string>
 
 
 </resources>
