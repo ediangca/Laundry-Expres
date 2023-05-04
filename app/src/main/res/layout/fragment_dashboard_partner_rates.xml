@@ -162,7 +162,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -180,14 +180,14 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/regularWhiteRate"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:hint="Rate/ Load"
+                            android:hint="Rate"
                             android:inputType="numberDecimal"
                             android:textColor="@color/color_blue_1"
                             android:textSize="12sp" />
@@ -220,7 +220,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -238,14 +238,14 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/regularColorRate"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:hint="Rate/ Load"
+                            android:hint="Rate"
                             android:inputType="numberDecimal"
                             android:textColor="@color/color_blue_1"
                             android:textSize="12sp" />
@@ -278,14 +278,14 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/regularComforterRate"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:hint="Rate/ Piece"
+                            android:hint="Rate"
                             android:inputType="numberDecimal"
                             android:textColor="@color/color_blue_1"
                             android:textSize="12sp" />
@@ -318,7 +318,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -336,14 +336,14 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/regularOthersRate"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:hint="Rate/ Load"
+                            android:hint="Rate"
                             android:inputType="numberDecimal"
                             android:textColor="@color/color_blue_1"
                             android:textSize="12sp" />
@@ -402,7 +402,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -420,14 +420,14 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/petsWhiteRate"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:hint="Rate/ Load"
+                            android:hint="Rate"
                             android:inputType="numberDecimal"
                             android:textColor="@color/color_blue_1"
                             android:textSize="12sp" />
@@ -460,7 +460,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -478,14 +478,14 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/petsColorRate"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:hint="Rate/ Load"
+                            android:hint="Rate"
                             android:inputType="numberDecimal"
                             android:textColor="@color/color_blue_1"
                             android:textSize="12sp" />
@@ -545,7 +545,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -563,14 +563,14 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/dryWhiteRate"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:hint="Rate/ Load"
+                            android:hint="Rate"
                             android:inputType="numberDecimal"
                             android:textColor="@color/color_blue_1"
                             android:textSize="12sp" />
@@ -603,7 +603,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -621,14 +621,14 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/dryColorRate"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:hint="Rate/ Load"
+                            android:hint="Rate"
                             android:inputType="numberDecimal"
                             android:textColor="@color/color_blue_1"
                             android:textSize="12sp" />
@@ -687,14 +687,14 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/sneakersOrdinaryRate"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:hint="Rate/ Pair"
+                            android:hint="Rate"
                             android:inputType="numberDecimal"
                             android:textColor="@color/color_blue_1"
                             android:textSize="12sp" />
@@ -727,14 +727,14 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/sneakersBootsRate"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:hint="Rate/ Pair"
+                            android:hint="Rate"
                             android:inputType="numberDecimal"
                             android:textColor="@color/color_blue_1"
                             android:textSize="12sp" />
@@ -794,7 +794,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -834,7 +834,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="4"
-                        android:padding="5sp"
+                        android:layout_margin="5sp"
                         app:endIconMode="clear_text">
 
                         <com.google.android.material.textfield.TextInputEditText

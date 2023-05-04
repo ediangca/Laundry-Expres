@@ -11,6 +11,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -199,9 +200,24 @@ class DashboardRatesFragment(var dashboardPartner: DashboardPartnerActivity) : F
         }
     }
 
+    private fun btnRatesSubmitOnClickListener() {
+        dashboardPartner.showLoadingDialog()
+        getDataFromFields()
+        if (errorFields()) {
+            dashboardPartner.dismissLoadingDialog()
+            Toast.makeText(
+                context,
+                "Please check error field(s)!",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        } else {
+            saveRates()
+        }
+    }
+
     private fun errorFields(): Boolean {
         var invalid = false
-
 
         if (!regular!! && !pets!! && !dry!! && !sneakers!!) {
             invalid = true
@@ -226,7 +242,7 @@ class DashboardRatesFragment(var dashboardPartner: DashboardPartnerActivity) : F
                         regularColorKg.error = "Please enter value."
                         invalid = true
                     }
-                    if (regularColorKg.text!!.isEmpty()) {
+                    if (regularWhiteRate.text!!.isEmpty()) {
                         regularWhiteRate.error = "Please enter value."
                         invalid = true
                     }
@@ -279,7 +295,7 @@ class DashboardRatesFragment(var dashboardPartner: DashboardPartnerActivity) : F
                         invalid = true
                     }
                 }
-                if (dry!!) {
+                if (sneakers!!) {
                     if (sneakersOrdinaryRate.text!!.isEmpty()) {
                         sneakersOrdinaryRate.error = "Please enter value."
                         invalid = true
@@ -301,22 +317,6 @@ class DashboardRatesFragment(var dashboardPartner: DashboardPartnerActivity) : F
         }
 
         return invalid
-    }
-
-    private fun btnRatesSubmitOnClickListener() {
-        dashboardPartner.showLoadingDialog()
-        getDataFromFields()
-        if (errorFields()) {
-            dashboardPartner.dismissLoadingDialog()
-            Toast.makeText(
-                context,
-                "Please check error field(s)!",
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        } else {
-            saveRates()
-        }
     }
 
     private fun saveRates() {
@@ -406,33 +406,49 @@ class DashboardRatesFragment(var dashboardPartner: DashboardPartnerActivity) : F
                     sneakers = true
                     setVisibility(linear5, btnServiceSneakers)
                 }
-                binding.regularWhiteKg.setText("${rates.regularWhiteMaxKg}")
-                binding.regularWhiteRate.setText("${rates.regularWhiteRate}")
-                binding.regularColorKg.setText("${rates.regularColorMaxKg}")
-                binding.regularColorRate.setText("${rates.regularColorRate}")
-                binding.regularComforterRate.setText("${rates.regularComforterRate}")
-                binding.regularOthersKg.setText("${rates.regularOthersMaxKg}")
-                binding.regularOthersRate.setText("${rates.regularOthersRate}")
 
-                binding.petsWhiteKg.setText("${rates.petsWhiteMaxKg}")
-                binding.petsWhiteRate.setText("${rates.petsWhiteRate}")
-                binding.petsColorKg.setText("${rates.petsColorMaxKg}")
-                binding.petsColorRate.setText("${rates.petsColorRate}")
+                if(rates.regularWhiteMaxKg!! <= 0){
+                    binding.regularWhiteKg.text = null
+                }else{
+                    binding.regularWhiteKg.setText("${rates.regularWhiteMaxKg}")
+                }
 
-                binding.dryWhiteKg.setText("${rates.dryWhiteMaxKg}")
-                binding.dryWhiteRate.setText("${rates.dryWhiteRate}")
-                binding.dryColorKg.setText("${rates.dryColorMaxKg}")
-                binding.dryColorRate.setText("${rates.dryColorRate}")
+                setNullIfLessThanEqualZero("${rates.regularWhiteMaxKg}", binding.regularWhiteKg)
+                setNullIfLessThanEqualZero("${rates.regularWhiteRate}",binding.regularWhiteRate)
+                setNullIfLessThanEqualZero("${rates.regularColorMaxKg}", binding.regularColorKg)
+                setNullIfLessThanEqualZero("${rates.regularColorRate}", binding.regularColorRate)
+                setNullIfLessThanEqualZero("${rates.regularComforterRate}", binding.regularComforterRate)
+                setNullIfLessThanEqualZero("${rates.regularOthersMaxKg}", binding.regularOthersKg)
+                setNullIfLessThanEqualZero("${rates.regularOthersRate}", binding.regularOthersRate)
 
-                binding.sneakersOrdinaryRate.setText("${rates.sneakerOrdinaryRate}")
-                binding.sneakersBootsRate.setText("${rates.sneakerBootsRate}")
+                setNullIfLessThanEqualZero("${rates.petsWhiteMaxKg}", binding.petsWhiteKg)
+                setNullIfLessThanEqualZero("${rates.petsWhiteRate}", binding.petsWhiteRate)
+                setNullIfLessThanEqualZero("${rates.petsColorMaxKg}", binding.petsColorKg)
+                setNullIfLessThanEqualZero("${rates.petsColorRate}", binding.petsColorRate)
 
-                binding.pickUpRate.setText("${rates.pickUpFee}")
-                binding.deliveryRate.setText("${rates.deliveryFee}")
+                setNullIfLessThanEqualZero("${rates.dryWhiteMaxKg}", binding.dryWhiteKg)
+                setNullIfLessThanEqualZero("${rates.dryWhiteRate}", binding.dryWhiteRate)
+                setNullIfLessThanEqualZero("${rates.dryColorMaxKg}", binding.dryColorKg)
+                setNullIfLessThanEqualZero("${rates.dryColorRate}", binding.dryColorRate)
+
+                setNullIfLessThanEqualZero("${rates.sneakerOrdinaryRate}", binding.sneakersOrdinaryRate)
+                setNullIfLessThanEqualZero("${rates.sneakerBootsRate}", binding.sneakersBootsRate)
+
+                setNullIfLessThanEqualZero("${rates.pickUpFee}", binding.pickUpRate)
+                setNullIfLessThanEqualZero("${rates.deliveryFee}", binding.deliveryRate)
 
                 datetimeCreated = rates.datetimeCreated
 
             }
+        }
+
+    }
+
+    private fun setNullIfLessThanEqualZero(value: String, textInputEditText: TextInputEditText) {
+        if(value.toDouble() <= 0){
+            textInputEditText.text = null
+        }else{
+            textInputEditText.setText(value)
         }
 
     }

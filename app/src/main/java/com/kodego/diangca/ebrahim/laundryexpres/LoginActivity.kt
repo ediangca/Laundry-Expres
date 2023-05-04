@@ -306,14 +306,12 @@ class LoginActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
 
-
-
                         this@LoginActivity.userType =
                             snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
                                 .getValue(String::class.java).toString()
                         val isVerified: Boolean =
                             snapshot.child(firebaseAuth.currentUser!!.uid).child("verified")
-                                .getValue(Boolean::class.java)!!
+                                .getValue(Boolean::class.java)!=null
                         checkIfVerified(isVerified)
                     } else {
                         dismissLoadingDialog()
