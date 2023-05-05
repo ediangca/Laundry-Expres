@@ -224,13 +224,14 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             with(schedulePickerBinding) {
-                dialogTitle.text = "$type Schedule"
+                dateTitle.text = "$type Datetime Schedule"
+                timePicker.setIs24HourView(true)
                 btnSelect.setOnClickListener {
                     calendarOnDateChangedListener(
                         textInputEditText,
                         calendar.year,
                         calendar.month,
-                        calendar.dayOfMonth
+                        calendar.dayOfMonth, timePicker.hour, timePicker.minute
                     )
                     schedulePickerDialogInterface.dismiss()
                 }
@@ -274,8 +275,10 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         year: Int,
         monthOfYear: Int,
         dayOfMonth: Int,
+        hour: Int,
+        minute: Int,
     ) {
-        textInputEditText.setText("$monthOfYear/$dayOfMonth/$year")
+        textInputEditText.setText("$monthOfYear/$dayOfMonth/$year $hour:$minute")
     }
 
 

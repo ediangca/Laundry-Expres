@@ -19,7 +19,7 @@ class DashboardOrdersFragment(var dashboardCustomer: DashboardCustomerActivity) 
     private val binding get() = _binding!!
 
 
-    private var status = arrayOf("ALL", "FOR PICK-UP", "ON PROCESS", "FOR DELIVERY", "COMPLETE", "CANCEL")
+    private var status = arrayOf("ALL", "FOR PICK-UP", "RECEIVED", "FOR DELIVERY", "COMPLETE", "CANCEL")
     val NEW_SPINNER_ID = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
