@@ -99,17 +99,21 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         binding.btnLaundryShop.setOnClickListener {
             btnLaundryShopOnClickListener()
         }
-        binding.editPickupLayout.setOnClickListener {
-            setSchedule(binding.editPickup, "Pick-Up")
-        }
         binding.editPickup.setOnClickListener {
             setSchedule(it, "Pick-Up")
         }
-        binding.editDeliveryLayout.setOnClickListener {
-            setSchedule(binding.editDelivery, "Delivery")
+        binding.editPickup.setOnFocusChangeListener { _, hasFocus ->
+            if(hasFocus){
+                setSchedule(binding.editPickup, "Pick-Up")
+            }
         }
         binding.editDelivery.setOnClickListener {
             setSchedule(it, "Delivery")
+        }
+        binding.editDelivery.setOnFocusChangeListener { _, hasFocus ->
+            if(hasFocus){
+                setSchedule(binding.editDelivery, "Delivery")
+            }
         }
 
     }
@@ -222,25 +226,71 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
         var cal = Calendar.getInstance()
 
+        var time: String? = null
+        var h = schedulePickerBinding.timePicker.hour
+        var m = schedulePickerBinding.timePicker.minute
+        var am_pm = ""
+
+        when {
+            h==0 -> {
+                h += 12
+                am_pm = "AM"
+            }
+            h==12 -> am_pm = "PM"
+            h > 12 -> {
+                h -= 12
+                am_pm = "PM"
+            }
+            else -> am_pm = "AM"
+        }
+        val hour = if (h < 10) "0$h" else h
+        val min = if (m < 10) "0$m" else m
+        // display format of time
+        time = "$hour:$min $am_pm"
+
+        schedulePickerBinding.timePicker.setOnTimeChangedListener { _, hour, minute ->
+            var h = hour
+            // AM_PM decider logic
+            when {
+                h==0 -> {
+                    h += 12
+                    am_pm = "AM"
+                }
+                h==12 -> am_pm = "PM"
+                h > 12 -> {
+                    h -= 12
+                    am_pm = "PM"
+                }
+                else -> am_pm = "AM"
+            }
+            val hour = if (h < 10) "0$h" else h
+            val min = if (minute < 10) "0$minute" else minute
+            // display format of time
+            time = "$hour:$min $am_pm"
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             with(schedulePickerBinding) {
                 dateTitle.text = "$type Datetime Schedule"
-                timePicker.setIs24HourView(true)
+                // set maximum date to be selected as today
+//                calendar.maxDate = cal.timeInMillis
+                calendar.minDate =  cal.timeInMillis
+                timePicker.setIs24HourView(false)
                 btnSelect.setOnClickListener {
+                    schedulePickerDialogInterface.dismiss()
                     calendarOnDateChangedListener(
                         textInputEditText,
                         calendar.year,
                         calendar.month,
-                        calendar.dayOfMonth, timePicker.hour, timePicker.minute
+                        calendar.dayOfMonth, time!!
                     )
-                    schedulePickerDialogInterface.dismiss()
                 }
                 btnCancel.setOnClickListener {
                     schedulePickerDialogInterface.dismiss()
                 }
             }
             schedulePickerBuilder = AlertDialog.Builder(dashboardCustomer)
-            schedulePickerBuilder.setCancelable(false)
+            schedulePickerBuilder.setCancelable(true)
             schedulePickerBuilder.setView(schedulePickerBinding.root)
             schedulePickerDialogInterface = schedulePickerBuilder.create()
             schedulePickerDialogInterface.show()
@@ -275,10 +325,9 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         year: Int,
         monthOfYear: Int,
         dayOfMonth: Int,
-        hour: Int,
-        minute: Int,
+        time: String,
     ) {
-        textInputEditText.setText("$monthOfYear/$dayOfMonth/$year $hour:$minute")
+        textInputEditText.setText("$monthOfYear/$dayOfMonth/$year $time")
     }
 
 

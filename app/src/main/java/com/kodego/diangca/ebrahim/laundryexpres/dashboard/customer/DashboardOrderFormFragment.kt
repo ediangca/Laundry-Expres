@@ -50,10 +50,10 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
     private var orderNo: String? = null
     private var uid: String? = null
     private var shopID: String? = null
-    private var regular: Boolean? = null
-    private var pets: Boolean? = null
-    private var dry: Boolean? = null
-    private var sneaker: Boolean? = null
+    private var regular: Boolean? = false
+    private var pets: Boolean? = false
+    private var dry: Boolean? = false
+    private var sneaker: Boolean? = false
     private var ratesUnit: String? = "PHP"
     private var regularWhiteMaxKg: Int? = null
     private var regularWhiteRate: Double? = null
@@ -113,10 +113,9 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
             pickUpDatetime = bundle.getString("pickUpDatetime")
             deliveryDatetime = bundle.getString("deliveryDatetime")
             Log.d("FETCH_SHOP", shop.toString())
+            retrieveShopServices()
+            setOrderNo()
         }
-        retrieveShopServices()
-
-        setOrderNo()
 
         binding.apply {
             btnBack.setOnClickListener {
@@ -296,6 +295,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                     notes = notesInput.text.toString()
 
                     order = Order(
+                        orderNo,
                         uid,
                         shopID,
                         regular,
@@ -333,6 +333,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                         deliveryDatetime
                     )
 
+                    val oldOrderNo: String = orderNo!!
 
                     Log.d("ORDER_NO", "$orderNo")
                     val databaseRef = firebaseDatabase.reference.child("orders/$uid")
@@ -340,6 +341,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                     databaseRef.setValue(order)
                         .addOnCompleteListener(dashboardCustomer) { task ->
                             if (task.isSuccessful) {
+                                dashboardCustomer.showOrderDetails(oldOrderNo, order!!, rates)
                                 dashboardCustomer.dismissLoadingDialog()
                                 Log.d(
                                     "ORDER_SAVING",
@@ -350,7 +352,6 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                                     "Order $orderNo has been successfully saved!",
                                     Toast.LENGTH_LONG
                                 ).show()
-                                dashboardCustomer.showOrder()
                             } else {
                                 dashboardCustomer.dismissLoadingDialog()
                                 Log.d(
@@ -373,8 +374,11 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                 shopID!!.length - 5,
                 shopID!!.length
             ) //get Last 5 character
-
-
+        val userPattern: String =
+            uid!!.substring(
+                uid!!.length - 5,
+                uid!!.length
+            ) //get Last 5 character
 
         firebaseDatabaseReference.child("orders/$uid")
             .addValueEventListener(object : ValueEventListener {
@@ -386,9 +390,9 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
 
                     orderNo = if (dataOrder!=null) {
                         Log.d("DATA_COUNT", "${dataOrder!!.size+1}")
-                        "TRX-$shopPattern-000${dataOrder!!.size+1}"
+                        "TRX-$shopPattern-$userPattern-000${dataOrder!!.size+1}"
                     }else{
-                        "TRX-$shopPattern-0001"
+                        "TRX-$shopPattern-$userPattern-0001"
                     }
                     Log.d("ORDER_NO", "$orderNo")
 

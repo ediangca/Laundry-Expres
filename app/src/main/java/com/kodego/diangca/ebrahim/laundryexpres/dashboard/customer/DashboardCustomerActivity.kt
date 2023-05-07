@@ -16,6 +16,8 @@ import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityDashboardCustomerBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
+import com.kodego.diangca.ebrahim.laundryexpres.model.Order
+import com.kodego.diangca.ebrahim.laundryexpres.model.Rates
 import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
 
@@ -39,6 +41,7 @@ class DashboardCustomerActivity : AppCompatActivity() {
 
     private lateinit var dashboardShopFragment: DashboardShopFragment
     private lateinit var dashboardOrderFormFragment: DashboardOrderFormFragment
+    private lateinit var dashboardOrderDetailsFragment: DashboardOrderDetailsFragment
 
     private var user: User? = null
     private var shop: Shop? = null
@@ -49,7 +52,7 @@ class DashboardCustomerActivity : AppCompatActivity() {
             private var bundle = Bundle()
 
     private lateinit var loadingBuilder: AlertDialog.Builder
-    private lateinit var loadingDialog: Dialog
+    lateinit var loadingDialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -265,6 +268,19 @@ class DashboardCustomerActivity : AppCompatActivity() {
         mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardOrdersFragment);
         mainFrame.addToBackStack(null);
         mainFrame.commit();
+    }
+
+    fun showOrderDetails(orderNO: String, order: Order, rates: Rates?) {
+        order.printLOG()
+        bundle = Bundle()
+        bundle.putParcelable("order", order)
+        bundle.putParcelable("rate", rates!!)
+        dashboardOrderDetailsFragment = DashboardOrderDetailsFragment(this)
+        dashboardOrderDetailsFragment.arguments = bundle
+        mainFrame = supportFragmentManager.beginTransaction()
+        mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardOrderDetailsFragment);
+        mainFrame.addToBackStack(null);
+        mainFrame.commit()
     }
 
 

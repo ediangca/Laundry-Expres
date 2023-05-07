@@ -23,10 +23,7 @@ import android.util.Base64
 import android.util.Log
 import android.util.Patterns
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -52,7 +49,7 @@ import java.io.File
 import java.io.OutputStream
 import java.util.*
 
-class RegisterCustomerActivity : AppCompatActivity() {
+class RegisterCustomerActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var binding: ActivityRegisterCustomerBinding
 
     private lateinit var dialogLoadingBinding: DialogLoadingBinding
@@ -96,9 +93,17 @@ class RegisterCustomerActivity : AppCompatActivity() {
             binding.email.setText(firebaseAuth.currentUser!!.email)
         }
 
-        val adapter = ArrayAdapter.createFromResource(this, R.array.sex, R.layout.spinner_item)
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
-        binding.sex.adapter = adapter
+        val sexAdapter = ArrayAdapter.createFromResource(this, R.array.sex, R.layout.spinner_item)
+        sexAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        binding.sex.adapter = sexAdapter
+
+        with(binding.sex)
+        {
+            adapter = sexAdapter
+            setSelection(0, false)
+            prompt = "Choose Sex"
+            gravity = android.view.Gravity.CENTER
+        }
 
         binding.btnBack.setOnClickListener {
             btnBackOnClickListener()
@@ -651,6 +656,14 @@ class RegisterCustomerActivity : AppCompatActivity() {
 */
     private fun isValidEmail(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        TODO("Not yet implemented")
     }
 
 }

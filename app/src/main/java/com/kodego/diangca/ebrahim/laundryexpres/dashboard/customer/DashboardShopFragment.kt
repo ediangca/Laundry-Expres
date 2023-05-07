@@ -149,7 +149,11 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     }
 
     private fun btnCurrentLocationOnClickListener() {
-        setLocation()
+        if(!dashboardCustomer.loadingDialog.isShowing) {
+            setLocation()
+        }else{
+            Toast.makeText(context, "Please while retrieving available shop to your registered address.", Toast.LENGTH_SHORT)
+        }
     }
 
     private fun btnBankOnClickListener() {
@@ -164,7 +168,7 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         firebaseDatabaseReference.child("shop").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    for (postSnapshot in dataSnapshot.children) {
+                    for ((index, postSnapshot) in dataSnapshot.children.withIndex()) {
                         val shop = postSnapshot.getValue(Shop::class.java)
                         if (shop!=null) {
                             val shopCity = getCity(shop.businessAddress!!) //if null -> n/a
@@ -187,6 +191,7 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                                                     "RATES FOUND @ ${shop.uid} -> ${shop.businessName}"
                                                 )
                                                 shopAdapter.notifyDataSetChanged()
+
                                             } else {
                                                 Log.d(
                                                     "SHOP_RATES",
@@ -200,8 +205,12 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                                         }
                                     })
                             }
+
                         }
-                        dashboardCustomer.dismissLoadingDialog()
+//                        Toast.makeText(context, "Retrieving Index $index out of ${dataSnapshot.childrenCount-1}", Toast.LENGTH_LONG).show()
+                        if(index >= (dataSnapshot.childrenCount-1)){
+                            dashboardCustomer.dismissLoadingDialog()
+                        }
                     }
                 } else {
                     Log.d("SHOP_ON_DATA_CHANGE", "NO SHOP YET AVAILABLE IN RECORD")

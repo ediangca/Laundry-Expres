@@ -47,27 +47,28 @@ class DashboardOrdersFragment(var dashboardCustomer: DashboardCustomerActivity) 
     }
 
     private fun initComponent() {
-        var aa = ArrayAdapter(dashboardCustomer, R.layout.simple_spinner_item, status)
-        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        var statusAdapter = ArrayAdapter(dashboardCustomer, R.layout.simple_spinner_item, status)
+        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         with(binding.spinnerOrderStatus)
         {
-            adapter = aa
+            adapter = statusAdapter
             setSelection(0, false)
             onItemSelectedListener = this@DashboardOrdersFragment
             prompt = "Select Order Status"
             gravity = Gravity.CENTER
-
         }
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        when (view?.id) {
-            1 -> showToast(message = "Spinner 2 Position:${position} and language: ${status[position]}")
-            else -> {
-                showToast(message = "Spinner 1 Position:${position} and language: ${status[position]}")
-            }
-        }
+        showToast(message = "Spinner 2 Position:${position} and language: ${status[position]}")
+        
+        showOrders(status[position])
+        
+    }
+
+    private fun showOrders(orderStatus: String) {
+
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {

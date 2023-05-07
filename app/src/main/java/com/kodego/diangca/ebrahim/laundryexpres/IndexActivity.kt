@@ -118,7 +118,7 @@ class IndexActivity : AppCompatActivity() {
             val builder = AlertDialog.Builder(this)
             builder.setCancelable(false)
             builder.setTitle("INTERNET CONNECTIVITY REQUIRED")
-            builder.setMessage("PLEASE TURN ON YOU WIFI OR DATA TO USE THIS APP.")
+            builder.setMessage("PLEASE TURN ON YOUR WIFI OR DATA TO USE THIS APP.")
             builder.setPositiveButton(android.R.string.yes) { dialog, which ->
                 startActivity(Intent(Settings.ACTION_WIFI_SETTINGS));
                 verifyDialog.dismiss()
