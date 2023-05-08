@@ -18,20 +18,27 @@ data class Order(
     val sneaker: Boolean? = null,
     val ratesUnit: String? = null,
     val regularWhiteMaxKg: Int? = null,
+    val regularWhiteLoad: Int? = null,
     val regularWhiteRate: Double? = null,
     val regularColorMaxKg: Int? = null,
+    val regularColorLoad: Int? = null,
     val regularColorRate: Double? = null,
     val regularComforterMaxKg: Int? = null,
     val regularComforterRate: Double? = null,
     val regularOthersMaxKg: Int? = null,
+    val regularOthersLoad: Int? = null,
     val regularOthersRate: Double? = null,
     val petsWhiteMaxKg: Int? = null,
+    val petsWhiteLoad: Int? = null,
     val petsWhiteRate: Double? = null,
     val petsColorMaxKg: Int? = null,
+    val petsColorLoad: Int? = null,
     val petsColorRate: Double? = null,
     val dryWhiteMaxKg: Int? = null,
+    val dryWhiteLoad: Int? = null,
     val dryWhiteRate: Double? = null,
     val dryColorMaxKg: Int? = null,
+    val dryColorLoad: Int? = null,
     val dryColorRate: Double? = null,
     val sneakerOrdinaryMaxKg: Int? = null,
     val sneakerOrdinaryRate: Double? = null,
@@ -58,19 +65,26 @@ data class Order(
         parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
         parcel.readString(),
         parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readValue(Double::class.java.classLoader) as? Double,
+        parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readValue(Double::class.java.classLoader) as? Double,
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readValue(Double::class.java.classLoader) as? Double,
         parcel.readValue(Int::class.java.classLoader) as? Int,
-        parcel.readValue(Double::class.java.classLoader) as? Double,
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readValue(Double::class.java.classLoader) as? Double,
         parcel.readValue(Int::class.java.classLoader) as? Int,
-        parcel.readValue(Double::class.java.classLoader) as? Double,
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readValue(Double::class.java.classLoader) as? Double,
+        parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readValue(Double::class.java.classLoader) as? Double,
+        parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readValue(Double::class.java.classLoader) as? Double,
+        parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readValue(Double::class.java.classLoader) as? Double,
         parcel.readValue(Int::class.java.classLoader) as? Int,
@@ -103,20 +117,27 @@ data class Order(
         parcel.writeValue(sneaker)
         parcel.writeString(ratesUnit)
         parcel.writeValue(regularWhiteMaxKg)
+        parcel.writeValue(regularWhiteLoad)
         parcel.writeValue(regularWhiteRate)
         parcel.writeValue(regularColorMaxKg)
+        parcel.writeValue(regularColorLoad)
         parcel.writeValue(regularColorRate)
         parcel.writeValue(regularComforterMaxKg)
         parcel.writeValue(regularComforterRate)
         parcel.writeValue(regularOthersMaxKg)
+        parcel.writeValue(regularOthersLoad)
         parcel.writeValue(regularOthersRate)
         parcel.writeValue(petsWhiteMaxKg)
+        parcel.writeValue(petsWhiteLoad)
         parcel.writeValue(petsWhiteRate)
         parcel.writeValue(petsColorMaxKg)
+        parcel.writeValue(petsColorLoad)
         parcel.writeValue(petsColorRate)
         parcel.writeValue(dryWhiteMaxKg)
+        parcel.writeValue(dryWhiteLoad)
         parcel.writeValue(dryWhiteRate)
         parcel.writeValue(dryColorMaxKg)
+        parcel.writeValue(dryColorLoad)
         parcel.writeValue(dryColorRate)
         parcel.writeValue(sneakerOrdinaryMaxKg)
         parcel.writeValue(sneakerOrdinaryRate)
@@ -137,7 +158,7 @@ data class Order(
     }
 
     override fun toString(): String {
-        return "Order(orderNo=$orderNo, uid=$uid, shopID=$shopID, regular=$regular, pets=$pets, dry=$dry, sneaker=$sneaker, ratesUnit=$ratesUnit, regularWhiteMaxKg=$regularWhiteMaxKg, regularWhiteRate=$regularWhiteRate, regularColorMaxKg=$regularColorMaxKg, regularColorRate=$regularColorRate, regularComforterMaxKg=$regularComforterMaxKg, regularComforterRate=$regularComforterRate, regularOthersMaxKg=$regularOthersMaxKg, regularOthersRate=$regularOthersRate, petsWhiteMaxKg=$petsWhiteMaxKg, petsWhiteRate=$petsWhiteRate, petsColorMaxKg=$petsColorMaxKg, petsColorRate=$petsColorRate, dryWhiteMaxKg=$dryWhiteMaxKg, dryWhiteRate=$dryWhiteRate, dryColorMaxKg=$dryColorMaxKg, dryColorRate=$dryColorRate, sneakerOrdinaryMaxKg=$sneakerOrdinaryMaxKg, sneakerOrdinaryRate=$sneakerOrdinaryRate, sneakerBootsMaxKg=$sneakerBootsMaxKg, sneakerBootsRate=$sneakerBootsRate, totalLaundryPrice=$totalLaundryPrice, pickUpFee=$pickUpFee, deliveryFee=$deliveryFee, totalOrder=$totalOrder, status=$status, notes=$notes, pickUpDatetime=$pickUpDatetime, deliveryDatetime=$deliveryDatetime)"
+        return "Order(orderNo=$orderNo, uid=$uid, shopID=$shopID, regular=$regular, pets=$pets, dry=$dry, sneaker=$sneaker, ratesUnit=$ratesUnit, regularWhiteMaxKg=$regularWhiteMaxKg, regularWhiteLoad=$regularWhiteLoad, regularWhiteRate=$regularWhiteRate, regularColorMaxKg=$regularColorMaxKg, regularColorLoad=$regularColorLoad, regularColorRate=$regularColorRate, regularComforterMaxKg=$regularComforterMaxKg, regularComforterRate=$regularComforterRate, regularOthersMaxKg=$regularOthersMaxKg, regularOthersLoad=$regularOthersLoad, regularOthersRate=$regularOthersRate, petsWhiteMaxKg=$petsWhiteMaxKg, petsWhiteLoad=$petsWhiteLoad, petsWhiteRate=$petsWhiteRate, petsColorMaxKg=$petsColorMaxKg, petsColorLoad=$petsColorLoad, petsColorRate=$petsColorRate, dryWhiteMaxKg=$dryWhiteMaxKg, dryWhiteLoad=$dryWhiteLoad, dryWhiteRate=$dryWhiteRate, dryColorMaxKg=$dryColorMaxKg, dryColorLoad=$dryColorLoad, dryColorRate=$dryColorRate, sneakerOrdinaryMaxKg=$sneakerOrdinaryMaxKg, sneakerOrdinaryRate=$sneakerOrdinaryRate, sneakerBootsMaxKg=$sneakerBootsMaxKg, sneakerBootsRate=$sneakerBootsRate, totalLaundryPrice=$totalLaundryPrice, pickUpFee=$pickUpFee, deliveryFee=$deliveryFee, totalOrder=$totalOrder, status=$status, notes=$notes, pickUpDatetime=$pickUpDatetime, deliveryDatetime=$deliveryDatetime)"
     }
 
     companion object CREATOR : Parcelable.Creator<Order> {
@@ -149,5 +170,6 @@ data class Order(
             return arrayOfNulls(size)
         }
     }
+
 
 }

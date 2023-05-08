@@ -17,7 +17,6 @@ import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityDashboardCustomerBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
-import com.kodego.diangca.ebrahim.laundryexpres.model.Rates
 import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
 
@@ -270,11 +269,10 @@ class DashboardCustomerActivity : AppCompatActivity() {
         mainFrame.commit();
     }
 
-    fun showOrderDetails(orderNO: String, order: Order, rates: Rates?) {
+    fun showOrderDetails(order: Order) {
         order.printLOG()
         bundle = Bundle()
         bundle.putParcelable("order", order)
-        bundle.putParcelable("rate", rates!!)
         dashboardOrderDetailsFragment = DashboardOrderDetailsFragment(this)
         dashboardOrderDetailsFragment.arguments = bundle
         mainFrame = supportFragmentManager.beginTransaction()

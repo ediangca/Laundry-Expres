@@ -21,68 +21,79 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/filterLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnTitle"
+        android:background="@drawable/box_style"
+        android:backgroundTint="@color/color_white_2"
+        android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="SELECT ORDER BY STATUS"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/spinnerOrderStatus"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnTitle"
+        android:spinnerMode="dialog"
+        android:background="@drawable/box_style"
+        android:textAlignment="center"
+        />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnTitle"
+        app:layout_constraintTop_toBottomOf="@id/filterLayout"
         app:layout_constraintBottom_toBottomOf="parent">
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/profileLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:background="@drawable/box_style"
-        android:backgroundTint="@color/color_white_2"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="SELECT ORDER BY STATUS"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:textStyle="bold"/>
-
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/spinnerOrderStatus"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_margin="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnTitle"
-            android:spinnerMode="dialog"
-            android:background="@drawable/box_style"
-            android:textAlignment="center"
-            />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="50dp"
-            android:text="NO ORDERS FOUND !"
-            android:textAlignment="center"
-            android:textSize="20dp" />
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/shopList"
+            android:id="@+id/orderList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:background="@drawable/box_style"
+            android:backgroundTint="@color/color_white_2"
+            android:layout_margin="10dp"
             android:nestedScrollingEnabled="true" />
 
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
 
     </ScrollView>
 
+
+    <TextView
+        android:id="@+id/promptView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:drawableTop="@mipmap/ic_launcher_foreground"
+        android:padding="20dp"
+        android:text="@string/retrieve_orders_prompt"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/color_blue_1"
+        android:textSize="18sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

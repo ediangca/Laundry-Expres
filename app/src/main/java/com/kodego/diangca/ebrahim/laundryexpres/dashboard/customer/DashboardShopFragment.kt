@@ -149,10 +149,14 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     }
 
     private fun btnCurrentLocationOnClickListener() {
-        if(!dashboardCustomer.loadingDialog.isShowing) {
+        if (!dashboardCustomer.loadingDialog.isShowing) {
             setLocation()
-        }else{
-            Toast.makeText(context, "Please while retrieving available shop to your registered address.", Toast.LENGTH_SHORT)
+        } else {
+            Toast.makeText(
+                context,
+                "Please while retrieving available shop to your registered address.",
+                Toast.LENGTH_SHORT
+            )
         }
     }
 
@@ -195,7 +199,7 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                                             } else {
                                                 Log.d(
                                                     "SHOP_RATES",
-                                                    "${shop.uid} -> RATES NOT FOUND"
+                                                    " RATES NOT FOUND"
                                                 )
                                             }
                                         }
@@ -208,7 +212,7 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
                         }
 //                        Toast.makeText(context, "Retrieving Index $index out of ${dataSnapshot.childrenCount-1}", Toast.LENGTH_LONG).show()
-                        if(index >= (dataSnapshot.childrenCount-1)){
+                        if (index >= (dataSnapshot.childrenCount - 1)) {
                             dashboardCustomer.dismissLoadingDialog()
                         }
                     }
@@ -216,6 +220,7 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                     Log.d("SHOP_ON_DATA_CHANGE", "NO SHOP YET AVAILABLE IN RECORD")
                 }
             }
+
             override fun onCancelled(error: DatabaseError) {
                 // Getting Post failed, log a message
                 dashboardCustomer.dismissLoadingDialog()
@@ -331,9 +336,9 @@ class DashboardShopFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     }
 
     fun onPropertyStateChanged() {
-        if(shopAdapter.itemCount <= 0){
+        if (shopAdapter.itemCount <= 0) {
             binding.promptView.visibility = View.VISIBLE
-        }else{
+        } else {
             binding.promptView.visibility = View.GONE
         }
     }

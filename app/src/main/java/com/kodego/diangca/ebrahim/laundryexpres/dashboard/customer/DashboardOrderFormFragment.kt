@@ -56,20 +56,27 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
     private var sneaker: Boolean? = false
     private var ratesUnit: String? = "PHP"
     private var regularWhiteMaxKg: Int? = null
+    private var regularWhiteLoad: Int? = null
     private var regularWhiteRate: Double? = null
     private var regularColorMaxKg: Int? = null
+    private var regularColorLoad: Int? = null
     private var regularColorRate: Double? = null
     private var regularComforterMaxKg: Int? = null
     private var regularComforterRate: Double? = null
     private var regularOthersMaxKg: Int? = null
+    private var regularOthersLoad: Int? = null
     private var regularOthersRate: Double? = null
     private var petsWhiteMaxKg: Int? = null
+    private var petsWhiteLoad: Int? = null
     private var petsWhiteRate: Double? = null
     private var petsColorMaxKg: Int? = null
+    private var petsColorLoad: Int? = null
     private var petsColorRate: Double? = null
     private var dryWhiteMaxKg: Int? = null
+    private var dryWhiteLoad: Int? = null
     private var dryWhiteRate: Double? = null
     private var dryColorMaxKg: Int? = null
+    private var dryColorLoad: Int? = null
     private var dryColorRate: Double? = null
     private var sneakerOrdinaryMaxKg: Int? = null
     private var sneakerOrdinaryRate: Double? = null
@@ -304,20 +311,27 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                         sneaker,
                         ratesUnit,
                         regularWhiteMaxKg,
+                        regularWhiteLoad,
                         regularWhiteRate,
                         regularColorMaxKg,
+                        regularColorLoad,
                         regularColorRate,
                         regularComforterMaxKg,
                         regularComforterRate,
                         regularOthersMaxKg,
+                        regularOthersLoad,
                         regularOthersRate,
                         petsWhiteMaxKg,
+                        petsWhiteLoad,
                         petsWhiteRate,
                         petsColorMaxKg,
+                        petsColorLoad,
                         petsColorRate,
                         dryWhiteMaxKg,
+                        dryWhiteLoad,
                         dryWhiteRate,
                         dryColorMaxKg,
+                        dryColorLoad,
                         dryColorRate,
                         sneakerOrdinaryMaxKg,
                         sneakerOrdinaryRate,
@@ -333,15 +347,13 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                         deliveryDatetime
                     )
 
-                    val oldOrderNo: String = orderNo!!
-
                     Log.d("ORDER_NO", "$orderNo")
                     val databaseRef = firebaseDatabase.reference.child("orders/$uid")
                         .child(orderNo!!)
                     databaseRef.setValue(order)
                         .addOnCompleteListener(dashboardCustomer) { task ->
                             if (task.isSuccessful) {
-                                dashboardCustomer.showOrderDetails(oldOrderNo, order!!, rates)
+                                dashboardCustomer.showOrderDetails(order!!)
                                 dashboardCustomer.dismissLoadingDialog()
                                 Log.d(
                                     "ORDER_SAVING",
@@ -434,19 +446,19 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                 Log.d(regularLabel3.text.toString(), "LOAD -> ${load3.text.toString()}")
                 Log.d(regularLabel4.text.toString(), "LOAD -> ${load4.text.toString()}")
 
-                regularWhiteMaxKg = load1.text.toString().toInt()
+                regularWhiteLoad = load1.text.toString().toInt()
                 regularWhiteRate = rates!!.regularWhiteRate
-                regularColorMaxKg = load2.text.toString().toInt()
+                regularColorLoad = load2.text.toString().toInt()
                 regularColorRate = rates!!.regularColorRate
                 regularComforterMaxKg = load3.text.toString().toInt()
                 regularComforterRate = rates!!.regularComforterRate
-                regularOthersMaxKg = load4.text.toString().toInt()
+                regularOthersLoad = load4.text.toString().toInt()
                 regularOthersRate = rates!!.regularOthersRate
 
-                val totalRegular = (regularWhiteMaxKg!! * regularWhiteRate!!) +
-                        (regularColorMaxKg!! * regularColorRate!!) +
+                val totalRegular = (regularWhiteLoad!! * regularWhiteRate!!) +
+                        (regularColorLoad!! * regularColorRate!!) +
                         (regularComforterMaxKg!! * regularComforterRate!!) +
-                        (regularOthersMaxKg!! * regularOthersRate!!)
+                        (regularOthersLoad!! * regularOthersRate!!)
 
                 totalLaundryPrice = totalLaundryPrice!! + totalRegular
             }
@@ -454,13 +466,13 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                 Log.d(petsLabel1.text.toString(), "LOAD -> ${load1p.text.toString()}")
                 Log.d(petsLabel2.text.toString(), "LOAD -> ${load2p.text.toString()}")
 
-                petsWhiteMaxKg = load1p.text.toString().toInt()
+                petsWhiteLoad = load1.text.toString().toInt()
                 petsWhiteRate = rates!!.petsWhiteRate
-                petsColorMaxKg = load2p.text.toString().toInt()
+                petsColorLoad = load2p.text.toString().toInt()
                 petsColorRate = rates!!.petsColorRate
 
-                val totalPets = (petsWhiteMaxKg!! * petsWhiteRate!!) +
-                        (petsColorMaxKg!! * petsColorRate!!)
+                val totalPets = (petsWhiteLoad!! * petsWhiteRate!!) +
+                        (petsColorLoad!! * petsColorRate!!)
 
                 totalLaundryPrice = totalLaundryPrice!! + totalPets
             }
@@ -468,13 +480,13 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                 Log.d(dryLabel1.text.toString(), "LOAD -> ${load1d.text.toString()}")
                 Log.d(dryLabel2.text.toString(), "LOAD -> ${load2d.text.toString()}")
 
-                dryWhiteMaxKg = load1d.text.toString().toInt()
+                dryWhiteLoad = load1d.text.toString().toInt()
                 dryWhiteRate = rates!!.dryWhiteRate
-                dryColorMaxKg = load2d.text.toString().toInt()
+                dryColorLoad = load2d.text.toString().toInt()
                 dryColorRate = rates!!.dryColorRate
 
-                val totalDry = (dryWhiteMaxKg!! * dryWhiteRate!!) +
-                        (dryColorMaxKg!! * dryColorRate!!)
+                val totalDry = (dryWhiteLoad!! * dryWhiteRate!!) +
+                        (dryColorLoad!! * dryColorRate!!)
 
                 totalLaundryPrice = totalLaundryPrice!! + totalDry
             }
@@ -538,24 +550,31 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                         if (!rates!!.sneakers!!) {
                             btnServiceSneakers.visibility = View.GONE
                         }
-                        //Regular Rates
+                        //Regular
+                        this@DashboardOrderFormFragment.regularWhiteMaxKg = rates!!.regularWhiteMaxKg
                         regularLabel1.text = "White Clothes (${rates!!.regularWhiteMaxKg} Kg Max)"
                         regularLoadRate1.text = "${rates!!.regularWhiteRate} / LOAD"
-                        regularLabel2.text = "Color Clothes (${rates!!.regularWhiteMaxKg} Kg Max)"
+                        this@DashboardOrderFormFragment.regularColorMaxKg = rates!!.regularColorMaxKg
+                        regularLabel2.text = "Color Clothes (${rates!!.regularColorMaxKg} Kg Max)"
                         regularLoadRate2.text = "${rates!!.regularColorRate} / LOAD"
                         regularLabel3.text = "Comforter (Per Piece)"
                         regularLoadRate3.text = "${rates!!.regularComforterRate} / LOAD"
+                        this@DashboardOrderFormFragment.regularOthersMaxKg = rates!!.regularOthersMaxKg
                         regularLabel4.text =
                             "Blankets/ Bedsheets/ Curtains/ Towels ${rates!!.regularOthersMaxKg} Kg Max)"
                         regularLoadRate4.text = "${rates!!.regularOthersRate} / LOAD"
                         //Pets Rates
+                        this@DashboardOrderFormFragment.petsWhiteMaxKg = rates!!.petsWhiteMaxKg
                         petsLabel1.text = "White Clothes (${rates!!.petsWhiteMaxKg} Kg Max)"
                         petsLoadRate1.text = "${rates!!.petsWhiteRate} / LOAD"
+                        this@DashboardOrderFormFragment.petsColorMaxKg = rates!!.petsColorMaxKg
                         petsLabel2.text = "Color Clothes (${rates!!.petsColorMaxKg} Kg Max)"
                         petsLoadRate2.text = "${rates!!.petsColorRate} / LOAD"
                         //Dry Rates
+                        this@DashboardOrderFormFragment.dryWhiteMaxKg = rates!!.dryWhiteMaxKg
                         dryLabel1.text = "White Clothes (${rates!!.dryWhiteMaxKg} Kg Max)"
                         dryLoadRate1.text = "${rates!!.dryWhiteRate} / LOAD"
+                        this@DashboardOrderFormFragment.dryColorMaxKg = rates!!.dryColorMaxKg
                         dryLabel2.text = "Color Clothes (${rates!!.dryColorMaxKg} Kg Max)"
                         dryLoadRate2.text = "${rates!!.dryColorRate} / LOAD"
                         //Sneakers

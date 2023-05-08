@@ -1,18 +1,42 @@
 package com.kodego.diangca.ebrahim.laundryexpres.adater
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.kodego.diangca.ebrahim.laundryexpres.databinding.ItemShopBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import com.kodego.diangca.ebrahim.laundryexpres.R
+import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.ItemOrdersBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
+import com.kodego.diangca.ebrahim.laundryexpres.model.Rates
+import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
 
 class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
     RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
 
 
+    private var dashboardCustomer: DashboardCustomerActivity? = null
+
+
+    private var firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance()
+    private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
+        .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
+    private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    private var shop: Shop? = null
+    private var rates: Rates? = null
+
+    @JvmName("setDashboardCustomer1")
+    fun setDashboardCustomer(dashboardCustomer: DashboardCustomerActivity){
+        this.dashboardCustomer = dashboardCustomer
+    }
     override fun getItemCount(): Int {
         return orderList.size
     }
@@ -22,7 +46,7 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
         viewType: Int,
     ): OrderAdapter.OrderViewHolder {
         val itemBinding =
-            ItemShopBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ItemOrdersBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return OrderViewHolder(itemBinding)
     }
 
@@ -31,17 +55,42 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
     }
 
     inner class OrderViewHolder(
-        private val itemBinding: ItemShopBinding,
+        private val itemBinding: ItemOrdersBinding,
     ) :
         RecyclerView.ViewHolder(itemBinding.root), View.OnClickListener {
 
         var order = Order()
+        @SuppressLint("UseCompatLoadingForDrawables")
         fun bindShop(order: Order) {
             this.order = order
             with(itemBinding){
-
+                orderNo.text = order.orderNo
+                pickUpDatetimeLabel.text = order.pickUpDatetime
+                deliveryDatetimeLabel.text = order.deliveryDatetime
+                statusLabel.text = order.status
+//                "ALL", "FOR PICK-UP", "RECEIVED", "FOR DELIVERY", "COMPLETE", "CANCEL"
+                when(order.status){
+                    "FOR PICK-UP" ->{
+                        indicatorIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_pickup))
+                    }
+                    "RECEIVED" ->{
+                        indicatorIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_received))
+                    }
+                    "FOR DELIVERY" ->{
+                        indicatorIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_delivery))
+                    }
+                    "COMPLETE" ->{
+                        indicatorIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_complete))
+                    }
+                    "CANCEL" ->{
+                        indicatorIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_cancel_book))
+                    }
+                    else ->{
+                        Toast.makeText(activity.applicationContext, "No Status stated", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
-            itemBinding.btnSelect.setOnClickListener {
+            itemBinding.btnDetails.setOnClickListener {
                 btnSelectOnClickListener(itemBinding, adapterPosition, order)
             }
         }
@@ -55,10 +104,13 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
         }
 
         private fun btnSelectOnClickListener(
-            itemBinding: ItemShopBinding,
+            itemBinding: ItemOrdersBinding,
             positionAdapter: Int,
             order: Order) {
 
+            if(dashboardCustomer!=null) {
+                dashboardCustomer!!.showOrderDetails(order)
+            }
         }
 
     }

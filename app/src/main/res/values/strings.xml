@@ -72,6 +72,9 @@
         \n Therefore, it is your responsibility to ensure that all information provided
  to us is accurate and complete before making any confirmations or relying on any statements."
     </string>
+    <string name="indication">Indicator</string>
+    <string name="retrieve_shop_prompt">We don\'t have Available Laundry Shop partner in your area.</string>
+    <string name="retrieve_orders_prompt">SORRY! NO ORDERS FOR FOUND!</string>
 
 
 </resources>

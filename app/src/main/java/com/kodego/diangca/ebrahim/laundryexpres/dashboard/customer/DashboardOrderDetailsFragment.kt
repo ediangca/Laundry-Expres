@@ -18,7 +18,6 @@ import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogAgreementBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardOrderDetailsFormBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
-import com.kodego.diangca.ebrahim.laundryexpres.model.Rates
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -38,7 +37,6 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
 
 
     private var order: Order? = null
-    private var rate: Rates? = null
 
     private var orderNo: String? = null
     private var uid: String? = null
@@ -49,20 +47,27 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
     private var sneaker: Boolean? = null
     private var ratesUnit: String? = "PHP"
     private var regularWhiteMaxKg: Int? = null
+    private var regularWhiteLoad: Int? = null
     private var regularWhiteRate: Double? = null
     private var regularColorMaxKg: Int? = null
+    private var regularColorLoad: Int? = null
     private var regularColorRate: Double? = null
     private var regularComforterMaxKg: Int? = null
     private var regularComforterRate: Double? = null
     private var regularOthersMaxKg: Int? = null
+    private var regularOthersLoad: Int? = null
     private var regularOthersRate: Double? = null
     private var petsWhiteMaxKg: Int? = null
+    private var petsWhiteLoad: Int? = null
     private var petsWhiteRate: Double? = null
     private var petsColorMaxKg: Int? = null
+    private var petsColorLoad: Int? = null
     private var petsColorRate: Double? = null
     private var dryWhiteMaxKg: Int? = null
+    private var dryWhiteLoad: Int? = null
     private var dryWhiteRate: Double? = null
     private var dryColorMaxKg: Int? = null
+    private var dryColorLoad: Int? = null
     private var dryColorRate: Double? = null
     private var sneakerOrdinaryMaxKg: Int? = null
     private var sneakerOrdinaryRate: Double? = null
@@ -104,7 +109,6 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
         val bundle = this.arguments
         if (bundle!=null) {
             order = bundle.getParcelable<Order>("order")!!
-            rate = bundle.getParcelable<Rates>("rate")!!
             Log.d("FETCH_ORDER", order.toString())
             retrieveOrder()
         }
@@ -228,15 +232,15 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 Log.d(regularLabel3.text.toString(), "LOAD -> ${load3.text.toString()}")
                 Log.d(regularLabel4.text.toString(), "LOAD -> ${load4.text.toString()}")
 
-                regularWhiteMaxKg = load1.text.toString().toInt()
-                regularColorMaxKg = load2.text.toString().toInt()
+                regularWhiteLoad = load1.text.toString().toInt()
+                regularColorLoad = load2.text.toString().toInt()
                 regularComforterMaxKg = load3.text.toString().toInt()
-                regularOthersMaxKg = load4.text.toString().toInt()
+                regularOthersLoad = load4.text.toString().toInt()
 
-                val totalRegular = (regularWhiteMaxKg!! * regularWhiteRate!!) +
-                        (regularColorMaxKg!! * regularColorRate!!) +
+                val totalRegular = (regularWhiteLoad!! * regularWhiteRate!!) +
+                        (regularColorLoad!! * regularColorRate!!) +
                         (regularComforterMaxKg!! * regularComforterRate!!) +
-                        (regularOthersMaxKg!! * regularOthersRate!!)
+                        (regularOthersLoad!! * regularOthersRate!!)
 
                 totalLaundryPrice = totalLaundryPrice!! + totalRegular
             }
@@ -244,11 +248,11 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 Log.d(petsLabel1.text.toString(), "LOAD -> ${load1p.text.toString()}")
                 Log.d(petsLabel2.text.toString(), "LOAD -> ${load2p.text.toString()}")
 
-                petsWhiteMaxKg = load1p.text.toString().toInt()
-                petsColorMaxKg = load2p.text.toString().toInt()
+                petsWhiteLoad = load1p.text.toString().toInt()
+                petsColorLoad = load2p.text.toString().toInt()
 
-                val totalPets = (petsWhiteMaxKg!! * petsWhiteRate!!) +
-                        (petsColorMaxKg!! * petsColorRate!!)
+                val totalPets = (petsWhiteLoad!! * petsWhiteRate!!) +
+                        (petsColorLoad!! * petsColorRate!!)
 
                 totalLaundryPrice = totalLaundryPrice!! + totalPets
             }
@@ -256,11 +260,11 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 Log.d(dryLabel1.text.toString(), "LOAD -> ${load1d.text.toString()}")
                 Log.d(dryLabel2.text.toString(), "LOAD -> ${load2d.text.toString()}")
 
-                dryWhiteMaxKg = load1d.text.toString().toInt()
-                dryColorMaxKg = load2d.text.toString().toInt()
+                dryWhiteLoad = load1d.text.toString().toInt()
+                dryColorLoad = load2d.text.toString().toInt()
 
-                val totalDry = (dryWhiteMaxKg!! * dryWhiteRate!!) +
-                        (dryColorMaxKg!! * dryColorRate!!)
+                val totalDry = (dryWhiteLoad!! * dryWhiteRate!!) +
+                        (dryColorLoad!! * dryColorRate!!)
 
                 totalLaundryPrice = totalLaundryPrice!! + totalDry
             }
@@ -320,23 +324,30 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
 
 
             //Regular Rates
+            this@DashboardOrderDetailsFragment.regularWhiteMaxKg = order!!.regularWhiteMaxKg
             regularLabel1.text = "White Clothes (${order!!.regularWhiteMaxKg} Kg Max)"
             regularLoadRate1.text = "${order!!.regularWhiteRate} / LOAD"
-            regularLabel2.text = "Color Clothes (${order!!.regularWhiteMaxKg} Kg Max)"
+            this@DashboardOrderDetailsFragment.regularColorMaxKg = order!!.regularColorMaxKg
+            regularLabel2.text = "Color Clothes (${order!!.regularColorMaxKg} Kg Max)"
             regularLoadRate2.text = "${order!!.regularColorRate} / LOAD"
             regularLabel3.text = "Comforter (Per Piece)"
             regularLoadRate3.text = "${order!!.regularComforterRate} / LOAD"
+            this@DashboardOrderDetailsFragment.regularOthersMaxKg = order!!.regularOthersMaxKg
             regularLabel4.text =
                 "Blankets/ Bedsheets/ Curtains/ Towels ${order!!.regularOthersMaxKg} Kg Max)"
             regularLoadRate4.text = "${order!!.regularOthersRate} / LOAD"
             //Pets Rates
+            this@DashboardOrderDetailsFragment.petsWhiteMaxKg = order!!.petsWhiteMaxKg
             petsLabel1.text = "White Clothes (${order!!.petsWhiteMaxKg} Kg Max)"
             petsLoadRate1.text = "${order!!.petsWhiteRate} / LOAD"
+            this@DashboardOrderDetailsFragment.petsColorMaxKg = order!!.petsColorMaxKg
             petsLabel2.text = "Color Clothes (${order!!.petsColorMaxKg} Kg Max)"
             petsLoadRate2.text = "${order!!.petsColorRate} / LOAD"
             //Dry Rates
+            this@DashboardOrderDetailsFragment.dryWhiteMaxKg = order!!.dryWhiteMaxKg
             dryLabel1.text = "White Clothes (${order!!.dryWhiteMaxKg} Kg Max)"
             dryLoadRate1.text = "${order!!.dryWhiteRate} / LOAD"
+            this@DashboardOrderDetailsFragment.dryColorMaxKg = order!!.dryColorMaxKg
             dryLabel2.text = "Color Clothes (${order!!.dryColorMaxKg} Kg Max)"
             dryLoadRate2.text = "${order!!.dryColorRate} / LOAD"
             //Sneakers
@@ -351,15 +362,15 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 btnServiceRegular.visibility = View.VISIBLE
                 linear2.visibility = View.VISIBLE
                 ContextCompat.getDrawable(dashboardCustomer, R.drawable.button_secondary)
-                load1.text = "${order!!.regularWhiteMaxKg}"
-                load2.text = "${order!!.regularColorMaxKg}"
+                load1.text = "${order!!.regularWhiteLoad}"
+                load2.text = "${order!!.regularColorLoad}"
                 load3.text = "${order!!.regularComforterMaxKg}"
-                load4.text = "${order!!.regularOthersMaxKg}"
+                load4.text = "${order!!.regularOthersLoad}"
                 //Regular Rates
-                this@DashboardOrderDetailsFragment.regularWhiteRate = rate!!.regularWhiteRate
-                this@DashboardOrderDetailsFragment.regularColorRate = rate!!.regularColorRate
-                this@DashboardOrderDetailsFragment.regularComforterRate = rate!!.regularComforterRate
-                this@DashboardOrderDetailsFragment.regularOthersRate = rate!!.regularOthersRate
+                this@DashboardOrderDetailsFragment.regularWhiteRate = order!!.regularWhiteRate
+                this@DashboardOrderDetailsFragment.regularColorRate = order!!.regularColorRate
+                this@DashboardOrderDetailsFragment.regularComforterRate = order!!.regularComforterRate
+                this@DashboardOrderDetailsFragment.regularOthersRate = order!!.regularOthersRate
             } else {
                 Log.d("RATES_DATA", "NO LOAD REGULAR")
                 btnServiceRegular.visibility = View.GONE
@@ -374,11 +385,11 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 btnServicePets.visibility = View.VISIBLE
                 linear3.visibility = View.VISIBLE
                 ContextCompat.getDrawable(dashboardCustomer, R.drawable.button_secondary)
-                load1p.text = "${order!!.petsWhiteMaxKg}"
-                load2p.text = "${order!!.petsColorMaxKg}"
+                load1p.text = "${order!!.petsWhiteLoad}"
+                load2p.text = "${order!!.petsColorLoad}"
                 //Pates Rates
-                this@DashboardOrderDetailsFragment.petsWhiteRate = rate!!.petsWhiteRate
-                this@DashboardOrderDetailsFragment.petsColorRate = rate!!.petsColorRate
+                this@DashboardOrderDetailsFragment.petsWhiteRate = order!!.petsWhiteRate
+                this@DashboardOrderDetailsFragment.petsColorRate = order!!.petsColorRate
             }else{
                 Log.d("RATES_DATA", "NO LOAD PETS")
                 btnServicePets.visibility = View.GONE
@@ -391,10 +402,10 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 btnServiceDryClean.visibility = View.VISIBLE
                 linear4.visibility = View.VISIBLE
                 ContextCompat.getDrawable(dashboardCustomer, R.drawable.button_secondary)
-                load1d.text = "${order!!.dryWhiteMaxKg}"
-                load2d.text = "${order!!.dryColorMaxKg}"
-                this@DashboardOrderDetailsFragment.dryWhiteRate = rate!!.dryWhiteRate
-                this@DashboardOrderDetailsFragment.dryColorRate = rate!!.dryColorRate
+                load1d.text = "${order!!.dryWhiteLoad}"
+                load2d.text = "${order!!.dryColorLoad}"
+                this@DashboardOrderDetailsFragment.dryWhiteRate = order!!.dryWhiteRate
+                this@DashboardOrderDetailsFragment.dryColorRate = order!!.dryColorRate
             }else{
                 Log.d("RATES_DATA", "NO LOAD DRY")
                 btnServiceDryClean.visibility = View.GONE
@@ -409,8 +420,8 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 ContextCompat.getDrawable(dashboardCustomer, R.drawable.button_secondary)
                 load1s.text = "${order!!.sneakerOrdinaryMaxKg}"
                 load2s.text = "${order!!.sneakerBootsMaxKg}"
-                this@DashboardOrderDetailsFragment.sneakerOrdinaryRate = rate!!.sneakerOrdinaryRate
-                this@DashboardOrderDetailsFragment.sneakerBootsRate = rate!!.sneakerBootsRate
+                this@DashboardOrderDetailsFragment.sneakerOrdinaryRate = order!!.sneakerOrdinaryRate
+                this@DashboardOrderDetailsFragment.sneakerBootsRate = order!!.sneakerBootsRate
             }else{
                 Log.d("RATES_DATA", "NO LOAD SNEAKER")
                 btnServiceSneakers.visibility = View.GONE

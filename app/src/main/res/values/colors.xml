@@ -17,7 +17,6 @@
     <color name="color_white_2">#AEFFFFFF</color>
     <color name="color_white_3">#737373</color>
 
-
     <color name="color_orange_1">#ff8c00</color>
     <color name="color_orange_2">#ffbe00</color>
     <color name="color_orange_3">#ffc000</color>
@@ -26,6 +25,11 @@
     <color name="color_brown_2">#8b4b00</color>
 
     <color name="overlay">#8A3775A4</color>
+
+
+    <color name="success">#009688</color>
+    <color name="danger">#F44336</color>
+    <color name="warning">#FFC107</color>
 
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>

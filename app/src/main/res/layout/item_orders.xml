@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/divider_dash"
+        app:dividerColor="@color/color_blue_1"
+        app:dividerThickness="2sp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/indicatorIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="5sp"
+        android:contentDescription="@string/indication"
+        android:padding="5sp"
+        android:src="@drawable/vector_check"
+        app:layout_constraintBottom_toBottomOf="@id/divider2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider" />
+
+    <TextView
+        android:id="@+id/orderNo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5sp"
+        android:paddingStart="10sp"
+        android:text="Order No."
+        android:textAlignment="textStart"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/indicatorIcon"
+        app:layout_constraintTop_toBottomOf="@id/divider" />
+
+    <TextView
+        android:id="@+id/pickUpDatetimeLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="10sp"
+        android:text="Pick-Up Datetime"
+        android:textAlignment="textStart"
+        android:textSize="14sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toStartOf="@id/deliveryDatetimeLabel"
+        app:layout_constraintStart_toEndOf="@id/indicatorIcon"
+        app:layout_constraintTop_toBottomOf="@id/orderNo" />
+
+    <TextView
+        android:id="@+id/deliveryDatetimeLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="10sp"
+        android:text="Delivery Datetime"
+        android:textAlignment="textStart"
+        android:textSize="14sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/pickUpDatetimeLabel"
+        app:layout_constraintTop_toBottomOf="@id/orderNo" />
+
+    <ImageView
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_marginTop="5sp"
+        android:layout_marginBottom="5sp"
+        android:src="@drawable/divider_dash"
+        app:layout_constraintTop_toBottomOf="@id/deliveryDatetimeLabel" />
+
+    <TextView
+        android:id="@+id/statusLabel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="start|center"
+        android:paddingStart="5dp"
+        android:text="Status"
+        android:textColor="@color/success"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnDetails"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider2" />
+
+    <Button
+        android:id="@+id/btnDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Details"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider2" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
