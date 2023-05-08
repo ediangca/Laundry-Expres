@@ -82,8 +82,13 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
     private var pickUpDatetime: String? = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
     private var deliveryDatetime: String? = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
 
+    private var callBack: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    fun setCallBack(callBack: String?) {
+        this.callBack = callBack
     }
 
     override fun onCreateView(
@@ -114,9 +119,6 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
         }
 
         binding.apply {
-            btnBack.setOnClickListener {
-                dashboardCustomer.resumeShopList()
-            }
 
             btnAgreement.setOnClickListener {
                 btnAgreementOnClickListener()
@@ -127,6 +129,17 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
 
             btnCancel.setOnClickListener {
                 btnCancelOnClickListener()
+            }
+
+
+            when(callBack){
+                "OrderForm" ->{
+                    btnHome.text = "Home"
+                }
+                "Order" ->{
+                    btnHome.text = "Back"
+                }
+
             }
 
             btnHome.setOnClickListener {
@@ -148,7 +161,16 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
     }
 
     private fun btnHomeOnClickListener() {
-        dashboardCustomer.showHome()
+
+        when(callBack){
+            "OrderForm" ->{
+                dashboardCustomer.showHome()
+            }
+            "Order" ->{
+                dashboardCustomer.showOrder()
+            }
+
+        }
     }
 
     private fun btnCancelOnClickListener() {
@@ -308,10 +330,26 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
         pickUpDatetime = order!!.pickUpDatetime
         deliveryDatetime = order!!.deliveryDatetime
 
-        regular = if(order!!.regular == null){false}else{order!!.regular}
-        pets = if(order!!.pets == null){false}else{order!!.pets}
-        dry = if(order!!.dry == null){false}else{order!!.dry}
-        sneaker = if(order!!.sneaker == null){false}else{order!!.sneaker}
+        regular = if (order!!.regular==null) {
+            false
+        } else {
+            order!!.regular
+        }
+        pets = if (order!!.pets==null) {
+            false
+        } else {
+            order!!.pets
+        }
+        dry = if (order!!.dry==null) {
+            false
+        } else {
+            order!!.dry
+        }
+        sneaker = if (order!!.sneaker==null) {
+            false
+        } else {
+            order!!.sneaker
+        }
 
         Log.d("RATES_DATA", "GET DATA RATES SUCCESSFUL")
 
@@ -369,7 +407,8 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 //Regular Rates
                 this@DashboardOrderDetailsFragment.regularWhiteRate = order!!.regularWhiteRate
                 this@DashboardOrderDetailsFragment.regularColorRate = order!!.regularColorRate
-                this@DashboardOrderDetailsFragment.regularComforterRate = order!!.regularComforterRate
+                this@DashboardOrderDetailsFragment.regularComforterRate =
+                    order!!.regularComforterRate
                 this@DashboardOrderDetailsFragment.regularOthersRate = order!!.regularOthersRate
             } else {
                 Log.d("RATES_DATA", "NO LOAD REGULAR")
@@ -390,7 +429,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 //Pates Rates
                 this@DashboardOrderDetailsFragment.petsWhiteRate = order!!.petsWhiteRate
                 this@DashboardOrderDetailsFragment.petsColorRate = order!!.petsColorRate
-            }else{
+            } else {
                 Log.d("RATES_DATA", "NO LOAD PETS")
                 btnServicePets.visibility = View.GONE
                 linear3.visibility = View.GONE
@@ -406,7 +445,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 load2d.text = "${order!!.dryColorLoad}"
                 this@DashboardOrderDetailsFragment.dryWhiteRate = order!!.dryWhiteRate
                 this@DashboardOrderDetailsFragment.dryColorRate = order!!.dryColorRate
-            }else{
+            } else {
                 Log.d("RATES_DATA", "NO LOAD DRY")
                 btnServiceDryClean.visibility = View.GONE
                 linear4.visibility = View.GONE
@@ -422,7 +461,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 load2s.text = "${order!!.sneakerBootsMaxKg}"
                 this@DashboardOrderDetailsFragment.sneakerOrdinaryRate = order!!.sneakerOrdinaryRate
                 this@DashboardOrderDetailsFragment.sneakerBootsRate = order!!.sneakerBootsRate
-            }else{
+            } else {
                 Log.d("RATES_DATA", "NO LOAD SNEAKER")
                 btnServiceSneakers.visibility = View.GONE
                 linear5.visibility = View.GONE
@@ -430,7 +469,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 load2s.text = "0"
             }
 
-            if(!status.equals("FOR PICK-UP")){
+            if (!status.equals("FOR PICK-UP")) {
                 btnCancel.visibility = View.GONE
             }
 

@@ -269,11 +269,12 @@ class DashboardCustomerActivity : AppCompatActivity() {
         mainFrame.commit();
     }
 
-    fun showOrderDetails(order: Order) {
+    fun showOrderDetails(order: Order, callBack: String) {
         order.printLOG()
         bundle = Bundle()
         bundle.putParcelable("order", order)
         dashboardOrderDetailsFragment = DashboardOrderDetailsFragment(this)
+        dashboardOrderDetailsFragment.setCallBack(callBack)
         dashboardOrderDetailsFragment.arguments = bundle
         mainFrame = supportFragmentManager.beginTransaction()
         mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardOrderDetailsFragment);

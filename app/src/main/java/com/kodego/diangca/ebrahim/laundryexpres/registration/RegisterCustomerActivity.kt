@@ -22,6 +22,7 @@ import android.provider.Settings
 import android.util.Base64
 import android.util.Log
 import android.util.Patterns
+import android.view.Gravity
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -93,16 +94,16 @@ class RegisterCustomerActivity : AppCompatActivity(), AdapterView.OnItemSelected
             binding.email.setText(firebaseAuth.currentUser!!.email)
         }
 
-        val sexAdapter = ArrayAdapter.createFromResource(this, R.array.sex, R.layout.spinner_item)
-        sexAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
+        val sexAdapter = ArrayAdapter(this,  android.R.layout.simple_spinner_item, this.resources.getStringArray(R.array.sex))
+        sexAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.sex.adapter = sexAdapter
 
         with(binding.sex)
         {
             adapter = sexAdapter
             setSelection(0, false)
-            prompt = "Choose Sex"
-            gravity = android.view.Gravity.CENTER
+            prompt = "Select Sex"
+            gravity = Gravity.CENTER
         }
 
         binding.btnBack.setOnClickListener {
@@ -437,7 +438,7 @@ class RegisterCustomerActivity : AppCompatActivity(), AdapterView.OnItemSelected
 
         var trap: Boolean = false
 
-        if (email.isEmpty() || !validEmail(email) || mobileNo.isEmpty() || mobileNo.length!=13 || firstName.isEmpty() || lastName.isEmpty() || binding.sex.selectedItemPosition ==0 || street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty()
+        if (email.isEmpty() || !validEmail(email) || mobileNo.isEmpty() || mobileNo.length!=13 || firstName.isEmpty() || lastName.isEmpty() || binding.sex.selectedItemPosition < 0 || street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty()
             || isValidAddress(street)
             || isValidAddress(city)
             || isValidAddress(state)
@@ -459,7 +460,7 @@ class RegisterCustomerActivity : AppCompatActivity(), AdapterView.OnItemSelected
             if (lastName.isEmpty()) {
                 binding.lastName.error = "Please enter your Lastname."
             }
-            if (binding.sex.selectedItemPosition ==0) {
+            if (binding.sex.selectedItemPosition < 0) {
                 (binding.sex.selectedView as TextView).error = "Please select your sex."
             }
             if (street.isEmpty() || isValidAddress(street)) {

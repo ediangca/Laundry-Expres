@@ -74,7 +74,8 @@ class DashboardOrdersFragment(var dashboardCustomer: DashboardCustomerActivity) 
 
         uid = firebaseAuth.currentUser!!.uid
         var statusAdapter = ArrayAdapter(dashboardCustomer, R.layout.simple_spinner_item, status)
-        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        statusAdapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
+
 
         with(binding.spinnerOrderStatus)
         {
@@ -89,6 +90,7 @@ class DashboardOrdersFragment(var dashboardCustomer: DashboardCustomerActivity) 
 
         orderAdapter = OrderAdapter(dashboardCustomer, ordersList)
         orderAdapter.setDashboardCustomer(dashboardCustomer)
+        orderAdapter.setCallBack("Order")
         binding.orderList.layoutManager = LinearLayoutManager(dashboardCustomer)
         binding.orderList.adapter = orderAdapter
         binding.orderList.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->

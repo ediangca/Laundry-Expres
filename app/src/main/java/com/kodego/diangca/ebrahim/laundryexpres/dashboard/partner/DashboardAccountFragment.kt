@@ -18,6 +18,7 @@ import android.provider.Settings
 import android.util.Base64
 import android.util.Log
 import android.util.Patterns
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -92,10 +93,17 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
 
     private fun initComponent() {
 
-        val adapter =
-            ArrayAdapter.createFromResource(dashboardPartner, R.array.sex, R.layout.spinner_item)
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
-        binding.sex.adapter = adapter
+        val sexAdapter = ArrayAdapter(dashboardPartner,  android.R.layout.simple_spinner_item, this.resources.getStringArray(R.array.sex))
+        sexAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.sex.adapter = sexAdapter
+
+        with(binding.sex)
+        {
+            adapter = sexAdapter
+            setSelection(0, false)
+            prompt = "Select Sex"
+            gravity = Gravity.CENTER
+        }
 
         val bundle = arguments
         if (bundle!=null) {
@@ -332,7 +340,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
         val email = binding.email.text.toString()
 
 
-        if (email.isEmpty() || !validEmail(email) || mobileNo.isEmpty() || mobileNo.length!=13 || firstName.isEmpty() || lastName.isEmpty() || binding.sex.selectedItemPosition==0 || street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty()
+        if (email.isEmpty() || !validEmail(email) || mobileNo.isEmpty() || mobileNo.length!=13 || firstName.isEmpty() || lastName.isEmpty() || binding.sex.selectedItemPosition<0 || street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty()
             || isValidAddress(street)
             || isValidAddress(city)
             || isValidAddress(state)
@@ -353,7 +361,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
             if (lastName.isEmpty()) {
                 binding.lastName.error = "Please enter your Lastname."
             }
-            if (binding.sex.selectedItemPosition==0) {
+            if (binding.sex.selectedItemPosition < 0) {
                 (binding.sex.selectedView as TextView).error = "Please select your sex."
             }
             if (street.isEmpty() || isValidAddress(street)) {
@@ -403,43 +411,35 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
                 if (task.isSuccessful) {
                     val filename = "profile_${user!!.uid}"
                     profileImageUri = Uri.parse(user!!.photoUri)
+
+                    Log.d("SAVING_USER", "SUCCESS SAVING USER DATA")
+                    setUserDetails(user)
+                    dashboardPartner.setUser(user)
+                    dashboardPartner.setUserDetails(user)
+
                     val firebaseStorageReference =
                         FirebaseStorage.getInstance().getReference("profile/$filename")
                     firebaseStorageReference.putFile(profileImageUri!!)
                         .addOnSuccessListener {
-                            Log.d("SAVING_PROFILE", "SUCCESS SAVING PROFILE $filename")
-                            Toast.makeText(
-                                context,
-                                "User has been successfully Updated!",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                            dashboardPartner.dismissLoadingDialog()
-                            Log.d("USER_UPDATE_SUCCESS", "User has been successfully Updated!")
-                            setUserDetails(user)
-                            dashboardPartner.setUser(user)
-                            dashboardPartner.setUserDetails(user)
+                            Log.d("SAVING_USER_PROFILE", "SUCCESS SAVING PROFILE $filename")
                         }
                         .addOnFailureListener {
-                            Toast.makeText(
-                                context,
-                                "FAILED SAVING PROFILE > ${it.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            Log.d(
-                                "SAVING_PROFILE",
-                                "FAILED SAVING PROFILE $filename > ${it.message}"
-                            )
+                            Log.d("FAILED_SAVING_USER_PROFILE", "FAILED SAVING PROFILE $filename > ${it.message}")
                         }
+                    dashboardPartner.dismissLoadingDialog()
+                    Toast.makeText(
+                        context,
+                        "User has been successfully Updated!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
                     dashboardPartner.dismissLoadingDialog()
-                    Log.d("USER_UPDATE_FAILED", "${task.exception}")
                     Toast.makeText(
                         context,
                         "Sorry! ${task.exception}",
                         Toast.LENGTH_SHORT
                     ).show()
-
+                    Log.d("USER_UPDATE_FAILED", "${task.exception}")
                 }
             }
         }

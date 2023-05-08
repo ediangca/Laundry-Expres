@@ -21,21 +21,6 @@
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/btnBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:contentDescription="Back"
-        android:padding="5dp"
-        android:src="@drawable/vector_left"
-        android:textColor="@color/color_light_3"
-        android:tint="@color/color_blue_1"
-        android:tooltipText="Home"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"

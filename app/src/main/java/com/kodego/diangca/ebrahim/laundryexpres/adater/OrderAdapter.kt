@@ -33,6 +33,8 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
     private var shop: Shop? = null
     private var rates: Rates? = null
 
+    private var callBack: String? = null
+
     @JvmName("setDashboardCustomer1")
     fun setDashboardCustomer(dashboardCustomer: DashboardCustomerActivity){
         this.dashboardCustomer = dashboardCustomer
@@ -54,36 +56,40 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
         holder.bindShop(orderList[position])
     }
 
+    fun setCallBack(callBack: String) {
+        this.callBack = callBack
+    }
+
     inner class OrderViewHolder(
         private val itemBinding: ItemOrdersBinding,
     ) :
         RecyclerView.ViewHolder(itemBinding.root), View.OnClickListener {
 
         var order = Order()
-        @SuppressLint("UseCompatLoadingForDrawables")
+        @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
         fun bindShop(order: Order) {
             this.order = order
             with(itemBinding){
                 orderNo.text = order.orderNo
                 pickUpDatetimeLabel.text = order.pickUpDatetime
                 deliveryDatetimeLabel.text = order.deliveryDatetime
-                statusLabel.text = order.status
+                statusLabel.text = "BOOK ${order.status}"
 //                "ALL", "FOR PICK-UP", "RECEIVED", "FOR DELIVERY", "COMPLETE", "CANCEL"
                 when(order.status){
                     "FOR PICK-UP" ->{
-                        indicatorIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_pickup))
+                        statusLabel.setTextColor(activity.getColor(R.color.color_blue_1))
                     }
                     "RECEIVED" ->{
-                        indicatorIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_received))
+                        statusLabel.setTextColor(activity.getColor(R.color.color_blue_2))
                     }
                     "FOR DELIVERY" ->{
-                        indicatorIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_delivery))
+                        statusLabel.setTextColor(activity.getColor(R.color.color_blue_3))
                     }
                     "COMPLETE" ->{
-                        indicatorIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_complete))
+                        statusLabel.setTextColor(activity.getColor(R.color.success))
                     }
                     "CANCEL" ->{
-                        indicatorIcon.setImageDrawable(activity.getDrawable(R.drawable.icon_cancel_book))
+                        statusLabel.setTextColor(activity.getColor(R.color.danger))
                     }
                     else ->{
                         Toast.makeText(activity.applicationContext, "No Status stated", Toast.LENGTH_SHORT).show()
@@ -109,7 +115,7 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
             order: Order) {
 
             if(dashboardCustomer!=null) {
-                dashboardCustomer!!.showOrderDetails(order)
+                dashboardCustomer!!.showOrderDetails(order, callBack!!)
             }
         }
 

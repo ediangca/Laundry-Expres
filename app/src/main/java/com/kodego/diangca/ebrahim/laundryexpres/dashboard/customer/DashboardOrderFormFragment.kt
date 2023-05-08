@@ -353,7 +353,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                     databaseRef.setValue(order)
                         .addOnCompleteListener(dashboardCustomer) { task ->
                             if (task.isSuccessful) {
-                                dashboardCustomer.showOrderDetails(order!!)
+                                dashboardCustomer.showOrderDetails(order!!, "OrderForm")
                                 dashboardCustomer.dismissLoadingDialog()
                                 Log.d(
                                     "ORDER_SAVING",
