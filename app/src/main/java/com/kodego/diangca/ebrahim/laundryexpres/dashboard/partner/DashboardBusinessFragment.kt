@@ -141,7 +141,7 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
         val bundle = arguments
         if (bundle!=null) {
             shop = bundle.getParcelable<Shop>("shop")!!
-            Log.d("ON_RESUME_FETCH_USER", shop.toString())
+            Log.d("ON_RESUME_FETCH_SHOP", shop.toString())
         } else {
             shop = dashboardPartner.getShop()
         }

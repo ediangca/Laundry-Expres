@@ -10,12 +10,21 @@
         android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardHomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_dashboard_partner_home" >
+        <action
+            android:id="@+id/action_navPartnerHome1_to_navPartnerOrder"
+            app:destination="@id/navPartnerOrder" />
     </fragment>
     <fragment
         android:id="@+id/navPartnerOrder"
         android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardOrdersFragment"
         android:label="Orders"
         tools:layout="@layout/fragment_dashboard_partner_orders" >
+        <action
+            android:id="@+id/action_navPartnerOrder_to_navPartnerUpdates"
+            app:destination="@id/navPartnerUpdates" />
+        <action
+            android:id="@+id/action_navPartnerOrder_to_navPartnerHome1"
+            app:destination="@id/navPartnerHome1" />
     </fragment>
 
     <fragment
@@ -23,6 +32,12 @@
         android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardNotificationFragment"
         android:label="Notification"
         tools:layout="@layout/fragment_dashboard_partner_notification" >
+        <action
+            android:id="@+id/action_navPartnerUpdates_to_navPartnerInbox"
+            app:destination="@id/navPartnerInbox" />
+        <action
+            android:id="@+id/action_navPartnerUpdates_to_navPartnerOrder"
+            app:destination="@id/navPartnerOrder" />
     </fragment>
 
     <fragment
@@ -30,6 +45,12 @@
         android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardInboxFragment"
         android:label="Inbox"
         tools:layout="@layout/fragment_dashboard_partner_inbox" >
+        <action
+            android:id="@+id/action_navPartnerInbox_to_navPartnerAccountPersonal"
+            app:destination="@id/navPartnerAccountPersonal" />
+        <action
+            android:id="@+id/action_navPartnerInbox_to_navPartnerUpdates"
+            app:destination="@id/navPartnerUpdates" />
     </fragment>
 
     <fragment
@@ -37,6 +58,12 @@
         android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardAccountFragment"
         android:label="Account"
         tools:layout="@layout/fragment_dashboard_partner_account" >
+        <action
+            android:id="@+id/action_navPartnerAccountPersonal_to_navPartnerAccountBusiness"
+            app:destination="@id/navPartnerAccountBusiness" />
+        <action
+            android:id="@+id/action_navPartnerAccountPersonal_to_navPartnerInbox"
+            app:destination="@id/navPartnerInbox" />
     </fragment>
 
     <fragment
@@ -44,6 +71,9 @@
         android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardAccountFragment"
         android:label="Account"
         tools:layout="@layout/fragment_dashboard_partner_account" >
+        <action
+            android:id="@+id/action_navPartnerAccountBusiness_to_navPartnerAccountPersonal"
+            app:destination="@id/navPartnerAccountPersonal" />
     </fragment>
 
 </navigation>
