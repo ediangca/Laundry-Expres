@@ -15,7 +15,6 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.StorageReference
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardPartnerRatesBinding
@@ -30,7 +29,6 @@ class DashboardRatesFragment(var dashboardPartner: DashboardPartnerActivity) : F
     private val binding get() = _binding!!
 
     private lateinit var firebaseStorageRef: StorageReference
-    private lateinit var firebaseFirestore: FirebaseFirestore
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
         .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")

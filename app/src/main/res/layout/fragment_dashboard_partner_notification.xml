@@ -1,20 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
     tools:context=".dashboard.partner.DashboardNotificationFragment">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnTitle"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/filterLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:background="@drawable/button_primary"
-        android:text="Notifications"
-        android:textColor="@color/color_light_3"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:weightSum="12">
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/orderList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:nestedScrollingEnabled="true" />
+
+
+        </ScrollView>
+
+        <TextView
+            android:id="@+id/promptView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableTop="@mipmap/ic_launcher_foreground"
+            android:fontFamily="sans-serif"
+            android:padding="20dp"
+            android:text="@string/retrieve_notifcation_prompt"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/color_light_3"
+            android:textSize="18sp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

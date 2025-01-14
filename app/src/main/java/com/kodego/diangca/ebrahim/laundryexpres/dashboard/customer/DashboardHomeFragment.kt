@@ -75,11 +75,11 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
         user = dashboardCustomer.getUser()
         val bundle = this.arguments
-        if (bundle!=null) {
+        if (bundle != null) {
             user = bundle.getParcelable<User>("user")!!
             Log.d("ON_RESUME_FETCH_USER", user.toString())
         }
-        if (user!=null) {
+        if (user != null) {
             setUserDetails(user!!)
         }
     }
@@ -88,11 +88,11 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
         user = dashboardCustomer.getUser()
         val bundle = this.arguments
-        if (bundle!=null) {
+        if (bundle != null) {
             user = bundle.getParcelable<User>("user")!!
             Log.d("ON_RESUME_FETCH_USER", user.toString())
         }
-        if (user!=null) {
+        if (user != null) {
             setUserDetails(user!!)
         }
 
@@ -103,7 +103,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             setSchedule(it, "Pick-Up")
         }
         binding.editPickup.setOnFocusChangeListener { _, hasFocus ->
-            if(hasFocus){
+            if (hasFocus) {
                 setSchedule(binding.editPickup, "Pick-Up")
             }
         }
@@ -111,7 +111,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             setSchedule(it, "Delivery")
         }
         binding.editDelivery.setOnFocusChangeListener { _, hasFocus ->
-            if(hasFocus){
+            if (hasFocus) {
                 setSchedule(binding.editDelivery, "Delivery")
             }
         }
@@ -136,12 +136,12 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                     userDisplayName.text = displayName
                 }
 
-                if (profileImageUri!=null) {
+                if (profileImageUri != null) {
                     Log.d("profilePic_profileData", "$profileImageUri")
                     Picasso.with(context).load(profileImageUri)
                         .into(profileView);
                 } else {
-                    if (user!!.photoUri!=null) {
+                    if (user!!.photoUri != null) {
                         val filename = "profile_${user!!.uid}"
                         profileImageUri = Uri.parse(user!!.photoUri)
                         val firebaseStorageReference =
@@ -171,7 +171,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                     }
                 }
 
-                if (user!=null) {
+                if (user != null) {
                     Log.d("displayUserName", "Hi ${user.firstname} ${user.lastname}, Good Day!")
                     userDisplayName.text = "Hi ${user.firstname} ${user.lastname}, Good Day!"
                 }
@@ -194,7 +194,10 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             }
             return
         }
-        dashboardCustomer.showShopList(binding.editPickup.text.toString(), binding.editDelivery.text.toString())
+        dashboardCustomer.showShopList(
+            binding.editPickup.text.toString(),
+            binding.editDelivery.text.toString()
+        )
     }
 
 
@@ -232,15 +235,17 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         var am_pm = ""
 
         when {
-            h==0 -> {
+            h == 0 -> {
                 h += 12
                 am_pm = "AM"
             }
-            h==12 -> am_pm = "PM"
+
+            h == 12 -> am_pm = "PM"
             h > 12 -> {
                 h -= 12
                 am_pm = "PM"
             }
+
             else -> am_pm = "AM"
         }
         val hour = if (h < 10) "0$h" else h
@@ -252,15 +257,17 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             var h = hour
             // AM_PM decider logic
             when {
-                h==0 -> {
+                h == 0 -> {
                     h += 12
                     am_pm = "AM"
                 }
-                h==12 -> am_pm = "PM"
+
+                h == 12 -> am_pm = "PM"
                 h > 12 -> {
                     h -= 12
                     am_pm = "PM"
                 }
+
                 else -> am_pm = "AM"
             }
             val hour = if (h < 10) "0$h" else h
@@ -269,12 +276,18 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             time = "$hour:$min $am_pm"
         }
 
+        when (type) {
+            "Pick-Up" -> {
+                binding.editDelivery.text = null
+            }
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             with(schedulePickerBinding) {
                 dateTitle.text = "$type Datetime Schedule"
                 // set maximum date to be selected as today
 //                calendar.maxDate = cal.timeInMillis
-                calendar.minDate =  cal.timeInMillis
+                calendar.minDate = cal.timeInMillis
                 timePicker.setIs24HourView(false)
                 btnSelect.setOnClickListener {
                     schedulePickerDialogInterface.dismiss()
@@ -303,9 +316,12 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                     cal.set(Calendar.YEAR, year)
                     cal.set(Calendar.MONTH, monthOfYear)
                     cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                    val myFormat = "MM/dd/yyyy" // mention the format you need
-                    val sdf = SimpleDateFormat(myFormat, Locale.US)
-                    textInputEditText.setText(sdf.format(cal.time))
+//                    val myFormat = "MM/dd/yyyy" // mention the format you need
+//                    val sdf = SimpleDateFormat(myFormat, Locale.US)
+//                    textInputEditText.setText(sdf.format(cal.time))
+                    val displayMonth = monthOfYear + 1 // Convert to one-based
+                    val formattedDate = "$displayMonth/$dayOfMonth/$year"
+                    textInputEditText.setText(formattedDate)
                 }
             }
             DatePickerDialog(
@@ -317,6 +333,8 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                 cal.get(Calendar.DAY_OF_MONTH)
             ).show()
         }
+
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -327,7 +345,10 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         dayOfMonth: Int,
         time: String,
     ) {
-        textInputEditText.setText("$monthOfYear/$dayOfMonth/$year $time")
+        Log.d("DATE_PICKER", "Year: $year, Month: $monthOfYear, Day: $dayOfMonth")
+//        textInputEditText.setText("$monthOfYear/$dayOfMonth/$year $time")
+        val displayMonth = monthOfYear + 1 // Convert to one-basedd
+        textInputEditText.setText("$displayMonth/$dayOfMonth/$year $time")
     }
 
 

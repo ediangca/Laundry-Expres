@@ -1,6 +1,7 @@
 package com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
@@ -15,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.R
+import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartnerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogAgreementBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardOrderDetailsFormBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
@@ -24,7 +26,7 @@ import java.util.*
 
 
 @SuppressLint("SimpleDateFormat")
-class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActivity) : Fragment() {
+class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment() {
 
     private var _binding: FragmentDashboardOrderDetailsFormBinding? = null
     private val binding get() = _binding!!
@@ -82,6 +84,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
     private var pickUpDatetime: String? = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
     private var deliveryDatetime: String? = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
 
+
     private var callBack: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,7 +115,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
 
         uid = firebaseAuth.currentUser!!.uid
         val bundle = this.arguments
-        if (bundle!=null) {
+        if (bundle != null) {
             order = bundle.getParcelable<Order>("order")!!
             Log.d("FETCH_ORDER", order.toString())
             retrieveOrder()
@@ -132,11 +135,12 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
             }
 
 
-            when(callBack){
-                "OrderForm" ->{
+            when (callBack) {
+                "OrderForm" -> {
                     btnHome.text = "Home"
                 }
-                "Order" ->{
+
+                "Order" -> {
                     btnHome.text = "Back"
                 }
 
@@ -162,19 +166,28 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
 
     private fun btnHomeOnClickListener() {
 
-        when(callBack){
-            "OrderForm" ->{
-                dashboardCustomer.showHome()
+        when (activity) {
+            is DashboardCustomerActivity -> {
+                Log.d("CALL_BACK", "DASHBOARD CUSTOMER ACTIVITY")
+                when (callBack) {
+                    "OrderForm" -> {
+                        (activity as? DashboardCustomerActivity)?.showHome()
+                    }
+                    "Order" -> {
+                        (activity as? DashboardCustomerActivity)?.showOrder()
+                    }
+                }
             }
-            "Order" ->{
-                dashboardCustomer.showOrder()
+            is DashboardPartnerActivity -> {
+                Log.d("CALL_BACK", "DASHBOARD PARTNER ACTIVITY")
+                        (activity as? DashboardPartnerActivity)?.showOrder()
             }
-
         }
+
     }
 
     private fun btnCancelOnClickListener() {
-        var promptDialog = Dialog(dashboardCustomer)
+        var promptDialog = Dialog(activityDashboard)
         val promptBuilder = AlertDialog.Builder(context)
         promptBuilder.setTitle("CANCEL BOOKING")
         promptBuilder.setMessage("Do you really want to cancel the Booking?")
@@ -182,7 +195,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
             val databaseRef = firebaseDatabase.reference.child("orders/$uid")
                 .child(orderNo!!).child("status")
             databaseRef.setValue("CANCEL")
-                .addOnCompleteListener(dashboardCustomer) { task ->
+                .addOnCompleteListener(activityDashboard) { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(
                             context,
@@ -190,11 +203,11 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                             Toast.LENGTH_LONG
                         ).show()
                         promptDialog.dismiss()
-                        dashboardCustomer.showOrder()
+                        btnHomeOnClickListener()
                     } else {
                         Log.d("CANCEL_FAILED", "${task.exception!!.message}")
                         Toast.makeText(
-                            dashboardCustomer,
+                            activityDashboard,
                             "${task.exception!!.message}",
                             Toast.LENGTH_SHORT
                         ).show()
@@ -205,7 +218,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
             promptDialog.dismiss()
         }
         promptDialog = promptBuilder.create()
-        if (promptDialog.window!=null) {
+        if (promptDialog.window != null) {
             promptDialog.window!!.setBackgroundDrawableResource(R.color.color_light_3)
         }
         promptDialog.show()
@@ -229,14 +242,14 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
     }
 
     private fun showDialog(agreementBinding: DialogAgreementBinding) {
-        var promptDialog = Dialog(dashboardCustomer)
+        var promptDialog = Dialog(activityDashboard)
         val promptBuilder = AlertDialog.Builder(context)
         promptBuilder.setView(agreementBinding.root)
         promptBuilder.setNegativeButton("Okay") { _, _ ->
             promptDialog.dismiss()
         }
         promptDialog = promptBuilder.create()
-        if (promptDialog.window!=null) {
+        if (promptDialog.window != null) {
             promptDialog.window!!.setBackgroundDrawableResource(R.color.color_light_3)
         }
         promptDialog.show()
@@ -248,7 +261,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
         totalOrder = 0.0
 
         with(binding) {
-            if (linear2.visibility==View.VISIBLE) {
+            if (linear2.visibility == View.VISIBLE) {
                 Log.d(regularLabel1.text.toString(), "LOAD -> ${load1.text.toString()}")
                 Log.d(regularLabel2.text.toString(), "LOAD -> ${load2.text.toString()}")
                 Log.d(regularLabel3.text.toString(), "LOAD -> ${load3.text.toString()}")
@@ -266,7 +279,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
 
                 totalLaundryPrice = totalLaundryPrice!! + totalRegular
             }
-            if (linear3.visibility==View.VISIBLE) {
+            if (linear3.visibility == View.VISIBLE) {
                 Log.d(petsLabel1.text.toString(), "LOAD -> ${load1p.text.toString()}")
                 Log.d(petsLabel2.text.toString(), "LOAD -> ${load2p.text.toString()}")
 
@@ -278,7 +291,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
 
                 totalLaundryPrice = totalLaundryPrice!! + totalPets
             }
-            if (linear4.visibility==View.VISIBLE) {
+            if (linear4.visibility == View.VISIBLE) {
                 Log.d(dryLabel1.text.toString(), "LOAD -> ${load1d.text.toString()}")
                 Log.d(dryLabel2.text.toString(), "LOAD -> ${load2d.text.toString()}")
 
@@ -290,7 +303,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
 
                 totalLaundryPrice = totalLaundryPrice!! + totalDry
             }
-            if (linear5.visibility==View.VISIBLE) {
+            if (linear5.visibility == View.VISIBLE) {
                 Log.d(sneakersLabel1.text.toString(), "LOAD -> ${load1s.text.toString()}")
                 Log.d(sneakersLabel2.text.toString(), "LOAD -> ${load2s.text.toString()}")
 
@@ -330,22 +343,22 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
         pickUpDatetime = order!!.pickUpDatetime
         deliveryDatetime = order!!.deliveryDatetime
 
-        regular = if (order!!.regular==null) {
+        regular = if (order!!.regular == null) {
             false
         } else {
             order!!.regular
         }
-        pets = if (order!!.pets==null) {
+        pets = if (order!!.pets == null) {
             false
         } else {
             order!!.pets
         }
-        dry = if (order!!.dry==null) {
+        dry = if (order!!.dry == null) {
             false
         } else {
             order!!.dry
         }
-        sneaker = if (order!!.sneaker==null) {
+        sneaker = if (order!!.sneaker == null) {
             false
         } else {
             order!!.sneaker
@@ -399,7 +412,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
             if (regular!!) {
                 btnServiceRegular.visibility = View.VISIBLE
                 linear2.visibility = View.VISIBLE
-                ContextCompat.getDrawable(dashboardCustomer, R.drawable.button_secondary)
+                ContextCompat.getDrawable(activityDashboard, R.drawable.button_secondary)
                 load1.text = "${order!!.regularWhiteLoad}"
                 load2.text = "${order!!.regularColorLoad}"
                 load3.text = "${order!!.regularComforterMaxKg}"
@@ -423,7 +436,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 Log.d("RATES_DATA", "LOAD PETS")
                 btnServicePets.visibility = View.VISIBLE
                 linear3.visibility = View.VISIBLE
-                ContextCompat.getDrawable(dashboardCustomer, R.drawable.button_secondary)
+                ContextCompat.getDrawable(activityDashboard, R.drawable.button_secondary)
                 load1p.text = "${order!!.petsWhiteLoad}"
                 load2p.text = "${order!!.petsColorLoad}"
                 //Pates Rates
@@ -440,7 +453,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 Log.d("RATES_DATA", "LOAD DRY")
                 btnServiceDryClean.visibility = View.VISIBLE
                 linear4.visibility = View.VISIBLE
-                ContextCompat.getDrawable(dashboardCustomer, R.drawable.button_secondary)
+                ContextCompat.getDrawable(activityDashboard, R.drawable.button_secondary)
                 load1d.text = "${order!!.dryWhiteLoad}"
                 load2d.text = "${order!!.dryColorLoad}"
                 this@DashboardOrderDetailsFragment.dryWhiteRate = order!!.dryWhiteRate
@@ -456,7 +469,7 @@ class DashboardOrderDetailsFragment(var dashboardCustomer: DashboardCustomerActi
                 Log.d("RATES_DATA", "LOAD SNEAKER")
                 btnServiceSneakers.visibility = View.VISIBLE
                 linear5.visibility = View.VISIBLE
-                ContextCompat.getDrawable(dashboardCustomer, R.drawable.button_secondary)
+                ContextCompat.getDrawable(activityDashboard, R.drawable.button_secondary)
                 load1s.text = "${order!!.sneakerOrdinaryMaxKg}"
                 load2s.text = "${order!!.sneakerBootsMaxKg}"
                 this@DashboardOrderDetailsFragment.sneakerOrdinaryRate = order!!.sneakerOrdinaryRate

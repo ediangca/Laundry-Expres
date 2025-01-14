@@ -315,7 +315,9 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
             Log.d("LOAD_USER_PROFILE_URI", profileImageUri.toString())
             val outputStream: OutputStream? =
                 pContext.contentResolver.openOutputStream(profileImageUri!!)
-            pBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            if (outputStream != null) {
+                pBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            }
             outputStream!!.close()
             Picasso.with(dashboardCustomer).load(profileImageUri).into(pImageView)
             Toast.makeText(dashboardCustomer, "Great Profile!", Toast.LENGTH_SHORT)

@@ -3,16 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.kodego.diangca.ebrahim.laundryexpres">
 
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -49,10 +51,10 @@
             android:theme="@style/Theme.LaundryExpress.NoActionBar" /> <!-- DASHBOARD -->
         <activity
             android:name=".dashboard.partner.DashboardPartnerActivity"
-            android:theme="@style/Theme.LaundryExpress.Drawer"
             android:exported="false"
             android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity"/>
+            android:theme="@style/Theme.LaundryExpress.Drawer"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".dashboard.customer.DashboardCustomerActivity"
             android:exported="false"

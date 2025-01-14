@@ -247,7 +247,9 @@ class RegisterCustomerActivity : AppCompatActivity(), AdapterView.OnItemSelected
         try {
             profileImageUri = Uri.fromFile(File.createTempFile("temp_profile", ".jpg", pContext.cacheDir))
             val outputStream: OutputStream? = pContext.contentResolver.openOutputStream(profileImageUri!!)
-            pBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            if (outputStream != null) {
+                pBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            }
             outputStream!!.close()
             Picasso.with(this).load(profileImageUri).into(pImageView)
             Toast.makeText(this, "Great Profile!", Toast.LENGTH_SHORT)

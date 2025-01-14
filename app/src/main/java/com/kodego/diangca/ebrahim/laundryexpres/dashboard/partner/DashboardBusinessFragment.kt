@@ -1,5 +1,7 @@
 package com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
@@ -31,7 +33,6 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.karumi.dexter.Dexter
@@ -56,7 +57,6 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
     private val binding get() = _binding!!
 
     private lateinit var firebaseStorageRef: StorageReference
-    private lateinit var firebaseFirestore: FirebaseFirestore
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
         .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
@@ -483,37 +483,54 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
 
 
     private fun cameraCheckPermission(code: Int) {
-
-        Dexter.withContext(context)
+        Dexter.withContext(dashboardPartner)
             .withPermissions(
-                android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                android.Manifest.permission.CAMERA
-            ).withListener(
-
-                object : MultiplePermissionsListener {
-                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                        report?.let {
-
-                            if (report.areAllPermissionsGranted()) {
-                                camera(code)
-                            } else {
-                                toast(it.toString())
-                            }
-
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA
+            )
+            .withListener(object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.let {
+                        if (report.areAllPermissionsGranted()) {
+                            openCamera(code)
+                        } else {
+                            Toast.makeText(
+                                dashboardPartner,
+                                "Permissions are required to use the camera",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
-
-                    override fun onPermissionRationaleShouldBeShown(
-                        p0: MutableList<PermissionRequest>?,
-                        p1: PermissionToken?,
-                    ) {
-                        showRotationalDialogForPermission()
-                    }
-
                 }
-            ).onSameThread().check()
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    showPermissionRationaleDialog(token)
+                }
+            })
+            .onSameThread()
+            .check()
+    }
+    private fun openCamera(code: Int) {
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (cameraIntent.resolveActivity(dashboardPartner.packageManager) != null) {
+            startActivityForResult(cameraIntent, code)
+        } else {
+            Toast.makeText(dashboardPartner, "No camera app available!", Toast.LENGTH_SHORT).show()
+        }
     }
 
+
+    private fun showPermissionRationaleDialog(token: PermissionToken?) {
+        AlertDialog.Builder(dashboardPartner)
+            .setTitle("Permission Required")
+            .setMessage("Camera and storage permissions are required to use this feature.")
+            .setPositiveButton("Grant") { _, _ -> token?.continuePermissionRequest() }
+            .setNegativeButton("Cancel") { _, _ -> token?.cancelPermissionRequest() }
+            .show()
+    }
     private fun showRotationalDialogForPermission() {
         AlertDialog.Builder(context)
             .setMessage(
@@ -687,7 +704,9 @@ class DashboardBusinessFragment(var dashboardPartner: DashboardPartnerActivity) 
         try {
             imageUri = Uri.fromFile(File.createTempFile("temp_profile", ".jpg", pContext.cacheDir))
             val outputStream: OutputStream? = pContext.contentResolver.openOutputStream(imageUri!!)
-            pBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            if (outputStream != null) {
+                pBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            }
             outputStream!!.close()
             Picasso.with(context).load(imageUri).into(pImageView)
             Toast.makeText(context, "Great Image!", Toast.LENGTH_SHORT)

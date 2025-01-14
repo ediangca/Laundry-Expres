@@ -25,6 +25,7 @@
        Once your laundry is ready, we will send you a notification through the app. You can then schedule a time for them to deliver your laundry back to you. Our delivery drivers will arrive at your specified location, and your clean laundry will be handed over to you.</string>
 
     <string-array name="sex">
+        <item name="">Select Sex</item>
         <item name="Male">Male</item>
         <item name="Female">Female</item>
     </string-array>
@@ -35,6 +36,17 @@
         <item name="Motorcycle">Motorcycle</item>
         <item name="Wheels">Wheels</item>
     </string-array>
+
+    <string-array name="bookStatus">
+        <item name="all">ALL</item>
+        <item name="pending">PENDING</item>
+        <item name="pickup">ON PICK UP</item>
+        <item name="process">ON PROCESS</item>
+        <item name="delivery">ON DELIVERY</item>
+        <item name="received">ON RECEIVED</item>
+        <item name="complete">COMPLETE</item>
+    </string-array>
+
     <string name="title_activity_dashboard_partner_drawer">DashboardPartnerDrawerActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -73,7 +85,8 @@
     </string>
     <string name="indication">Indicator</string>
     <string name="retrieve_shop_prompt">We don\'t have Available Laundry Shop partner in your area.</string>
-    <string name="retrieve_orders_prompt">SORRY! NO ORDERS FOR FOUND!</string>
+    <string name="retrieve_orders_prompt">SORRY! NO ORDERS YET!</string>
+    <string name="retrieve_notifcation_prompt">SORRY! NO UPDATES YET!</string>
 
 
 </resources>

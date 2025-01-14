@@ -21,9 +21,10 @@ import com.kodego.diangca.ebrahim.laundryexpres.adater.OrderAdapter
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardOrdersBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
 import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-class DashboardOrdersFragment(var dashboardCustomer: DashboardCustomerActivity) : Fragment(),
-    AdapterView.OnItemSelectedListener {
+class DashboardOrdersFragment(var dashboardCustomer: DashboardCustomerActivity) : Fragment() {
 
     private var _binding: FragmentDashboardOrdersBinding? = null
     private val binding get() = _binding!!
@@ -36,7 +37,17 @@ class DashboardOrdersFragment(var dashboardCustomer: DashboardCustomerActivity) 
 
 
     private var status =
-        arrayOf("ALL", "FOR PICK-UP", "RECEIVED", "FOR DELIVERY", "COMPLETE", "CANCEL")
+        arrayOf(
+            "ALL",
+            "PENDING",
+            "FOR PICK-UP",
+            "ON DELIVER",
+            "ON PROCESS",
+            "FOR DELIVERY",
+            "TO RECEIVE",
+            "COMPLETE",
+            "CANCEL"
+        )
 
     private var uid: String? = null
     private var shopId: String? = null
@@ -81,7 +92,24 @@ class DashboardOrdersFragment(var dashboardCustomer: DashboardCustomerActivity) 
         {
             adapter = statusAdapter
             setSelection(0, false)
-            onItemSelectedListener = this@DashboardOrdersFragment
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val selectedItem =
+                        parent.getItemAtPosition(position).toString() // Get the selected item
+                    showOrders(selectedItem);
+
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>) {
+                    // Optionally handle the case where no item is selected
+
+                }
+            }
             prompt = "Select Order Status"
             gravity = Gravity.CENTER
         }
@@ -89,100 +117,140 @@ class DashboardOrdersFragment(var dashboardCustomer: DashboardCustomerActivity) 
         ordersList.clear()
 
         orderAdapter = OrderAdapter(dashboardCustomer, ordersList)
-        orderAdapter.setDashboardCustomer(dashboardCustomer)
+//        orderAdapter.setDashboardCustomer(dashboardCustomer)
         orderAdapter.setCallBack("Order")
         binding.orderList.layoutManager = LinearLayoutManager(dashboardCustomer)
         binding.orderList.adapter = orderAdapter
-        binding.orderList.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-            onPropertyStateChanged()
-        }
-        showOrders()
+        showOrders("ALL")
     }
 
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//        showToast(message = "Spinner 2 Position:${position} and language: ${status[position]}")
-
-        showOrders(status[position])
-
+    fun onPropertyStateChanged(selectedItem: String) {
+        showOrders(selectedItem);
     }
-
-    private fun showOrders(orderStatus: String) {
-
-    }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-        showToast(message = "Nothing selected")
-    }
-
-    private fun showToast(
-        context: Context = dashboardCustomer.applicationContext,
-        message: String,
-        duration: Int = Toast.LENGTH_LONG,
-    ) {
-        Toast.makeText(context, message, duration).show()
-    }
-
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun showOrders() {
+    private fun showOrders(status: String) {
         ordersList.clear()
-
         dashboardCustomer.showLoadingDialog()
+        Log.d("SHOW ORDER STATUS", status)
+
+        // Fetch orders for the user
         firebaseDatabaseReference.child("orders/$uid")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        for ((index, postSnapshot) in dataSnapshot.children.withIndex()) {
-                            val order = postSnapshot.getValue(Order::class.java)
-                            if (order!=null) {
-                                Log.d("SHOP_RATES", "CHECK SHOP RATES ${order.orderNo}")
+                    if (!dataSnapshot.exists()) {
+                        dashboardCustomer.dismissLoadingDialog()
+                        updateUI()
+                        return
+                    }
 
-                                //Check if the shop had added Rates
-                                firebaseDatabase.reference.child("shop")
-                                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                                        override fun onDataChange(snapshot: DataSnapshot) {
-                                            if (snapshot.hasChild(order.shopID!!)) {
-                                                shop = snapshot.getValue(Shop::class.java)
-                                                Log.d(
-                                                    "SHOP",
-                                                    "SHOP FOUND @ ${shop!!.uid} -> ${shop!!.businessName}"
-                                                )
-
-                                            } else {
-                                                Log.d(
-                                                    "SHOP","SHOP NOT FOUND"
-                                                )
-                                            }
-                                        }
-
-                                        override fun onCancelled(error: DatabaseError) {
-                                            Log.d("SHOP_ERROR", error.message)
-                                        }
-                                    })
-                                ordersList.add(order)
-                                orderAdapter.notifyDataSetChanged()
-                            }
-                            if (index >= (dataSnapshot.childrenCount - 1)) {
-                                dashboardCustomer.dismissLoadingDialog()
+                    // Loop through orders
+                    val ordersToAdd = mutableListOf<Order>()
+                    val children = dataSnapshot.children.toList()
+                    children.forEachIndexed { index, postSnapshot ->
+                        val order = postSnapshot.getValue(Order::class.java)
+                        if (order != null) {
+//                            checkShopRates(order)
+                            when (status) {
+                                // If "All" is selected, disregard status and add all orders for this shop
+                                "ALL" -> {
+                                    ordersToAdd.add(order)
+                                }
+                                // Otherwise, filter based on status
+                                else -> {
+                                    if (order.status.equals(status, true)) {
+                                        ordersToAdd.add(order)
+                                    }
+                                }
                             }
                         }
-                    } else {
-                        Log.d("ORDER_ON_DATA_CHANGE", "NO ORDER YET AVAILABLE IN RECORD")
+
+                        // Check if it's the last item
+                        if (index == children.lastIndex) {
+                            ordersList.addAll(ordersToAdd)
+                            orderAdapter.notifyDataSetChanged()
+                            sortAndNotify(status)
+                        }
                     }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    // Getting Post failed, log a message
-                    dashboardCustomer.dismissLoadingDialog()
                     Log.w("addValueEventListener", "loadPost:onCancelled", error.toException())
-                    Toast.makeText(
-                        dashboardCustomer,
-                        error.message,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    dashboardCustomer.dismissLoadingDialog()
+                    binding.promptView.visibility = View.VISIBLE
+                    Toast.makeText(dashboardCustomer, error.message, Toast.LENGTH_SHORT).show()
                 }
             })
     }
+
+    // Function to check shop rates and log information
+    private fun checkShopRates(order: Order) {
+        firebaseDatabase.reference.child("shop")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.hasChild(order.shopID ?: "")) {
+                        shop = snapshot.child(order.shopID!!).getValue(Shop::class.java)
+                        shop?.let {
+                            Log.d(
+                                "SHOP",
+                                "SHOP FOUND @ ${it.uid} -> ${it.businessName}"
+                            )
+                        }
+                    } else {
+                        Log.d("SHOP", "SHOP NOT FOUND")
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.d("SHOP_ERROR", error.message)
+                }
+            })
+    }
+
+    // Sort and notify adapter
+    @SuppressLint("SetTextI18n")
+    private fun sortAndNotify(status: String) {
+        with(binding) {
+            when (status) {
+                "ALL" -> promptView.text = "No Order's yet!"
+                else -> promptView.text = "No $status Order's"
+            }
+            if (ordersList.isEmpty()) {
+                promptView.visibility = View.VISIBLE
+            } else {
+                // Sort ordersList by descending pickUpDatetime
+                ordersList.sortByDescending { order ->
+                    parseDatetime(order.pickUpDatetime)
+                }
+                promptView.visibility = View.GONE
+            }
+            dashboardCustomer.dismissLoadingDialog()
+        }
+    }
+
+    // Helper to parse datetime string
+    private fun parseDatetime(datetime: String?): Long? {
+        return try {
+            datetime?.let {
+                SimpleDateFormat("MM/dd/yyyy hh:mm a", Locale.getDefault()).parse(it)?.time
+            }
+        } catch (e: Exception) {
+            Log.e("DATETIME_PARSE", "Error parsing date: $datetime", e)
+            null
+        }
+    }
+
+    // Update UI on empty ordersList
+    private fun updateUI() {
+        if (ordersList.isEmpty()) {
+            binding.promptView.visibility = View.VISIBLE
+        } else {
+            binding.promptView.visibility = View.GONE
+            orderAdapter.notifyDataSetChanged()
+        }
+    }
+
+
     fun onPropertyStateChanged() {
         if (orderAdapter.itemCount <= 0) {
             binding.promptView.visibility = View.VISIBLE

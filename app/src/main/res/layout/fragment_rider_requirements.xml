@@ -71,9 +71,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
+            app:endIconMode="clear_text"
             app:helperText="Kindly input number without space, Follow format country code +XX then followed by your number. (+639123456789)"
-            app:helperTextTextColor="@android:color/holo_red_dark"
-            app:endIconMode="clear_text">
+            app:helperTextTextColor="@android:color/holo_red_dark">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/emergencyPhone"
@@ -98,8 +98,8 @@
             android:textAlignment="center"
             android:textColor="@color/color_blue_1"
             android:textSize="24sp"
-            android:textStyle="bold|italic"
-            />
+            android:textStyle="bold|italic" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -107,17 +107,8 @@
             android:textAlignment="center"
             android:textColor="@android:color/holo_red_dark"
             android:textSize="12sp"
-            android:textStyle="bold|italic"
-            />
+            android:textStyle="bold|italic" />
 
-        <Spinner
-            android:id="@+id/spinnerVehicle"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_margin="5dp"
-            android:background="@color/white"
-            android:entries="@array/vehicle"
-            />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tinNumberLayout"
@@ -137,7 +128,8 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <LinearLayout
+        <!-- CAPTURE SELFIE-->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -146,26 +138,50 @@
             android:padding="10dp">
 
             <TextView
+                android:id="@+id/profileNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Please take a picture of your NBI or Police clearance closely and clear."
+                android:text="Please take a picture of your self closely and clear."
                 android:textAlignment="center"
                 android:textColor="@android:color/holo_red_dark"
                 android:textSize="12sp"
-                android:textStyle="bold|italic" />
+                android:textStyle="bold|italic"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btnNBIPoliceClearance"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/selfieImageUri"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:padding="10dp"
-                android:src="@drawable/vector_image_holder"
-                android:tint="@color/color_blue_1" />
+                android:text="Filename"
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/profileNote" />
 
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/selfieImage"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/selfieImageUri" />
 
-        <LinearLayout
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCaptureSelf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="Capture"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/selfieImage" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- CAPTURE || BROWSE NBI-->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -174,26 +190,63 @@
             android:padding="10dp">
 
             <TextView
+                android:id="@+id/nbiBIRNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Please take a picture of your License ID closely and clear."
+                android:text="Please browse or take a picture of nbi/ police clearance."
                 android:textAlignment="center"
                 android:textColor="@android:color/holo_red_dark"
                 android:textSize="12sp"
-                android:textStyle="bold|italic" />
+                android:textStyle="bold|italic"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btnLicenseID"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/nbiImageUri"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:padding="10dp"
-                android:src="@drawable/vector_image_holder"
-                android:tint="@color/color_blue_1" />
+                android:text="Filename"
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/nbiBIRNote" />
+
+            <ImageView
+                android:id="@+id/nbiImage"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/nbiImageUri" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCaptureNBI"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="Capture"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/btnBrowseNBI"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/nbiImage" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnBrowseNBI"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="Browse"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnCaptureNBI"
+                app:layout_constraintTop_toBottomOf="@id/nbiImage" />
 
 
-        </LinearLayout>
-        <LinearLayout
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- CAPTURE || BROWSE LICENCE-->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -202,26 +255,63 @@
             android:padding="10dp">
 
             <TextView
+                android:id="@+id/licenseNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Please take a picture of your OR Vehicle closely and clear."
+                android:text="Please browse or take a picture of your license."
                 android:textAlignment="center"
                 android:textColor="@android:color/holo_red_dark"
                 android:textSize="12sp"
-                android:textStyle="bold|italic" />
+                android:textStyle="bold|italic"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btnORVehicle"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/licenseImageUri"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:padding="10dp"
-                android:src="@drawable/vector_image_holder"
-                android:tint="@color/color_blue_1" />
+                android:text="Filename"
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/licenseNote" />
 
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/licenseImage"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/licenseImageUri" />
 
-        <LinearLayout
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCaptureLicense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="Capture"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/btnBrowseLicense"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/licenseImage" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnBrowseLicense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="Browse"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnCaptureLicense"
+                app:layout_constraintTop_toBottomOf="@id/licenseImage" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- CAPTURE || BROWSE OR-->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -230,25 +320,63 @@
             android:padding="10dp">
 
             <TextView
+                android:id="@+id/orNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Please take a picture of your CR Vehicle closely and clear."
+                android:text="Please browse or take a picture of your OR Vehicle."
                 android:textAlignment="center"
                 android:textColor="@android:color/holo_red_dark"
                 android:textSize="12sp"
-                android:textStyle="bold|italic" />
+                android:textStyle="bold|italic"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btnCRVehicle"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/orImageUri"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:padding="10dp"
-                android:src="@drawable/vector_image_holder"
-                android:tint="@color/color_blue_1" />
+                android:text="Filename"
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/orNote" />
 
-        </LinearLayout>
-        <LinearLayout
+            <ImageView
+                android:id="@+id/orImage"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/orImageUri" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCaptureOR"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="Capture"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/btnBrowseOR"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/orImage" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnBrowseOR"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="Browse"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnCaptureOR"
+                app:layout_constraintTop_toBottomOf="@id/orImage" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- CAPTURE || BROWSE CR-->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -257,24 +385,126 @@
             android:padding="10dp">
 
             <TextView
+                android:id="@+id/crNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Please take a picture of your Vehicle closely and clear."
+                android:text="Please browse or take a picture of your CR Vehicle."
                 android:textAlignment="center"
                 android:textColor="@android:color/holo_red_dark"
                 android:textSize="12sp"
-                android:textStyle="bold|italic" />
+                android:textStyle="bold|italic"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btnVehicle"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/crImageUri"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:padding="10dp"
-                android:src="@drawable/vector_image_holder"
-                android:tint="@color/color_blue_1" />
+                android:text="Filename"
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/crNote" />
 
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/crImage"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/crImageUri" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCaptureCR"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="Capture"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/btnBrowseCR"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/crImage" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnBrowseCR"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="Browse"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnCaptureCR"
+                app:layout_constraintTop_toBottomOf="@id/crImage" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- CAPTURE || BROWSE VEHICLE-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/button_secondary"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/vehicleNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Please browse or take a picture of your Vehicle."
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="12sp"
+                android:textStyle="bold|italic"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/vehicleImageUri"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="Filename"
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/vehicleNote" />
+
+            <ImageView
+                android:id="@+id/vehicleImage"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/vehicleImageUri" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnCaptureVehicle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="Capture"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/btnBrowseVehicle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/vehicleImage" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnBrowseVehicle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="Browse"
+                android:textColor="@color/color_blue_1"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnCaptureVehicle"
+                app:layout_constraintTop_toBottomOf="@id/vehicleImage" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSubmit"

@@ -1,8 +1,11 @@
 package com.kodego.diangca.ebrahim.laundryexpres.registration.partner
 
+import ProgressDialog
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
@@ -22,8 +25,10 @@ import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.adater.FragmentAdapter
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityRegisterPartnerBinding
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentPartnerBasicInfoBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentPartnerBusinessInfoBinding
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.ProgressDialogBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
 
@@ -379,6 +384,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
     private fun validEmail(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
+
     private fun isValidAddress(address: String): Boolean {
         var addresses: List<Address>? = null
         var locality: String? = null
@@ -465,6 +471,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
         }
     }
 
+
     private fun setTab(currentItem: Int) {
         binding.viewPager2.post {
             binding.viewPager2.setCurrentItem(currentItem, true)
@@ -521,7 +528,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
         val user = User(
             firebaseAuth.currentUser!!.uid,
             email,
-            "Partner",
+            "Rider",
             firstName,
             lastName,
             sex,
@@ -546,7 +553,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
                     "User has been successfully Registered!",
                     Toast.LENGTH_SHORT
                 ).show()*/
-                saveBusinessInfo()
+                saveRequirementsInfo()
             } else {
                 Log.d("USER -> addOnCompleteListener", task.exception!!.message!!)
             }
@@ -554,7 +561,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveBusinessInfo() {
+    private fun saveRequirementsInfo() {
 
         val bindingBusinessInfo = partnerBusinessInfoFragment.getBinding()
         setDataBusinessInfo(bindingBusinessInfo)

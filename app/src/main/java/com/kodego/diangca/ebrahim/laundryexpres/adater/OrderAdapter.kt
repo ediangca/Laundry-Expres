@@ -2,6 +2,7 @@ package com.kodego.diangca.ebrahim.laundryexpres.adater
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartnerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ItemOrdersBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
 import com.kodego.diangca.ebrahim.laundryexpres.model.Rates
@@ -22,23 +24,19 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
 
 
     private var dashboardCustomer: DashboardCustomerActivity? = null
-
-
-    private var firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance()
-    private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
-    private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
-        .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
-    private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-
-    private var shop: Shop? = null
-    private var rates: Rates? = null
+    private var dashboardPartner: DashboardPartnerActivity? = null
 
     private var callBack: String? = null
 
-    @JvmName("setDashboardCustomer1")
-    fun setDashboardCustomer(dashboardCustomer: DashboardCustomerActivity){
-        this.dashboardCustomer = dashboardCustomer
-    }
+//    @JvmName("setDashboardCustomer1")
+//    fun setDashboardCustomer(dashboardCustomer: DashboardCustomerActivity){
+//        this.dashboardCustomer = dashboardCustomer
+//    }
+//    fun setDashboardPartner(dashboardPartner: DashboardPartnerActivity){
+//        this.dashboardPartner = dashboardPartner
+//    }
+
+
     override fun getItemCount(): Int {
         return orderList.size
     }
@@ -114,8 +112,16 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
             positionAdapter: Int,
             order: Order) {
 
-            if(dashboardCustomer!=null) {
-                dashboardCustomer!!.showOrderDetails(order, callBack!!)
+            when(activity){
+                is DashboardCustomerActivity ->{
+                    Log.d("ON_SHOW_DETAIL", "DASHBOARD CUSTOMER")
+                    (activity as DashboardCustomerActivity).showOrderDetails(order, callBack!!)
+                }
+                is DashboardPartnerActivity ->{
+                    Log.d("ON_SHOW_DETAIL", "DASHBOARD PARTNER")
+                    (activity as DashboardPartnerActivity).showOrderDetails(order, callBack!!)
+                }
+
             }
         }
 

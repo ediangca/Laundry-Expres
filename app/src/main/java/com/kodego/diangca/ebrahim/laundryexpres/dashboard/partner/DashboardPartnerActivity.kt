@@ -12,6 +12,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -25,9 +26,11 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.R
+import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardOrderDetailsFragment
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityDashboardPartnerBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.NavHeaderPartnerBinding
+import com.kodego.diangca.ebrahim.laundryexpres.model.Order
 import com.kodego.diangca.ebrahim.laundryexpres.model.Rates
 import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
@@ -56,6 +59,8 @@ class DashboardPartnerActivity : AppCompatActivity() {
     private lateinit var dashboardAccountFragment: DashboardAccountFragment
     private lateinit var dashboardBusinessFragment: DashboardBusinessFragment
     private lateinit var dashboardRatesFragment: DashboardRatesFragment
+
+    private lateinit var dashboardOrderDetailsFragment: DashboardOrderDetailsFragment
 
     private lateinit var loadingBuilder: AlertDialog.Builder
     private lateinit var loadingDialog: Dialog
@@ -352,7 +357,28 @@ class DashboardPartnerActivity : AppCompatActivity() {
         loadingDialog.dismiss()
     }
 
+    fun showOrderDetails(order: Order, callBack: String) {
 
+        order.printLOG()
+        bundle = Bundle()
+        bundle.putParcelable("order", order)
+        dashboardOrderDetailsFragment = DashboardOrderDetailsFragment(this)
+        dashboardOrderDetailsFragment.setCallBack(callBack)
+        dashboardOrderDetailsFragment.arguments = bundle
+        mainFrame = supportFragmentManager.beginTransaction()
+        Log.d("ON_SHOW_DETAIL", "FRAGMENT ORDER")
+        mainFrame.replace(R.id.fragmentPartnerDashboard, dashboardOrderDetailsFragment);
+        mainFrame.addToBackStack(null);
+        mainFrame.commit()
+    }
+
+
+    fun showOrder() {
+        mainFrame = supportFragmentManager.beginTransaction()
+        mainFrame.replace(R.id.fragmentPartnerDashboard, dashboardOrdersFragment);
+        mainFrame.addToBackStack(null);
+        mainFrame.commit();
+    }
 
 }
 
