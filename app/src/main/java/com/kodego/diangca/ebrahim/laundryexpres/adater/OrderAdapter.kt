@@ -8,16 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
-import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartnerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ItemOrdersBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
-import com.kodego.diangca.ebrahim.laundryexpres.model.Rates
-import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
 
 class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
     RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {

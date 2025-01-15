@@ -23,6 +23,8 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartnerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityRegisterPersonalInfoBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
@@ -279,12 +281,12 @@ class RegisterPersonalInfoActivity : AppCompatActivity() {
                 finish()
             }
             "Partner" -> {
-                startActivity(Intent(Intent(this, DashboardCustomerActivity::class.java)))
+                startActivity(Intent(Intent(this, DashboardPartnerActivity::class.java)))
                 finish()
 
             }
             "Rider" -> {
-                startActivity(Intent(Intent(this, DashboardCustomerActivity::class.java)))
+                startActivity(Intent(Intent(this, DashboardRiderActivity::class.java)))
                 finish()
             }
             else -> {

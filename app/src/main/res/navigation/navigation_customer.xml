@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/dashboardOrdersFragment"
-        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardOrdersFragment"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardRiderOrdersFragment"
         android:label="fragment_dashboard_orders"
         tools:layout="@layout/fragment_dashboard_orders" >
         <action

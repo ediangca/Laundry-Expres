@@ -31,7 +31,6 @@ class DashboardCustomerActivity : AppCompatActivity() {
     private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
         .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
 
-
     private lateinit var dashboardHomeFragment: DashboardHomeFragment
     private lateinit var dashboardOrdersFragment: DashboardOrdersFragment
     private lateinit var dashboardNotificationFragment: DashboardNotificationFragment
@@ -46,9 +45,9 @@ class DashboardCustomerActivity : AppCompatActivity() {
     private var shop: Shop? = null
 
     private var pickUpDatetime: String? = null
-    private var deliveryDatetime:String? = null
+    private var deliveryDatetime: String? = null
 
-            private var bundle = Bundle()
+    private var bundle = Bundle()
 
     private lateinit var loadingBuilder: AlertDialog.Builder
     lateinit var loadingDialog: Dialog
@@ -105,7 +104,7 @@ class DashboardCustomerActivity : AppCompatActivity() {
         databaseRef.get().addOnCompleteListener { dataSnapshot ->
             if (dataSnapshot.isSuccessful) {
                 user = dataSnapshot.result.getValue(User::class.java)
-                if (user!=null) {
+                if (user != null) {
                     Log.d("USER_DETAILS_FOUND", user.toString())
                     bundle = Bundle()
                     bundle.putParcelable("user", user)
@@ -126,7 +125,7 @@ class DashboardCustomerActivity : AppCompatActivity() {
 
 
     private fun navMenuOnItemSelectedListener(it: MenuItem?): Boolean {
-        if (it==null) {
+        if (it == null) {
             bundle = Bundle()
             bundle.putParcelable("user", user)
             dashboardHomeFragment.arguments = bundle
@@ -148,6 +147,7 @@ class DashboardCustomerActivity : AppCompatActivity() {
                     mainFrame.commit();
                     return true
                 }
+
                 R.id.navCustomerOrder -> {
                     mainFrame = supportFragmentManager.beginTransaction()
                     mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardOrdersFragment);
@@ -155,6 +155,7 @@ class DashboardCustomerActivity : AppCompatActivity() {
                     mainFrame.commit();
                     return true
                 }
+
                 R.id.navCustomerUpdates -> {
                     mainFrame = supportFragmentManager.beginTransaction()
                     mainFrame.replace(
@@ -166,6 +167,7 @@ class DashboardCustomerActivity : AppCompatActivity() {
                     binding.dashboardNav.visibility = View.VISIBLE
                     return true
                 }
+
                 R.id.navCustomerInbox -> {
                     mainFrame = supportFragmentManager.beginTransaction()
                     mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardInboxFragment);
@@ -173,6 +175,7 @@ class DashboardCustomerActivity : AppCompatActivity() {
                     mainFrame.commit();
                     return true
                 }
+
                 R.id.navCustomerAccount -> {
                     bundle.putParcelable("user", user)
                     dashboardAccountFragment.arguments = bundle
@@ -251,7 +254,7 @@ class DashboardCustomerActivity : AppCompatActivity() {
         loadingBuilder.setCancelable(false)
         loadingBuilder.setView(loadingBinding.root)
         loadingDialog = loadingBuilder.create()
-        if (loadingDialog.window!=null) {
+        if (loadingDialog.window != null) {
             loadingDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
         }
         loadingDialog.show()
