@@ -17,8 +17,10 @@ import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityDashboardRiderBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
-import com.kodego.diangca.ebrahim.laundryexpres.model.Order
-import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardRiderAccountBinding
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardRiderInboxBinding
+import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardRiderNotificationBinding
+import com.kodego.diangca.ebrahim.laundryexpres.model.Requirements
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
 
 class DashboardRiderActivity : AppCompatActivity() {
@@ -33,9 +35,14 @@ class DashboardRiderActivity : AppCompatActivity() {
         .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
 
 
+    private lateinit var dashboardHomeFragment: DashboardRiderHomeFragment
+    private lateinit var dashboardRidesFragment: DashboardRiderRideFragment
+    private lateinit var dashboardNotificationFragment: DashboardRiderNotificationFragment
+    private lateinit var dashboardInboxFragment: DashboardRiderInboxFragment
+    private lateinit var dashboardAccountFragment: DashboardRiderAccountFragment
 
     private var user: User? = null
-    private var shop: Shop? = null
+    private var requirements: Requirements? = null
 
     private var pickUpDatetime: String? = null
     private var deliveryDatetime: String? = null
@@ -53,16 +60,29 @@ class DashboardRiderActivity : AppCompatActivity() {
         initComponent()
     }
     private fun initComponent() {
+        Log.d("ON_ATTACH_DASHBOARD_RIDER", "ATTACHED RIDER DASHBOARD")
+        retrieveUserDetails()
+
+        dashboardHomeFragment = DashboardRiderHomeFragment(this)
+        dashboardRidesFragment = DashboardRiderRideFragment(this)
+        dashboardNotificationFragment = DashboardRiderNotificationFragment(this)
+        dashboardInboxFragment = DashboardRiderInboxFragment(this)
+        dashboardAccountFragment = DashboardRiderAccountFragment(this)
+
+
+        binding.dashboardNav.setOnItemSelectedListener {
+            navMenuOnItemSelectedListener(it)
+        }
     }
 
     @JvmName("getShop1")
-    fun setShop(shop: Shop) {
-        this.shop = shop
+    fun setRequirements(requirements: Requirements) {
+        this.requirements = requirements
     }
 
     @JvmName("getShop1")
-    fun getShop(): Shop {
-        return shop!!
+    fun getRequirements(): Requirements {
+        return requirements!!
     }
 
     fun setUser(user: User?) {
@@ -71,6 +91,104 @@ class DashboardRiderActivity : AppCompatActivity() {
 
     fun getUser(): User? {
         return user!!
+    }
+
+    private fun retrieveUserDetails() {
+        val databaseRef = firebaseDatabase.reference.child("users")
+            .child(firebaseAuth.currentUser!!.uid)
+
+        databaseRef.get().addOnCompleteListener { dataSnapshot ->
+            if (dataSnapshot.isSuccessful) {
+                user = dataSnapshot.result.getValue(User::class.java)
+                if (user != null) {
+                    Log.d("USER_DETAILS_FOUND", user.toString())
+                    bundle = Bundle()
+                    bundle.putParcelable("user", user)
+                    dashboardHomeFragment.arguments = bundle
+                    mainFrame = supportFragmentManager.beginTransaction()
+                    mainFrame.replace(
+                        R.id.fragmentRiderDashboard,
+                        DashboardRiderHomeFragment(this@DashboardRiderActivity)
+                    );
+                    mainFrame.addToBackStack(null);
+                    mainFrame.commit();
+                }
+            } else {
+                Log.d("USER_DETAILS_NOT_FOUND", "USER NOT FOUND")
+            }
+        }
+    }
+
+    private fun navMenuOnItemSelectedListener(it: MenuItem?): Boolean {
+        if (it == null) {
+            bundle = Bundle()
+            bundle.putParcelable("user", user)
+            dashboardHomeFragment.arguments = bundle
+            mainFrame = supportFragmentManager.beginTransaction()
+            mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardHomeFragment);
+            mainFrame.addToBackStack(null);
+            mainFrame.commit();
+            return true
+        } else {
+            Log.d("MENU ITEM", "ID: ${it.itemId}  --------------")
+            bundle = Bundle()
+            when (it.itemId) {
+                R.id.navRiderHome -> {
+                    bundle.putParcelable("user", user)
+                    dashboardHomeFragment.arguments = bundle
+                    mainFrame = supportFragmentManager.beginTransaction()
+                    mainFrame.replace(R.id.fragmentRiderDashboard, dashboardHomeFragment);
+                    mainFrame.addToBackStack(null);
+                    mainFrame.commit();
+                    return true
+                }
+
+                R.id.navRiderOrder -> {
+                    mainFrame = supportFragmentManager.beginTransaction()
+                    mainFrame.replace(R.id.fragmentRiderDashboard, dashboardRidesFragment);
+                    mainFrame.addToBackStack(null);
+                    mainFrame.commit();
+                    return true
+                }
+
+                R.id.navRiderUpdates -> {
+                    mainFrame = supportFragmentManager.beginTransaction()
+                    mainFrame.replace( R.id.fragmentRiderDashboard, dashboardNotificationFragment);
+                    mainFrame.addToBackStack(null);
+                    mainFrame.commit();
+                    binding.dashboardNav.visibility = View.VISIBLE
+                    return true
+                }
+
+                R.id.navRiderInbox -> {
+                    mainFrame = supportFragmentManager.beginTransaction()
+                    mainFrame.replace(R.id.fragmentRiderDashboard, dashboardInboxFragment);
+                    mainFrame.addToBackStack(null);
+                    mainFrame.commit();
+                    return true
+                }
+
+                R.id.navCustomerAccount -> {
+                    bundle.putParcelable("user", user)
+                    dashboardAccountFragment.arguments = bundle
+                    mainFrame = supportFragmentManager.beginTransaction()
+                    mainFrame.replace(R.id.fragmentRiderDashboard, dashboardAccountFragment);
+                    mainFrame.addToBackStack(null);
+                    mainFrame.commit();
+                    return true
+                }
+
+                else -> {
+                    bundle.putParcelable("user", user)
+                    dashboardHomeFragment.arguments = bundle
+                    mainFrame = supportFragmentManager.beginTransaction()
+                    mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardHomeFragment);
+                    mainFrame.addToBackStack(null);
+                    mainFrame.commit();
+                    return true
+                }
+            }
+        }
     }
 
     fun signOut() {

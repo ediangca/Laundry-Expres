@@ -29,6 +29,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAzofW3ZdxI6l6Jz7C16Z_iHHLH_KMmIWY" /> <!-- REGISTRATION -->
+
         <activity
             android:name=".registration.RegisterPersonalInfoActivity"
             android:exported="false"

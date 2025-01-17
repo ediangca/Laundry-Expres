@@ -370,6 +370,10 @@ class LoginActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             dismissLoadingDialog()
 
+            Log.d(
+                "ACCOUNT TYPE", userType
+            )
+
             if((userType!="Customer") && !isVerified) {
                 Log.d(
                     "ACCOUNT",

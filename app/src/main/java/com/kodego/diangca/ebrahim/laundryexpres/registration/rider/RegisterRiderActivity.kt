@@ -409,7 +409,7 @@ class RegisterRiderActivity : AppCompatActivity() {
         val user = User(
             firebaseAuth.currentUser!!.uid,
             email,
-            "Partner",
+            "Rider",
             firstName,
             lastName,
             sex,

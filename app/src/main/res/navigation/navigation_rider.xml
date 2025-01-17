@@ -2,5 +2,11 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/navigation_rider">
+    android:id="@+id/navigation_rider"
+    app:startDestination="@id/dashboardRiderHome">
+    <fragment
+        android:id="@+id/dashboardRiderHome"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderHomeFragment"
+        android:label="fragment_dashboard_rider_home"
+        tools:layout="@layout/fragment_dashboard_rider_home" />
 </navigation>
