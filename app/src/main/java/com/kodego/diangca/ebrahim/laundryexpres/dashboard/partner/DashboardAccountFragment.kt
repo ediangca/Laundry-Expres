@@ -93,7 +93,11 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
 
     private fun initComponent() {
 
-        val sexAdapter = ArrayAdapter(dashboardPartner,  android.R.layout.simple_spinner_item, this.resources.getStringArray(R.array.sex))
+        val sexAdapter = ArrayAdapter(
+            dashboardPartner,
+            android.R.layout.simple_spinner_item,
+            this.resources.getStringArray(R.array.sex)
+        )
         sexAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.sex.adapter = sexAdapter
 
@@ -106,7 +110,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
         }
 
         val bundle = arguments
-        if (bundle!=null) {
+        if (bundle != null) {
             user = bundle.getParcelable<User>("user")!!
             Log.d("ON_RESUME_FETCH_USER", user.toString())
         } else {
@@ -146,7 +150,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
             profileOptionDialog.dismiss()
         }
         profileOptionDialog = loadingBuilder.create()
-        if (profileOptionDialog.window!=null) {
+        if (profileOptionDialog.window != null) {
             profileOptionDialog.window!!.setBackgroundDrawableResource(R.color.color_light_3)
         }
         profileOptionDialog.show()
@@ -169,7 +173,6 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
 
         Dexter.withContext(dashboardPartner)
             .withPermissions(
-                android.Manifest.permission.READ_EXTERNAL_STORAGE,
                 android.Manifest.permission.CAMERA
             ).withListener(
 
@@ -204,17 +207,17 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
         if (imageUri!!.scheme.equals("content")) {
             val cursor = context.contentResolver.query(imageUri, null, null, null, null)
             try {
-                if (cursor!=null && cursor.moveToFirst()) {
+                if (cursor != null && cursor.moveToFirst()) {
                     filename = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
                 }
             } finally {
                 cursor!!.close()
             }
 
-            if (filename==null) {
+            if (filename == null) {
                 filename = imageUri.path
                 val cut: Int = filename!!.lastIndexOf('/')
-                if (cut!=-1) {
+                if (cut != -1) {
                     filename = filename.substring(cut + 1)
                 }
 
@@ -266,7 +269,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode==AppCompatActivity.RESULT_OK) {
+        if (resultCode == AppCompatActivity.RESULT_OK) {
             when (requestCode) {
                 PICK_PROFILE_CODE -> {
                     profileImageUri = data?.data
@@ -287,7 +290,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
 
                 CAMERA_PROFILE_CODE -> {
                     try {
-                        if (data!=null) {
+                        if (data != null) {
                             //we are using coroutine image loader (coil)
                             val myBitmap = data.extras?.get("data") as Bitmap
 
@@ -342,7 +345,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
         val email = binding.email.text.toString()
 
 
-        if (email.isEmpty() || !validEmail(email) || mobileNo.isEmpty() || mobileNo.length!=13 || firstName.isEmpty() || lastName.isEmpty() || binding.sex.selectedItemPosition<0 || street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty()
+        if (email.isEmpty() || !validEmail(email) || mobileNo.isEmpty() || mobileNo.length != 13 || firstName.isEmpty() || lastName.isEmpty() || binding.sex.selectedItemPosition < 0 || street.isEmpty() || city.isEmpty() || state.isEmpty() || zipCode.isEmpty() || country.isEmpty()
             || isValidAddress(street)
             || isValidAddress(city)
             || isValidAddress(state)
@@ -354,7 +357,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
             if (mobileNo.isEmpty()) {
                 binding.phoneNo.error = "Please enter your Mobile No."
             }
-            if (mobileNo.length!=13) {
+            if (mobileNo.length != 13) {
                 binding.phoneNo.error = "Please check length of Mobile No."
             }
             if (firstName.isEmpty()) {
@@ -415,6 +418,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
                     profileImageUri = Uri.parse(user!!.photoUri)
 
                     Log.d("SAVING_USER", "SUCCESS SAVING USER DATA")
+
                     setUserDetails(user)
                     dashboardPartner.setUser(user)
                     dashboardPartner.setUserDetails(user)
@@ -426,9 +430,13 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
                             Log.d("SAVING_USER_PROFILE", "SUCCESS SAVING PROFILE $filename")
                         }
                         .addOnFailureListener {
-                            Log.d("FAILED_SAVING_USER_PROFILE", "FAILED SAVING PROFILE $filename > ${it.message}")
+                            Log.d(
+                                "FAILED_SAVING_USER_PROFILE",
+                                "FAILED SAVING PROFILE $filename > ${it.message}"
+                            )
                         }
                     dashboardPartner.dismissLoadingDialog()
+
                     Toast.makeText(
                         context,
                         "User has been successfully Updated!",
@@ -459,7 +467,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
                 Log.d("SEARCH_GEO_LOCATION", "${e.message}")
             }
 
-            if (addresses!=null && addresses.isNotEmpty()) {
+            if (addresses != null && addresses.isNotEmpty()) {
                 locality = addresses[0].locality
                 Log.d("SEARCH_GEO_LOCATION > $address", addresses[0].getAddressLine(0))
             } else {
@@ -478,7 +486,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
     }
 
     private fun setUserDetails(user: User?) {
-
+        this.user = user
         firebaseAuth.currentUser?.let {
             for (profile in it.providerData) {
                 displayName = profile.displayName
@@ -489,7 +497,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
                 Log.d("displayUserName", "Hi ${displayName}, Good Day!")
                 binding.userDisplayName.text = displayName
             } else {
-                if (user!=null) {
+                if (user != null) {
                     displayName = "${user!!.firstname} ${user!!.lastname}"
                     binding.userDisplayName.text = displayName
                 }
@@ -497,11 +505,11 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
 
             val profileView: ImageView = binding.profilePicture
 //        profileView.setImageResource(R.drawable.icon_logo)
-            if (profileImageUri!=null) {
+            if (profileImageUri != null) {
                 Log.d("profilePic_profileData", "$profileImageUri")
                 Picasso.with(context).load(profileImageUri).into(profileView);
             } else {
-                if (user!!.photoUri!=null) {
+                if (user!!.photoUri != null) {
                     val filename = "profile_${user.uid}"
                     profileImageUri = Uri.parse(user!!.photoUri)
                     val firebaseStorageReference =
@@ -520,18 +528,18 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
                         .addOnFailureListener {
                             Toast.makeText(
                                 context,
-                                "User Profile failed to load! > ${it.message}",
+                                "Please Update your Profile Picture",
                                 Toast.LENGTH_SHORT
                             ).show()
                             Log.d("USER_PROFILE_PIC", "User Profile failed to load!")
                         }
-                    Log.d("profilePic_user", "$profileImageUri")
-                    Picasso.with(context).load(profileImageUri)
-                        .into(profileView);
+//                    Log.d("profilePic_user", "$profileImageUri")
+//                    Picasso.with(context).load(profileImageUri)
+//                        .into(profileView);
                 }
             }
 
-            if (user!=null) {
+            if (user != null) {
                 userType = user.type
                 this.isVerified = user.verified
                 binding.apply {
@@ -546,7 +554,7 @@ class DashboardAccountFragment(var dashboardPartner: DashboardPartnerActivity) :
                             sex.setSelection(index)
                         }
                     }
-                    if (user.photoUri!=null) {
+                    if (user.photoUri != null) {
                         profileImageUri = Uri.parse(user.photoUri)
                     }
                     address.setText(user.address)

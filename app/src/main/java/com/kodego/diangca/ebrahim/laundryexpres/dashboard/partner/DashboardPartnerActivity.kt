@@ -361,6 +361,7 @@ class DashboardPartnerActivity : AppCompatActivity() {
 
         order.printLOG()
         bundle = Bundle()
+        bundle.putString("user", "partner")
         bundle.putParcelable("order", order)
         dashboardOrderDetailsFragment = DashboardOrderDetailsFragment(this)
         dashboardOrderDetailsFragment.setCallBack(callBack)

@@ -69,7 +69,6 @@ class DashboardRiderActivity : AppCompatActivity() {
         dashboardInboxFragment = DashboardRiderInboxFragment(this)
         dashboardAccountFragment = DashboardRiderAccountFragment(this)
 
-
         binding.dashboardNav.setOnItemSelectedListener {
             navMenuOnItemSelectedListener(it)
         }
@@ -168,7 +167,7 @@ class DashboardRiderActivity : AppCompatActivity() {
                     return true
                 }
 
-                R.id.navCustomerAccount -> {
+                R.id.navRiderAccount -> {
                     bundle.putParcelable("user", user)
                     dashboardAccountFragment.arguments = bundle
                     mainFrame = supportFragmentManager.beginTransaction()
@@ -182,7 +181,7 @@ class DashboardRiderActivity : AppCompatActivity() {
                     bundle.putParcelable("user", user)
                     dashboardHomeFragment.arguments = bundle
                     mainFrame = supportFragmentManager.beginTransaction()
-                    mainFrame.replace(R.id.fragmentCustomerDashboard, dashboardHomeFragment);
+                    mainFrame.replace(R.id.fragmentRiderDashboard, dashboardHomeFragment);
                     mainFrame.addToBackStack(null);
                     mainFrame.commit();
                     return true

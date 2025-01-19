@@ -41,6 +41,8 @@ class RegisterPartnerActivity : AppCompatActivity() {
     private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
         .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
 
+    private var userType: String = "Partner"
+
     var fragmentAdapter = FragmentAdapter(supportFragmentManager, lifecycle)
     private lateinit var partnerBasicInfoFragment: PartnerBasicInfoFragment
     private lateinit var partnerBusinessInfoFragment: PartnerBusinessInfoFragment
@@ -528,7 +530,7 @@ class RegisterPartnerActivity : AppCompatActivity() {
         val user = User(
             firebaseAuth.currentUser!!.uid,
             email,
-            "Rider",
+            userType,
             firstName,
             lastName,
             sex,

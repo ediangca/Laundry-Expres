@@ -75,6 +75,7 @@ class IndexActivity : AppCompatActivity() {
     }
 
     private fun initComponent() {
+
         window.decorView.apply {
             // Hide both the navigation bar and the status bar.
             // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
@@ -268,16 +269,16 @@ class IndexActivity : AppCompatActivity() {
                             )
                         }
                         .addOnFailureListener {
-                            Toast.makeText(
-                                applicationContext,
-                                "User Profile failed to load! > ${it.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+//                            Toast.makeText(
+//                                applicationContext,
+//                                "User Profile failed to load! > ${it.message}",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
                             Log.d("USER_PROFILE_PIC", "User Profile failed to load!")
                         }
-                    Log.d("profilePic_user", "$profileImageUri")
-                    Picasso.with(applicationContext).load(profileImageUri)
-                        .into(profileView);
+//                    Log.d("profilePic_user", "$profileImageUri")
+//                    Picasso.with(applicationContext).load(profileImageUri)
+//                        .into(profileView);
                 }
             }
         }

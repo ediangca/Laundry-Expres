@@ -168,7 +168,6 @@ class DashboardAccountFragment(var dashboardCustomer: DashboardCustomerActivity)
 
         Dexter.withContext(dashboardCustomer)
             .withPermissions(
-                android.Manifest.permission.READ_EXTERNAL_STORAGE,
                 android.Manifest.permission.CAMERA
             ).withListener(
 
@@ -540,14 +539,14 @@ private fun setUserDetails(user: User?) {
                     .addOnFailureListener {
                         Toast.makeText(
                             context,
-                            "User Profile failed to load!> ${it.message}",
+                            "Please Update your Profile Picture",
                             Toast.LENGTH_SHORT
                         ).show()
                         Log.d("USER_PROFILE_PIC", "User Profile failed to load!")
                     }
-                Log.d("profilePic_user", "$profileImageUri")
-                Picasso.with(context).load(profileImageUri)
-                    .into(profileView);
+//                Log.d("profilePic_user", "$profileImageUri")
+//                Picasso.with(context).load(profileImageUri)
+//                    .into(profileView);
             }
         }
 

@@ -61,7 +61,7 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="nav_home">Home</string>
-    <string name="nav_orders">Orders</string>
+    <string name="nav_orders">Booking</string>
     <string name="nav_updates">Updates</string>
     <string name="nav_inbox">Inbox</string>
     <string name="nav_menu_account">Account</string>
@@ -86,6 +86,7 @@
     <string name="indication">Indicator</string>
     <string name="retrieve_shop_prompt">We don\'t have Available Laundry Shop partner in your area.</string>
     <string name="retrieve_orders_prompt">SORRY! NO ORDERS YET!</string>
+    <string name="retrieve_rides_prompt">SORRY! NO RIDES YET!</string>
     <string name="retrieve_notifcation_prompt">SORRY! NO UPDATES YET!</string>
 
 

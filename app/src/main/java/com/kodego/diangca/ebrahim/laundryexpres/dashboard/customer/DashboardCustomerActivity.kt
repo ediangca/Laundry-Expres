@@ -275,6 +275,7 @@ class DashboardCustomerActivity : AppCompatActivity() {
     fun showOrderDetails(order: Order, callBack: String) {
         order.printLOG()
         bundle = Bundle()
+        bundle.putString("user", "customer")
         bundle.putParcelable("order", order)
         dashboardOrderDetailsFragment = DashboardOrderDetailsFragment(this)
         dashboardOrderDetailsFragment.setCallBack(callBack)

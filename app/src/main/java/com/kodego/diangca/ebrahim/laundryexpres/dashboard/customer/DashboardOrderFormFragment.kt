@@ -86,7 +86,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
     private var pickUpFee: Double? = null
     private var deliveryFee: Double? = null
     private var totalOrder: Double? = null
-    private var status: String? = "FOR PICK-UP"
+    private var status: String? = "PENDING"
     private var notes: String? = null
     private var pickUpDatetime: String? = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
     private var deliveryDatetime: String? = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())

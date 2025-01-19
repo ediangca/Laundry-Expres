@@ -48,7 +48,7 @@ data class Order(
     val pickUpFee: Double? = null,
     val deliveryFee: Double? = null,
     val totalOrder: Double? = null,
-    val status: String? = "WAITING",
+    var status: String? = "WAITING",
     val notes: String? = null,
     val pickUpDatetime: String? = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date()),
     val deliveryDatetime: String? = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date()),

@@ -35,15 +35,17 @@ class DashboardOrdersFragment(var dashboardPartner: DashboardPartnerActivity) : 
     private var status =
         arrayOf(
             "ALL",
-            "PENDING",
-            "FOR PICK-UP",
-            "ON DELIVER",
+            "PENDING", //AFTER BOOKING
+            "FOR PICK-UP", //AFTER ACCEPT BY LAUNDRY
+            "TO PICK UP", //
+            "ON DELIVER", //
             "ON PROCESS",
             "FOR DELIVERY",
             "TO RECEIVE",
             "COMPLETE",
             "CANCEL"
         )
+
 
     private var shop: Shop? = null
 

@@ -45,6 +45,8 @@ class RegisterRiderActivity : AppCompatActivity() {
     private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
         .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
 
+    private var userType: String = "Rider"
+
     var fragmentAdapter = FragmentAdapter(supportFragmentManager, lifecycle)
 
     private lateinit var riderBasicInfoFragment: RiderBasicInfoFragment
@@ -409,7 +411,7 @@ class RegisterRiderActivity : AppCompatActivity() {
         val user = User(
             firebaseAuth.currentUser!!.uid,
             email,
-            "Rider",
+            userType,
             firstName,
             lastName,
             sex,

@@ -4,7 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +19,13 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
+import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartnerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogAgreementBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardOrderDetailsFormBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
+import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,6 +45,8 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
 
 
     private var order: Order? = null
+    private var customer: User? = null
+    private var user: String? = null
 
     private var orderNo: String? = null
     private var uid: String? = null
@@ -116,11 +124,12 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
         uid = firebaseAuth.currentUser!!.uid
         val bundle = this.arguments
         if (bundle != null) {
+            user = bundle.getString("user")
             order = bundle.getParcelable<Order>("order")!!
             Log.d("FETCH_ORDER", order.toString())
             retrieveOrder()
+            updateOrderActions();
         }
-
         binding.apply {
 
             btnAgreement.setOnClickListener {
@@ -132,6 +141,10 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
 
             btnCancel.setOnClickListener {
                 btnCancelOnClickListener()
+            }
+
+            btnAccept.setOnClickListener {
+                btnbtnAcceptOnClickListener()
             }
 
 
@@ -164,6 +177,58 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
 
     }
 
+    private fun updateOrderActions() {
+        if (user.equals("partner", true) && !order!!.status.equals("PENDING", true)) {
+            binding.btnAccept.visibility = View.GONE
+        }
+        if (user.equals("rider", true) && !order!!.status.equals("FOR PICK-UP", true)) {
+            binding.btnAccept.visibility = View.GONE
+        }
+        if (user.equals("customer", true)) {
+            binding.btnAccept.visibility = View.GONE
+        } else {
+            binding.btnCancel.visibility = View.GONE
+        }
+    }
+
+    private fun btnbtnAcceptOnClickListener() {
+        if (user.equals("partner", true)) {
+
+            changeOrderStatus("FOR PICK-UP")
+        }
+        if (user.equals("rider", true)) {
+
+        }
+    }
+
+    private fun changeOrderStatus(status: String) {
+
+        val databaseRef = firebaseDatabase.reference.child("order")
+            .child(order!!.uid.toString())
+
+        order!!.status = status
+
+        val loadingBuilder = AlertDialog.Builder(activityDashboard)
+        loadingBuilder.setTitle("CONFIRM")
+        loadingBuilder.setMessage("Do you really accept booking?")
+        loadingBuilder.setPositiveButton("Yes") { _, _ ->
+
+            databaseRef.setValue(order).addOnCompleteListener(activityDashboard) { task ->
+                if (task.isSuccessful) {
+                    Log.d("UPDATE ORDER STATUS SUCCESS", "")
+                    Toast.makeText(
+                        context,
+                        "Order Accepted",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    Log.d("UPDATE ORDER STATUS FAILURE", "${task.exception}")
+
+                }
+            }
+        }
+    }
+
     private fun btnHomeOnClickListener() {
 
         when (activity) {
@@ -173,14 +238,16 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
                     "OrderForm" -> {
                         (activity as? DashboardCustomerActivity)?.showHome()
                     }
+
                     "Order" -> {
                         (activity as? DashboardCustomerActivity)?.showOrder()
                     }
                 }
             }
+
             is DashboardPartnerActivity -> {
                 Log.d("CALL_BACK", "DASHBOARD PARTNER ACTIVITY")
-                        (activity as? DashboardPartnerActivity)?.showOrder()
+                (activity as? DashboardPartnerActivity)?.showOrder()
             }
         }
 
@@ -329,6 +396,7 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
             totalOrderAmount.text = "$ratesUnit ${DecimalFormat("#,###.00").format(totalOrder)}"
 
             notes = notesInput.text.toString()
+
         }
     }
 
@@ -488,6 +556,16 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
 
             Log.d("ORDER_DATA", "GET ORDER LOAD SUCCESSFUL >>>>>>>>>>")
 
+
+            firebaseDatabase.reference.child("users")
+                .child(order!!.uid.toString()).get().addOnCompleteListener { dataSnapshot ->
+                    if (dataSnapshot.isSuccessful) {
+                        customer = dataSnapshot.result.getValue(User::class.java)
+                        if (customer != null) {
+                            customerName.text = "${customer!!.firstname}  ${customer!!.lastname}"
+                        }
+                    }
+                }
             propertyChange()
         }
     }

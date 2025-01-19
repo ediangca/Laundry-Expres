@@ -116,14 +116,14 @@ class DashboardRiderHomeFragment (var dashboardRider: DashboardRiderActivity) : 
                             .addOnFailureListener {
                                 Toast.makeText(
                                     context,
-                                    "User Profile failed to load!> ${it.message}",
+                                    "Please Update your Profile Picture",
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 Log.d("USER_PROFILE_PIC", "User Profile failed to load!")
                             }
-                        Log.d("profilePic_user", "$profileImageUri")
-                        Picasso.with(context).load(profileImageUri)
-                            .into(profileView);
+//                        Log.d("profilePic_user", "$profileImageUri")
+//                        Picasso.with(context).load(profileImageUri)
+//                            .into(profileView);
                     }
                 }
 

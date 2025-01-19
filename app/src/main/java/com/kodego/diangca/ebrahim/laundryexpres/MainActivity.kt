@@ -19,6 +19,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initComponent()
+        test()
+    }
+
+    private fun test() {
+        val num1 = 1
+        var num2: Int?  = 2
+        println("Sum of two numbers ${num1 + num2?.let { 0 } as Int }")
+
+
+        val sum = num2?.let { it+num2 }
     }
 
     private fun initComponent() {
