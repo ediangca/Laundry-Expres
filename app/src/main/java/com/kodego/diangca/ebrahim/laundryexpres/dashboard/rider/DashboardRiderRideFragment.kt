@@ -10,7 +10,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardRiderOrdersBinding
 
-class DashboardRiderRideFragment (var dashboardRider: DashboardRiderActivity) : Fragment() {
+class DashboardRiderRideFragment(var dashboardRider: DashboardRiderActivity) : Fragment() {
 
 
     private var _binding: FragmentDashboardRiderOrdersBinding? = null
@@ -19,6 +19,20 @@ class DashboardRiderRideFragment (var dashboardRider: DashboardRiderActivity) : 
     private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
         .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    private var status =
+        arrayOf(
+            "ALL",
+            "PENDING", //AFTER BOOKING
+            "FOR PICK-UP", // AFTER ACCEPT BY LAUNDRY
+            "TO PICK-UP", // AFTER ACCEPT BY RIDE
+            "IN TRANSIT", // AFTER PICK-UP TRANSIT LAUNDRY TO SHOP
+            "ON PROCESS", // LAUNDRY ACCEPTED BY SHOP
+            "FOR DELIVERY", // TO RELEASE LAUNDRY BY SHOP
+            "TO DELIVER", // AFTER PICK-UP RIDER FROM SHOP
+            "COMPLETE", // RECEIVE FROM CUSTOMER
+            "CANCEL" // CANCEL BY CUSTOMER
+        )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

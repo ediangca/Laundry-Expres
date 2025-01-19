@@ -40,14 +40,14 @@ class DashboardOrdersFragment(var dashboardCustomer: DashboardCustomerActivity) 
         arrayOf(
             "ALL",
             "PENDING", //AFTER BOOKING
-            "FOR PICK-UP", //AFTER ACCEPT BY LAUNDRY
-            "TO PICK UP", //
-            "ON DELIVER", //
-            "ON PROCESS",
-            "FOR DELIVERY",
-            "TO RECEIVE",
-            "COMPLETE",
-            "CANCEL"
+            "FOR PICK-UP", // AFTER ACCEPT BY LAUNDRY
+            "TO PICK-UP", // AFTER ACCEPT BY RIDE
+            "IN TRANSIT", // AFTER PICK-UP TRANSIT LAUNDRY TO SHOP
+            "ON PROCESS", // LAUNDRY ACCEPTED BY SHOP
+            "FOR DELIVERY", // TO RELEASE LAUNDRY BY SHOP
+            "TO DELIVER", // AFTER PICK-UP RIDER FROM SHOP
+            "COMPLETE", // RECEIVE FROM CUSTOMER
+            "CANCEL" // CANCEL BY CUSTOMER
         )
 
     private var uid: String? = null

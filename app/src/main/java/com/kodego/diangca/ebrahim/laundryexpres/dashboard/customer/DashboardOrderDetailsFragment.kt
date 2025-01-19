@@ -178,17 +178,35 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
     }
 
     private fun updateOrderActions() {
-        if (user.equals("partner", true) && !order!!.status.equals("PENDING", true)) {
-            binding.btnAccept.visibility = View.GONE
+//        if (user.equals("partner", true) && !order!!.status.equals("PENDING", true)) {
+//            binding.btnAccept.visibility = View.GONE
+//        }
+//        if (user.equals("rider", true) && !order!!.status.equals("FOR PICK-UP", true)) {
+//            binding.btnAccept.visibility = View.GONE
+//        }
+//        if (user.equals("customer", true)) {
+//            binding.btnAccept.visibility = View.GONE
+//        }
+//
+//        if(user.equals("customer", true) && !order!!.status.equals("PENDING", true)){
+//            binding.btnCancel.visibility = View.GONE
+//        }else{
+//            binding.btnCancel.visibility = View.GONE
+//        }
+        binding.btnAccept.visibility = when {
+            user.equals("partner", true) && !order!!.status.equals("PENDING", true) -> View.GONE
+            user.equals("rider", true) && !order!!.status.equals("FOR PICK-UP", true) -> View.GONE
+            user.equals("customer", true) -> View.GONE
+            else -> View.VISIBLE
         }
-        if (user.equals("rider", true) && !order!!.status.equals("FOR PICK-UP", true)) {
-            binding.btnAccept.visibility = View.GONE
-        }
-        if (user.equals("customer", true)) {
-            binding.btnAccept.visibility = View.GONE
-        } else {
-            binding.btnCancel.visibility = View.GONE
-        }
+
+        binding.btnCancel.visibility =
+            if (user.equals("customer", true) && order!!.status.equals("PENDING", true)) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+
     }
 
     private fun btnbtnAcceptOnClickListener() {
@@ -197,6 +215,7 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
             changeOrderStatus("FOR PICK-UP")
         }
         if (user.equals("rider", true)) {
+            changeOrderStatus("TO PICK-UP")
 
         }
     }

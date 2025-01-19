@@ -8,5 +8,54 @@
         android:id="@+id/dashboardRiderHome"
         android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderHomeFragment"
         android:label="fragment_dashboard_rider_home"
-        tools:layout="@layout/fragment_dashboard_rider_home" />
+        tools:layout="@layout/fragment_dashboard_rider_home" >
+        <action
+            android:id="@+id/action_dashboardRiderHome_to_dashboardRiderRideFragment2"
+            app:destination="@id/dashboardRiderRideFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/dashboardRiderRideFragment"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderRideFragment"
+        android:label="fragment_dashboard_rider_orders"
+        tools:layout="@layout/fragment_dashboard_rider_orders" >
+        <action
+            android:id="@+id/action_dashboardRiderRideFragment_to_dashboardRiderNotificationFragment"
+            app:destination="@id/dashboardRiderNotificationFragment" />
+        <action
+            android:id="@+id/action_dashboardRiderRideFragment_to_dashboardRiderHome"
+            app:destination="@id/dashboardRiderHome" />
+    </fragment>
+    <fragment
+        android:id="@+id/dashboardRiderNotificationFragment"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderNotificationFragment"
+        android:label="fragment_dashboard_rider_notification"
+        tools:layout="@layout/fragment_dashboard_rider_notification" >
+        <action
+            android:id="@+id/action_dashboardRiderNotificationFragment_to_dashboardRiderInboxFragment"
+            app:destination="@id/dashboardRiderInboxFragment" />
+        <action
+            android:id="@+id/action_dashboardRiderNotificationFragment_to_dashboardRiderRideFragment"
+            app:destination="@id/dashboardRiderRideFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/dashboardRiderInboxFragment"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderInboxFragment"
+        android:label="fragment_dashboard_rider_inbox"
+        tools:layout="@layout/fragment_dashboard_rider_inbox" >
+        <action
+            android:id="@+id/action_dashboardRiderInboxFragment_to_dashboardRiderAccountFragment"
+            app:destination="@id/dashboardRiderAccountFragment" />
+        <action
+            android:id="@+id/action_dashboardRiderInboxFragment_to_dashboardRiderNotificationFragment"
+            app:destination="@id/dashboardRiderNotificationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/dashboardRiderAccountFragment"
+        android:name="com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderAccountFragment"
+        android:label="fragment_dashboard_rider_account"
+        tools:layout="@layout/fragment_dashboard_rider_account" >
+        <action
+            android:id="@+id/action_dashboardRiderAccountFragment_to_dashboardRiderInboxFragment"
+            app:destination="@id/dashboardRiderInboxFragment" />
+    </fragment>
 </navigation>

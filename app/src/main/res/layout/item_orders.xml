@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
     android:background="@drawable/box_style"
-    android:backgroundTint="@color/color_white_2"
+    android:backgroundTint="@color/color_light_2"
     android:padding="5dp">
 
     <TextView
@@ -30,7 +30,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="5sp"
-        android:drawableStart="@drawable/icon_pickup"
+        android:drawableStart="@drawable/ic_pickup"
         android:drawablePadding="5sp"
         android:text="Pick-Up Datetime"
         android:textAlignment="textStart"
@@ -45,7 +45,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="5sp"
-        android:drawableStart="@drawable/icon_delivery"
+        android:drawableStart="@drawable/ic_delivery"
         android:drawablePadding="5sp"
         android:text="Delivery Datetime"
         android:textAlignment="textStart"
@@ -65,10 +65,10 @@
         android:textColor="@color/success"
         android:textSize="16sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pickUpDatetimeLabel"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/pickUpDatetimeLabel" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btnDetails"
