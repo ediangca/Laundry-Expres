@@ -65,9 +65,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage-ktx'
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
 
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.code.gson:gson:2.10.1' // For parsing JSON
+
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0'
