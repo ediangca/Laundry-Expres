@@ -11,7 +11,7 @@ import java.util.*
 data class User(
     val uid: String? = null,
     val email: String? = null,
-    val type: String? = null,
+    var type: String? = null,
     val firstname: String? = null,
     val lastname: String? = null,
     val sex: String? = null,

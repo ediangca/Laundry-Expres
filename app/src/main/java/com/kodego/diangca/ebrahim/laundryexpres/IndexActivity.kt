@@ -22,8 +22,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartnerActivity
@@ -163,6 +166,16 @@ class IndexActivity : AppCompatActivity() {
             }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (user != null) {
+            if(user!!.type.equals("Rider", true)){
+                setupRiderPresence(user!!.uid!!)
+            }
+        }
+    }
+
+
     private fun showMain() {
         showLoadingDialog()
         Handler(Looper.getMainLooper()).postDelayed({
@@ -189,14 +202,49 @@ class IndexActivity : AppCompatActivity() {
                     finish()
                 }
                 "Rider" -> {
-                    startActivity((Intent(this, DashboardRiderActivity::class.java)))
-                    finish()
+                    setupRiderPresence(user!!.uid!!)
                 }
                 else -> {
 
                 }
             }
         }, 3000) // 3000 is the delayed time in milliseconds.
+    }
+
+    private fun setupRiderPresence(riderId: String) {
+        val database = FirebaseDatabase.getInstance()
+        val riderStatusRef = database.getReference("riders").child(riderId)
+        val connectedRef = database.getReference(".info/connected")
+
+        connectedRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val isConnected = snapshot.getValue(Boolean::class.java) ?: false
+                if (isConnected) {
+                    // Rider is online; set status to "online"
+                    riderStatusRef.child("status").setValue("online")
+
+                    // Track disconnection: set status to "offline" and update lastActive
+                    riderStatusRef.onDisconnect().setValue(
+                        mapOf(
+                            "fullName" to "${user!!.firstname} ${user!!.lastname}" ,
+                            "status" to "offline",
+                            "lastActive" to System.currentTimeMillis()
+                        )
+                    )
+                    Log.d("STATUS RIDER", "ONLINE")
+                    showRiderDashboard()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseError", "Could not check connection status: ${error.message}")
+            }
+        })
+    }
+
+    private fun showRiderDashboard() {
+        startActivity((Intent(this, DashboardRiderActivity::class.java)))
+        finish()
     }
 
     private fun showProgressBar(visible: Boolean) {

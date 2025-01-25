@@ -191,6 +191,10 @@ class DashboardRiderActivity : AppCompatActivity() {
     }
 
     fun signOut() {
+        Log.d("STATUS RIDER", "${user!!.uid!!} OFFLINE")
+        val database = FirebaseDatabase.getInstance()
+        val riderStatusRef = database.getReference("riders").child(user!!.uid!!)
+        riderStatusRef.child("status").setValue("offline")
         var loginIntent = Intent(this, LoginActivity::class.java)
         startActivity(Intent(loginIntent))
         finish()

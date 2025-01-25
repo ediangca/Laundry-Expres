@@ -31,6 +31,7 @@ import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityLoginBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogForgotPasswordBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogUserTypeBinding
+import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import com.kodego.diangca.ebrahim.laundryexpres.registration.RegisterCustomerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.registration.partner.RegisterPartnerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.registration.rider.RegisterRiderActivity
@@ -52,8 +53,7 @@ class LoginActivity : AppCompatActivity() {
 
 
     private lateinit var credential: AuthCredential
-
-    private var userType = "UNKNOWN"
+    private lateinit var user: User
     private lateinit var gmail: String
 
     private lateinit var googleSignInClient: GoogleSignInClient
@@ -269,7 +269,6 @@ class LoginActivity : AppCompatActivity() {
                 // Sign in success, update UI with the signed-in user's information
                 val user = firebaseAuth.currentUser
                 if (user!=null) {
-                    val uid = user.uid
                     val email = user.email
 
 //                    if(authResult.additionalUserInfo!!.isNewUser){} //Check if LoggedIn User is new
@@ -306,13 +305,17 @@ class LoginActivity : AppCompatActivity() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.hasChild(firebaseAuth.currentUser!!.uid)) {
 
-                        this@LoginActivity.userType =
-                            snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
-                                .getValue(String::class.java).toString()
-                        val isVerified: Boolean =
-                            snapshot.child(firebaseAuth.currentUser!!.uid).child("verified")
-                                .getValue(Boolean::class.java)!!
-                        checkIfVerified(isVerified)
+
+                        user = snapshot.child(firebaseAuth.currentUser!!.uid).getValue(User::class.java)!!
+                        Log.d("USER ACCOUNT", user.toString());
+
+//                        this@LoginActivity.userType =
+//                            snapshot.child(firebaseAuth.currentUser!!.uid).child("type")
+//                                .getValue(String::class.java).toString()
+//                        val isVerified: Boolean =
+//                            snapshot.child(firebaseAuth.currentUser!!.uid).child("verified")
+//                                .getValue(Boolean::class.java)!!
+                        checkIfVerified()
                     } else {
                         dismissLoadingDialog()
                         btnRegisterOnClickListener()
@@ -366,15 +369,17 @@ class LoginActivity : AppCompatActivity() {
         })
     }*/
 
-    private fun checkIfVerified(isVerified: Boolean) {
+    private fun checkIfVerified() {
         Handler(Looper.getMainLooper()).postDelayed({
             dismissLoadingDialog()
 
-            Log.d(
-                "ACCOUNT TYPE", userType
-            )
+            user.type?.let {
+                Log.d(
+                    "ACCOUNT TYPE", it
+                )
+            }
 
-            if((userType!="Customer") && !isVerified) {
+            if((user.type!="Customer") && !user.verified!!) {
                 Log.d(
                     "ACCOUNT",
                     "Unverified Account! Please wait for your verification. We will notify you within 24-72hours."
@@ -408,17 +413,17 @@ class LoginActivity : AppCompatActivity() {
         with(dialogUserTypeBinding) {
             userDisplayName.text = title
             userPartner.setOnClickListener {
-                userType = "Partner"
+                user.type = "Partner"
                 showRegistrationActivity()
                 userDialog.dismiss()
             }
             userRider.setOnClickListener {
-                userType = "Rider"
+                user.type = "Rider"
                 showRegistrationActivity()
                 userDialog.dismiss()
             }
             userCustomer.setOnClickListener {
-                userType = "Customer"
+                user.type = "Customer"
                 showRegistrationActivity()
                 userDialog.dismiss()
             }
@@ -427,7 +432,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun showRegistrationActivity() {
-        when (userType) {
+        when (user.type) {
             "Customer" -> {
                 startActivity((Intent(this, RegisterCustomerActivity::class.java)))
                 finish()
@@ -448,7 +453,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun goToDashboard() {
-        when (userType) {
+        when (user.type) {
             "Customer" -> {
                 startActivity((Intent(this, DashboardCustomerActivity::class.java)))
                 finish()
@@ -458,8 +463,8 @@ class LoginActivity : AppCompatActivity() {
                 finish()
             }
             "Rider" -> {
-                startActivity((Intent(this, DashboardRiderActivity::class.java)))
-                finish()
+
+                setupRiderPresence(user.uid!!)
             }
             else -> {
 
@@ -482,6 +487,42 @@ class LoginActivity : AppCompatActivity() {
 
     private fun dismissLoadingDialog() {
         loadingDialog.dismiss()
+    }
+
+    private fun setupRiderPresence(riderId: String) {
+        val database = FirebaseDatabase.getInstance()
+        val riderStatusRef = database.getReference("riders").child(riderId)
+        val connectedRef = database.getReference(".info/connected")
+
+        connectedRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val isConnected = snapshot.getValue(Boolean::class.java) ?: false
+                if (isConnected) {
+                    // Rider is online; set status to "online"
+                    riderStatusRef.child("fullName").setValue("${user.firstname} ${user.lastname}")
+                    riderStatusRef.child("status").setValue("online")
+
+                    // Track disconnection: set status to "offline" and update lastActive
+                    riderStatusRef.onDisconnect().setValue(
+                        mapOf(
+                            "fullName" to "${user.firstname} ${user.lastname}" ,
+                            "status" to "offline",
+                            "lastActive" to System.currentTimeMillis()
+                        )
+                    )
+                    showRiderDashboard()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseError", "Could not check connection status: ${error.message}")
+            }
+        })
+    }
+
+    private fun showRiderDashboard() {
+        startActivity((Intent(this, DashboardRiderActivity::class.java)))
+        finish()
     }
 
 }

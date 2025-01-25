@@ -24,6 +24,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.RemoteMessage
 import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardRiderHomeBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
@@ -37,6 +39,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
+import java.util.UUID
 
 
 class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : Fragment() {
@@ -49,6 +52,7 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
     private var user: User? = null
+
     private var displayName: String? = null
     private var profileImageUri: Uri? = null
 
@@ -63,12 +67,16 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         val customerLat: Double,
         val customerLng: Double
     )
+
+    private var lat: Double = 0.0
+    private var lng: Double = 0.0
+
     data class Rider(
         val id: String,
-        val name: String,
         val lat: Double,
         val lng: Double,
-        var activeRequests: Int // Track the number of ongoing requests
+        var activeRequests: Int, // Track the number of ongoing requests
+        val messagingToken: String? = null // Add this property
     )
 
 
@@ -163,9 +171,19 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                     }
                 }
 
-                if (user != null) {
-                    Log.d("displayUserName", "Hi ${user.firstname} ${user.lastname}, Good Day!")
-                    userDisplayName.text = "Hi ${user.firstname} ${user.lastname}, Good Day!"
+                Log.d("displayUserName", "Hi ${user.firstname} ${user.lastname}, Good Day!")
+                userDisplayName.text = "Hi ${user.firstname} ${user.lastname}, Good Day!"
+
+                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val token = task.result
+                        Log.d("FCM Token", "Token retrieved: $token")
+
+                        // Save the token to the database
+                        saveMessagingTokenToDatabase(token)
+                    } else {
+                        Log.e("FCM Token", "Failed to retrieve token", task.exception)
+                    }
                 }
             }
             dashboardRider.dismissLoadingDialog()
@@ -173,7 +191,23 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
 
     }
 
+    private fun saveMessagingTokenToDatabase(token: String) {
+        val riderId = FirebaseAuth.getInstance().currentUser?.uid
+        if (riderId != null) {
+            val database = FirebaseDatabase.getInstance().getReference("riders")
+            val tokenMap = mapOf("messagingToken" to token)
 
+            database.child(riderId).updateChildren(tokenMap).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("Save Token", "Messaging token saved successfully.")
+                } else {
+                    Log.e("Save Token", "Failed to save messaging token.", task.exception)
+                }
+            }
+        } else {
+            Log.e("Save Token", "Rider ID is null. Unable to save messaging token.")
+        }
+    }
 
     private fun monitorLaundryRequests() {
         // Reference to the "orders" node
@@ -184,9 +218,14 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         Log.d("Monitor Laundry Request", "Monitoring...")
 
         // Add a listener for changes in the "orders" node
+        /**
         firebaseDatabaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val customerRequests = mutableListOf<CustomerRequest>()
+                var requestCount = 0
+                var totalRequests = 0
+
+
 
                 if (snapshot.exists()) {
                     // Iterate through each UID under "orders"
@@ -199,91 +238,143 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                             val status = transactionSnapshot.child("status").value as? String
 
 
-                            var pickupLocation = "Unknown Location"
                             val customerId = transactionSnapshot.child("uid").value as? String
                                 ?: "Unknown Customer"
 
-                            val database = FirebaseDatabase.getInstance()
-                            val customerRef = database.getReference("users").child(customerId)
 
+//                            Log.d(
+//                                "Monitor All User Status",
+//                                "Status: $status\nPickup Location: $pickupLocation\nCustomer ID: $customerId"
+//                            )
 
                             if (status == "FOR PICK-UP" && customerId != "Unknown Customer") {
                                 // Show a dialog to accept or decline the request
                                 // Get data from Firebase
 
+                                val database = FirebaseDatabase.getInstance()
+                                val customerRef =
+                                    database.getReference("users").child(customerId)
+
                                 customerRef.addListenerForSingleValueEvent(object :
                                     ValueEventListener {
                                     override fun onDataChange(snapshot: DataSnapshot) {
                                         // Fetch the pickupLocation and customerId from the snapshot
-                                        pickupLocation = snapshot.child("address").value as? String
-                                            ?: "Unknown Location"
-                                        val lastName =
-                                            snapshot.child("lastname").value as? String ?: ""
-                                        val firstName =
-                                            snapshot.child("firstname").value as? String ?: ""
+                                        // Get total request count
+
+                                        var pickupLocation = "Unknown Location"
 
                                         // Process the fetched data (e.g., print to Log, or use in UI)
-                                        Log.d(
-                                            "CustomerData",
-                                            "Pickup Location: $pickupLocation, Customer ID: $customerId"
-                                        )
-                                        getLatLngFromAddress(pickupLocation) { customerLocation ->
-                                            customerLocation?.let { (customerLat, customerLng) ->
-                                                getRiderLocation { riderLocation ->
-                                                    val (riderLat, riderLng) = riderLocation
-                                                    val distance = calculateDistance(
-                                                        customerLat,
-                                                        customerLng,
-                                                        riderLat,
-                                                        riderLng
-                                                    )
+                                        if (snapshot.key == customerId) {
 
-                                                    Log.d(
-                                                        "Monitor ListRequestedData",
-                                                        "Transaction ID: $transactionId\nCustomer ID: $customerId\n" +
-                                                                "Customer name: $firstName $lastName\n" +
-                                                                "Pickup Location: $pickupLocation\n" +
-                                                                "Monitor Distance from customer to rider: $distance km" +
-                                                                "Do you want to accept this request?"
-                                                    )
-                                                    val request = CustomerRequest(
-                                                        transactionId ?: "Unknown Transaction",
-                                                        customerId,
-                                                        "$firstName $lastName",
-                                                        pickupLocation,
-                                                        distance,
-                                                        customerLat,
-                                                        customerLng
-                                                    )
-
-                                                    customerRequests.add(request)
-
-                                                    // Sort and show the nearest request after all data is loaded
-                                                    if (customerRequests.size == snapshot.childrenCount.toInt()) {
-                                                        val nearestRequest =
-                                                            customerRequests.minByOrNull { it.distance }
-//                                                        Log.d(
-//                                                            "Monitor Nearest Request",
-//                                                            "$nearestRequest"
-//                                                        )
-//                                                        Log.d(
-//                                                            "Monitor All Requests",
-//                                                            laundryRequests.joinToString("\n") { request ->
-//                                                                "Transaction ID: ${request.transactionId}, Customer ID: ${request.customerId}, Distance: ${request.distance} km"
-//                                                            }
-//                                                        )
-                                                        val chosenRequest = chooseOneRequest(customerRequests)
-                                                        Log.d("Chosen Request", "$chosenRequest")
-                                                        notifyDriver(chosenRequest)
-                                                    }
-
-
-                                                }
-                                            } ?: Log.e(
-                                                "Monitor Distance Failed $pickupLocation",
-                                                "Failed to get customer location"
+                                            Log.d(
+                                                "Monitor CustomerData",
+                                                "Snapshot: ${snapshot}"
                                             )
+
+                                            pickupLocation =
+                                                snapshot.child("address").value as? String
+                                                    ?: "Unknown Location"
+                                            val lastName =
+                                                snapshot.child("lastname").value as? String ?: ""
+                                            val firstName =
+                                                snapshot.child("firstname").value as? String ?: ""
+
+                                            getLatLngFromAddress(pickupLocation) { customerLocation ->
+                                                customerLocation?.let { (customerLat, customerLng) ->
+                                                    getRiderLocation { riderLocation ->
+                                                        val (riderLat, riderLng) = riderLocation
+                                                        val distance = calculateDistance(
+                                                            customerLat,
+                                                            customerLng,
+                                                            riderLat,
+                                                            riderLng
+                                                        )
+
+                                                        Log.d(
+                                                            "Monitor ListRequestedData",
+                                                            "Transaction ID: $transactionId\n" +
+                                                                    "Customer ID: $customerId\n" +
+                                                                    "Customer name: $firstName $lastName\n" +
+                                                                    "Pickup Location: $pickupLocation\n" +
+                                                                    "Monitor Distance from customer to rider: $distance km \n" +
+                                                                    "Do you want to accept this request?"
+                                                        )
+                                                        val request = CustomerRequest(
+                                                            transactionId ?: "Unknown Transaction",
+                                                            customerId,
+                                                            "$firstName $lastName",
+                                                            pickupLocation,
+                                                            distance,
+                                                            customerLat,
+                                                            customerLng
+                                                        )
+
+                                                        customerRequests.add(request)
+
+                                                        // Sort and show the nearest request after all data is loaded
+
+//                                                        Log.d(
+//                                                            "Monitor # of Request",
+//                                                            "${customerRequests.size}"
+//                                                        )
+//                                                        if (customerRequests.size > 0) {
+////                                                            val nearestRequest =
+////                                                                customerRequests.minByOrNull { it.distance }
+////                                                            val chosenRequest =
+////                                                                chooseOneRequest(customerRequests)
+////                                                            Log.d(
+////                                                                "Monitor Chosen Request",
+////                                                                "$chosenRequest"
+////                                                            )
+////                                                            notifyRider(chosenRequest)
+//
+//                                                            fetchOnlineRiders { onlineRiders ->
+//                                                                processRequests(customerRequests) // Pass your pending requests here
+//                                                            }
+//                                                        } else {
+//                                                            Log.d("OrdersData", "Nothing Available")
+//                                                        }
+
+                                                        requestCount++
+
+                                                        Log.d(
+                                                            "Monitor Total # of Request",
+                                                            "Total ${customerRequests.size}"
+                                                        )
+                                                        Log.d(
+                                                            "Monitor Total # of Request","Total $totalRequests"
+                                                        )
+
+
+                                                        if (totalRequests != 0 && requestCount == totalRequests) {
+                                                            Log.d(
+                                                                "Monitor # of Request",
+                                                                "Done loading all requests: ${customerRequests.size}"
+                                                            )
+
+                                                            // Trigger post-data loading actions here
+                                                            fetchOnlineRiders { onlineRiders ->
+                                                                val assignments =
+                                                                    distributeRequestAmongRiders(
+                                                                        onlineRiders,
+                                                                        customerRequests
+                                                                    )
+                                                                Log.d(
+                                                                    "Monitor Assignments",
+                                                                    "Assignments: ${assignments.size}"
+                                                                )
+                                                                notifyRider(assignments)
+                                                            }
+
+                                                        }
+                                                    }
+                                                } ?: Log.e(
+                                                    "Monitor Distance Failed $pickupLocation",
+                                                    "Failed to get customer location"
+                                                )
+                                            }
                                         }
+
                                     }
 
                                     override fun onCancelled(error: DatabaseError) {
@@ -294,8 +385,125 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                                         )
                                     }
                                 })
-                            } else {
-                                Log.d("OrdersData", "Nothing Available")
+                            }
+                        }
+
+                    }
+
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", "Error: ${error.message}")
+            }
+        })
+        */
+        firebaseDatabaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val customerRequests = mutableListOf<CustomerRequest>()
+                var processedRequestsCount = 0
+                var totalRequests = 0  // Total requests matching the condition (status == "FOR PICK-UP" && customerId != "Unknown Customer")
+
+                if (snapshot.exists()) {
+                    // Count total valid customer requests that meet the condition
+                    for (userSnapshot in snapshot.children) {
+                        for (transactionSnapshot in userSnapshot.children) {
+                            val status = transactionSnapshot.child("status").value as? String
+                            val customerId = transactionSnapshot.child("uid").value as? String ?: "Unknown Customer"
+
+                            // Only count requests that match the given condition
+                            if (status == "FOR PICK-UP" && customerId != "Unknown Customer") {
+                                totalRequests++  // Increment the total count for valid requests
+                            }
+                        }
+                    }
+
+                    // Process the requests now that we know the total count
+                    for (userSnapshot in snapshot.children) {
+                        for (transactionSnapshot in userSnapshot.children) {
+                            val transactionId = transactionSnapshot.key
+                            val status = transactionSnapshot.child("status").value as? String
+                            val customerId = transactionSnapshot.child("uid").value as? String ?: "Unknown Customer"
+
+                            if (status == "FOR PICK-UP" && customerId != "Unknown Customer") {
+                                val customerRef = FirebaseDatabase.getInstance()
+                                    .getReference("users").child(customerId)
+
+                                customerRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(snapshot: DataSnapshot) {
+                                        var pickupLocation = "Unknown Location"
+                                        if (snapshot.key == customerId) {
+                                            pickupLocation = snapshot.child("address").value as? String ?: "Unknown Location"
+                                            val firstName = snapshot.child("firstname").value as? String ?: ""
+                                            val lastName = snapshot.child("lastname").value as? String ?: ""
+
+                                            getLatLngFromAddress(pickupLocation) { customerLocation ->
+                                                customerLocation?.let { (customerLat, customerLng) ->
+                                                    getRiderLocation { riderLocation ->
+                                                        val (riderLat, riderLng) = riderLocation
+                                                        val distance = calculateDistance(customerLat, customerLng, riderLat, riderLng)
+
+                                                        val request = CustomerRequest(
+                                                            transactionId ?: "Unknown Transaction",
+                                                            customerId,
+                                                            "$firstName $lastName",
+                                                            pickupLocation,
+                                                            distance,
+                                                            customerLat,
+                                                            customerLng
+                                                        )
+
+                                                        // Add the request to the list
+                                                        customerRequests.add(request)
+
+                                                        Log.d(
+                                                            "Monitor ListRequestedData",
+                                                            "Transaction ID: $transactionId\n" +
+                                                                    "Customer ID: $customerId\n" +
+                                                                    "Customer name: $firstName $lastName\n" +
+                                                                    "Pickup Location: $pickupLocation\n" +
+                                                                    "Monitor Distance from customer to rider: $distance km \n" +
+                                                                    "Do you want to accept this request?"
+                                                        )
+                                                        // Increment the processed count
+                                                        processedRequestsCount++
+
+                                                        // Check if all requests are processed
+                                                        if (processedRequestsCount == totalRequests) {
+                                                            Log.d("Monitor # of Request", "Done loading all requests: ${customerRequests.size}")
+
+                                                            // Trigger post-data loading actions here
+//                                                            fetchOnlineRiders { onlineRiders ->
+//                                                                val assignments = distributeRequestAmongRiders(onlineRiders, customerRequests)
+//                                                                Log.d("Monitor Assignments", "Assignments: ${assignments.size}")
+//                                                                notifyRider(assignments)
+//                                                            }
+
+                                                            val nearestRequest =
+                                                                customerRequests.minByOrNull { it.distance }
+                                                            val chosenRequest =
+                                                                chooseOneRequest(customerRequests)
+                                                            Log.d(
+                                                                "Monitor Chosen Request",
+                                                                "$chosenRequest"
+                                                            )
+
+                                                            notifyRider(chosenRequest)
+
+//                                                            fetchOnlineRiders { onlineRiders ->
+//                                                                processRequests(customerRequests) // Pass your pending requests here
+//                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) {
+                                        Log.e("Firebase", "Error fetching customer data: ${error.message}")
+                                    }
+                                })
                             }
                         }
                     }
@@ -307,6 +515,97 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
             }
         })
     }
+
+
+    private fun fetchOnlineRiders(onRidersFetched: (List<Rider>) -> Unit) {
+        val ridersRef = FirebaseDatabase.getInstance().getReference("riders")
+
+        ridersRef.orderByChild("status").equalTo("online").addListenerForSingleValueEvent(object :
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val onlineRiders = mutableListOf<Rider>()
+
+                for (riderSnapshot in snapshot.children) {
+                    val riderId = riderSnapshot.key ?: continue
+                    val lat = riderSnapshot.child("lat").getValue(Double::class.java) ?: continue
+                    val lng = riderSnapshot.child("lng").getValue(Double::class.java) ?: continue
+                    val activeRequests =
+                        riderSnapshot.child("activeRequests").getValue(Int::class.java) ?: 0
+                    val messagingToken =
+                        riderSnapshot.child("messagingToken").getValue(String::class.java)
+                            ?: continue
+
+                    onlineRiders.add(
+                        Rider(
+                            id = riderId,
+                            lat = lat,
+                            lng = lng,
+                            activeRequests = activeRequests,
+                            messagingToken = messagingToken
+                        )
+                    )
+                }
+
+                onRidersFetched(onlineRiders)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseError", "Failed to fetch online riders: ${error.message}")
+            }
+        })
+    }
+
+//    private fun fetchOnlineRiders(onRidersFetched: (List<Rider>) -> Unit) {
+//        val ridersRef = FirebaseDatabase.getInstance().getReference("riders")
+//
+//        ridersRef.orderByChild("status").equalTo("online").addListenerForSingleValueEvent(object :
+//            ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val onlineRiders = mutableListOf<Rider>()
+//
+//                for (riderSnapshot in snapshot.children) {
+//                    val riderId = riderSnapshot.key ?: continue
+//                    val lat = riderSnapshot.child("lat").getValue(Double::class.java) ?: continue
+//                    val lng = riderSnapshot.child("lng").getValue(Double::class.java) ?: continue
+//                    val activeRequests =
+//                        riderSnapshot.child("activeRequests").getValue(Int::class.java) ?: 0
+//
+//                    onlineRiders.add(Rider(riderId, lat, lng, activeRequests))
+//                }
+//
+//                onRidersFetched(onlineRiders)
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                Log.e("FirebaseError", "Failed to fetch online riders: ${error.message}")
+//            }
+//        })
+//    }
+
+    private fun processRequests(requests: List<CustomerRequest>) {
+        fetchOnlineRiders { onlineRiders ->
+            if (onlineRiders.isNotEmpty()) {
+                val riderAssignments =
+                    distributeRequestAmongRiders(onlineRiders, requests)
+
+                // Handle the rider assignments (e.g., notify each rider)
+                riderAssignments.forEach { (rider, request) ->
+                    if (request != null) {
+                        Log.d(
+                            "Assignment",
+                            "Rider ${rider.id} assigned to request ${request.transactionId}"
+                        )
+
+                        // Notify the rider (e.g., send a push notification)
+                        notifyRider(request)
+                    }
+                }
+            } else {
+                Log.d("NoRiders", "No online riders available.")
+            }
+        }
+    }
+
 
     private fun chooseOneRequest(requests: List<CustomerRequest>): CustomerRequest {
         val shortestDistance = requests.minByOrNull { it.distance }?.distance ?: Double.MAX_VALUE
@@ -324,9 +623,9 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         }
     }
 
-    private fun notifyDriver(request: CustomerRequest) {
+    private fun notifyRider(request: CustomerRequest) {
         Log.d(
-            "Notify Driver",
+            "Monitor Notify Driver",
             "Transaction ID: ${request.transactionId}, Customer: ${request.customerName}, Distance: ${request.distance} km"
         )
         // Add additional logic to notify the driver about the chosen request
@@ -339,6 +638,45 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         )
     }
 
+    private fun notifyRider(assignments: Map<Rider, CustomerRequest?>) {
+        assignments.forEach { (rider, request) ->
+            if (request != null) {
+                Log.d(
+                    "Monitor Notify Rider",
+                    "Rider ID: ${rider.id}, Transaction ID: ${request.transactionId}, " +
+                            "Customer: ${request.customerName}, Distance: ${request.distance} km"
+                )
+                // Add logic to notify the rider, such as sending a push notification
+//                sendNotificationToRider(rider, request)
+
+                // Optionally, display a dialog to inform the admin or rider
+                showRideRequestDialog(
+                    request.transactionId,
+                    request.customerId,
+                    request.customerName,
+                    request.pickupLocation
+                )
+            } else {
+                Log.d("Monitor Notify Rider", "No request assigned to Rider ID: ${rider.id}")
+            }
+        }
+    }
+
+    private fun sendNotificationToRider(rider: Rider, request: CustomerRequest) {
+        // Logic for sending a push notification or message to the rider
+        val message = "New request assigned! Customer: ${request.customerName}, " +
+                "Location: ${request.pickupLocation}, Distance: ${request.distance} km"
+        // Example: Send via Firebase Cloud Messaging (FCM)
+        FirebaseMessaging.getInstance().send(
+            RemoteMessage.Builder("${rider.messagingToken}@fcm.googleapis.com")
+                .setMessageId(UUID.randomUUID().toString())
+                .addData("title", "New Ride Request")
+                .addData("body", message)
+                .build()
+        )
+        Log.d("NotifyRider", "Notification sent to Rider ID: ${rider.id}")
+    }
+
 
     private fun showRideRequestDialog(
         transactionId: String,
@@ -349,15 +687,9 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
 
 
         val builder = AlertDialog.Builder(dashboardRider)
+        builder.setCancelable(false)
         builder.setTitle("New Laundry Pickup Request")
         builder.setMessage(
-            "Transaction ID: $transactionId\nCustomer ID: $customerId\n" +
-                    "Customer name: $customerName\n" +
-                    "Pickup Location: $pickupLocation\n" +
-                    "Do you want to accept this request?"
-        )
-        Log.d(
-            "Monitor ListRequestedData",
             "Transaction ID: $transactionId\nCustomer ID: $customerId\n" +
                     "Customer name: $customerName\n" +
                     "Pickup Location: $pickupLocation\n" +
@@ -370,7 +702,7 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
             // Update the status of the transaction to "accepted" in Firebase
             val transactionRef = FirebaseDatabase.getInstance()
                 .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/orders/$customerId/$transactionId")
-//                updateRequestStatus(transactionRef.toString(), "TO PICK-UP")
+                updateRequestStatus(customerId, transactionId, "TO PICK-UP")
         }
 
         builder.setNegativeButton("Decline") { dialog, _ ->
@@ -380,6 +712,22 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         val dialog = builder.create()
         dialog.show()
     }
+
+    fun updateRequestStatus(customerId: String, transactionRef: String, newStatus: String) {
+        // Get a reference to the Firebase Database
+        val databaseReference = FirebaseDatabase.getInstance().getReference("orders/$customerId")
+
+        // Update the status of the transaction
+        databaseReference.child(transactionRef).child("status")
+            .setValue(newStatus)
+            .addOnSuccessListener {
+                Log.d("Monitor Request Status", "$transactionRef Status updated to: $newStatus")
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Monitor Request Status", "$transactionRef Error updating status: ${exception.message}")
+            }
+    }
+
 
     fun openGoogleMaps(pickupLocation: String) {
         val gmmIntentUri = Uri.parse("google.navigation:q=$pickupLocation")
@@ -502,8 +850,8 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         }
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
-                val lat = location.latitude
-                val lng = location.longitude
+                lat = location.latitude
+                lng = location.longitude
                 callback(Pair(lat, lng))
             } else {
                 Log.e("Monitor Rider Location", "Rider location not available")
@@ -552,33 +900,6 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         return R * c // Distance in kilometers
     }
 
-
-    //
-//    fun updateRequestStatus(requestId: String, newStatus: String) {
-//        // Assuming you have a method or service to call an API endpoint that updates the request status
-//        // Here's an example of calling a hypothetical API (you can replace it with your actual service call)
-//
-//        val updateStatusRequest = UpdateRequestStatusBody(requestId, newStatus)
-//
-//        // Use your preferred method (e.g. Retrofit) to make an API call
-//        apiService.updateRequestStatus(updateStatusRequest)
-//            .enqueue(object : Callback<Void> {
-//                override fun onResponse(call: Call<Void>, response: Response<Void>) {
-//                    if (response.isSuccessful) {
-//                        // Handle success
-//                        Log.d("StatusUpdate", "Request status updated successfully.")
-//                    } else {
-//                        // Handle failure
-//                        Log.d("StatusUpdate", "Failed to update request status.")
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<Void>, t: Throwable) {
-//                    // Handle network failure or other issues
-//                    Log.e("StatusUpdate", "Error updating request status.", t)
-//                }
-//            })
-//    }
     private fun distributeRequestAmongRiders(
         riders: List<Rider>,
         requests: List<CustomerRequest>
