@@ -35,6 +35,7 @@ import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import com.kodego.diangca.ebrahim.laundryexpres.registration.RegisterCustomerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.registration.partner.RegisterPartnerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.registration.rider.RegisterRiderActivity
+import java.util.Calendar
 
 
 class LoginActivity : AppCompatActivity() {
@@ -498,19 +499,25 @@ class LoginActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val isConnected = snapshot.getValue(Boolean::class.java) ?: false
                 if (isConnected) {
-                    // Rider is online; set status to "online"
-                    riderStatusRef.child("fullName").setValue("${user.firstname} ${user.lastname}")
-                    riderStatusRef.child("status").setValue("online")
+                    // ✅ Fetch lastActive timestamp first
+                    riderStatusRef.child("lastActive").get().addOnSuccessListener { lastActiveSnapshot ->
+                        val lastActive = lastActiveSnapshot.getValue(Long::class.java) ?: 0L
+                        val currentDate = System.currentTimeMillis() // Get current timestamp
 
-                    // Track disconnection: set status to "offline" and update lastActive
-                    riderStatusRef.onDisconnect().setValue(
-                        mapOf(
-                            "fullName" to "${user.firstname} ${user.lastname}" ,
-                            "status" to "offline",
-                            "lastActive" to System.currentTimeMillis()
-                        )
-                    )
-                    showRiderDashboard()
+                        riderStatusRef.child("name").setValue("${user.firstname} ${user.lastname}")
+                        riderStatusRef.child("status").setValue("online")
+//
+//                            // Track disconnection: set status to "offline" and update lastActive
+//                            riderStatusRef.onDisconnect().setValue(
+//                                mapOf(
+//                                    "name" to "${user.firstname} ${user.lastname}",
+//                                    "status" to "offline",
+//                                    "lastActive" to currentDate // Update lastActive
+//                                )
+//                            )
+                        showRiderDashboard()
+
+                    }
                 }
             }
 
@@ -519,6 +526,18 @@ class LoginActivity : AppCompatActivity() {
             }
         })
     }
+
+    /**
+     * ✅ Helper function to check if two timestamps are on the same day
+     */
+    private fun isSameDay(timestamp1: Long, timestamp2: Long): Boolean {
+        val calendar1 = Calendar.getInstance().apply { timeInMillis = timestamp1 }
+        val calendar2 = Calendar.getInstance().apply { timeInMillis = timestamp2 }
+
+        return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) &&
+                calendar1.get(Calendar.DAY_OF_YEAR) == calendar2.get(Calendar.DAY_OF_YEAR)
+    }
+
 
     private fun showRiderDashboard() {
         startActivity((Intent(this, DashboardRiderActivity::class.java)))

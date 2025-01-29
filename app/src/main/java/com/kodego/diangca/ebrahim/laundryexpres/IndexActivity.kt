@@ -1,11 +1,15 @@
 package com.kodego.diangca.ebrahim.laundryexpres
 
+import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.drawable.ColorDrawable
+import android.location.Geocoder
+import android.location.Location
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -19,8 +23,12 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -39,6 +47,8 @@ import com.kodego.diangca.ebrahim.laundryexpres.registration.partner.RegisterPar
 import com.kodego.diangca.ebrahim.laundryexpres.registration.rider.RegisterRiderActivity
 import com.squareup.picasso.Picasso
 import java.io.File
+import java.util.Calendar
+import java.util.Locale
 
 
 class IndexActivity : AppCompatActivity() {
@@ -62,6 +72,7 @@ class IndexActivity : AppCompatActivity() {
     private lateinit var loadingBuilder: AlertDialog.Builder
     private lateinit var loadingDialog: Dialog
 
+
     fun getDatabaseReference(): DatabaseReference {
         return firebaseDatabaseReference
     }
@@ -84,23 +95,34 @@ class IndexActivity : AppCompatActivity() {
             // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
             // a general rule, you should design your app to hide the status bar whenever you
             // hide the navigation bar.
-            systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
+            systemUiVisibility =
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
         }
 
+
+        // Initialize fused location client
+
+        // Check location permission and get location
+
     }
+
     private fun isNetworkAvailable(context: Context?): Boolean {
         if (context == null) return false
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
             if (capabilities != null) {
                 when {
                     capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
                         return true
                     }
+
                     capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
                         return true
                     }
+
                     capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> {
                         return true
                     }
@@ -114,9 +136,10 @@ class IndexActivity : AppCompatActivity() {
         }
         return false
     }
+
     override fun onStart() {
         super.onStart()
-        if(!isNetworkAvailable(this)){
+        if (!isNetworkAvailable(this)) {
             Log.d("NETWORK", "NO NETWORK AVAILABLE ")
             var verifyDialog: Dialog = Dialog(this)
             val builder = AlertDialog.Builder(this)
@@ -128,48 +151,48 @@ class IndexActivity : AppCompatActivity() {
                 verifyDialog.dismiss()
             }
             verifyDialog = builder.create()
-            if(verifyDialog.window != null){
+            if (verifyDialog.window != null) {
                 verifyDialog.window!!.setBackgroundDrawableResource(R.color.color_light_3)
             }
             verifyDialog.show()
 //            Toast.makeText(this, "NO NETWORK AVAILABLE", Toast.LENGTH_LONG).show()
             return
         }
-            if (FirebaseAuth.getInstance().currentUser!=null) {
-                val databaseRef = firebaseDatabase.reference.child("users")
-                    .child(firebaseAuth.currentUser!!.uid)
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            val databaseRef = firebaseDatabase.reference.child("users")
+                .child(firebaseAuth.currentUser!!.uid)
 
-                databaseRef.get().addOnCompleteListener { dataSnapshot ->
-                    if (dataSnapshot.isSuccessful) {
-                        user = dataSnapshot.result.getValue(User::class.java)
-                        if (user!=null) {
-                            userType = user!!.type!!
+            databaseRef.get().addOnCompleteListener { dataSnapshot ->
+                if (dataSnapshot.isSuccessful) {
+                    user = dataSnapshot.result.getValue(User::class.java)
+                    if (user != null) {
+                        userType = user!!.type!!
 
-                            val isVerified = user!!.verified
+                        val isVerified = user!!.verified
 
-                            if ((userType!="Customer") && !isVerified!!) {
-                                Log.d("SIGN_OUT_USER", "UNVERIFIED_ACCOUNT")
-                                firebaseAuth.signOut()
-                                showMain()
-                            } else {
-                                goToDashboard()
-                            }
+                        if ((userType != "Customer") && !isVerified!!) {
+                            Log.d("SIGN_OUT_USER", "UNVERIFIED_ACCOUNT")
+                            firebaseAuth.signOut()
+                            showMain()
+                        } else {
+                            goToDashboard()
                         }
-                    } else {
-                        Log.d("SIGN_OUT_USER", "WITH_AUTH_BUT_NOT_REGISTERED")
-                        firebaseAuth.signOut()
-                        showMain()
                     }
+                } else {
+                    Log.d("SIGN_OUT_USER", "WITH_AUTH_BUT_NOT_REGISTERED")
+                    firebaseAuth.signOut()
+                    showMain()
                 }
-            } else {
-                showMain()
             }
+        } else {
+            showMain()
+        }
     }
 
     override fun onResume() {
         super.onResume()
         if (user != null) {
-            if(user!!.type.equals("Rider", true)){
+            if (user!!.type.equals("Rider", true)) {
                 setupRiderPresence(user!!.uid!!)
             }
         }
@@ -197,19 +220,23 @@ class IndexActivity : AppCompatActivity() {
                     startActivity((Intent(this, DashboardCustomerActivity::class.java)))
                     finish()
                 }
+
                 "Partner" -> {
                     startActivity((Intent(this, DashboardPartnerActivity::class.java)))
                     finish()
                 }
+
                 "Rider" -> {
                     setupRiderPresence(user!!.uid!!)
                 }
+
                 else -> {
 
                 }
             }
         }, 3000) // 3000 is the delayed time in milliseconds.
     }
+
 
     private fun setupRiderPresence(riderId: String) {
         val database = FirebaseDatabase.getInstance()
@@ -220,19 +247,29 @@ class IndexActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val isConnected = snapshot.getValue(Boolean::class.java) ?: false
                 if (isConnected) {
-                    // Rider is online; set status to "online"
-                    riderStatusRef.child("status").setValue("online")
+                    val currentDate = System.currentTimeMillis()  // Get current timestamp
+                    riderStatusRef.child("lastActive").get()
+                        .addOnSuccessListener { lastActiveSnapshot ->
+                            val lastActive = lastActiveSnapshot.getValue(Long::class.java) ?: 0L
 
-                    // Track disconnection: set status to "offline" and update lastActive
-                    riderStatusRef.onDisconnect().setValue(
-                        mapOf(
-                            "fullName" to "${user!!.firstname} ${user!!.lastname}" ,
-                            "status" to "offline",
-                            "lastActive" to System.currentTimeMillis()
-                        )
-                    )
-                    Log.d("STATUS RIDER", "ONLINE")
-                    showRiderDashboard()
+                            // Update rider status and reset activeRequests if necessary
+                            riderStatusRef.apply {
+                                child("name").setValue("${user!!.firstname} ${user!!.lastname}")
+                                child("status").setValue("online")
+                                // Track disconnection
+                                onDisconnect().setValue(
+                                    mapOf(
+                                        "name" to "${user!!.firstname} ${user!!.lastname}",
+                                        "status" to "offline",
+                                        "lastActive" to currentDate
+                                    )
+                                )
+                            }
+                            showRiderDashboard()
+
+                        }.addOnFailureListener {
+                        Log.e("FirebaseError", "Error fetching lastActive: ${it.message}")
+                    }
                 }
             }
 
@@ -241,6 +278,84 @@ class IndexActivity : AppCompatActivity() {
             }
         })
     }
+
+    /**
+    private fun setupRiderPresence(riderId: String) {
+    val database = FirebaseDatabase.getInstance()
+    val riderStatusRef = database.getReference("riders").child(riderId)
+    val connectedRef = database.getReference(".info/connected")
+
+    connectedRef.addValueEventListener(object : ValueEventListener {
+    override fun onDataChange(snapshot: DataSnapshot) {
+    val isConnected = snapshot.getValue(Boolean::class.java) ?: false
+    if (isConnected) {
+    val currentDate = System.currentTimeMillis()
+
+    // Fetch lastActive to check if reset is needed
+    riderStatusRef.child("lastActive").get().addOnSuccessListener { lastActiveSnapshot ->
+    val lastActive = lastActiveSnapshot.getValue(Long::class.java) ?: 0L
+    val shouldResetRequests = !isSameDay(lastActive, currentDate) // Reset only if not the same day
+
+    riderStatusRef.get().addOnSuccessListener { riderSnapshot ->
+    val activeRequest = riderSnapshot.child("activeRequest").getValue(Int::class.java) ?: 0
+    val transactionId = riderSnapshot.child("transactionId").getValue(String::class.java) ?: ""
+
+    // 🚀 **Do not overwrite transactionId or activeRequest if they already exist!**
+    riderStatusRef.child("name").setValue("${user!!.firstname} ${user!!.lastname}")
+    riderStatusRef.child("status").setValue("online")
+
+    if (shouldResetRequests) {
+    riderStatusRef.child("activeRequest").setValue(0) // Reset if new day
+    }
+
+    Log.d("Monitor Request ", "$transactionId Request $activeRequest")
+
+    // Track disconnection but **preserve values if they exist**
+    val disconnectData = mutableMapOf<String, Any>(
+    "name" to "${user!!.firstname} ${user!!.lastname}",
+    "status" to "offline",
+    "lastActive" to currentDate
+    )
+
+    if (activeRequest > 0) {
+    disconnectData["activeRequest"] = activeRequest
+    }
+
+    if (transactionId.isNotEmpty()) {
+    disconnectData["transactionId"] = transactionId
+    }
+
+    riderStatusRef.onDisconnect().setValue(disconnectData) // ✅ **Keeps values on disconnect**
+
+    showRiderDashboard()
+    }.addOnFailureListener {
+    Log.e("FirebaseError", "Error fetching rider data: ${it.message}")
+    }
+    }.addOnFailureListener {
+    Log.e("FirebaseError", "Error fetching lastActive: ${it.message}")
+    }
+    }
+    }
+
+    override fun onCancelled(error: DatabaseError) {
+    Log.e("FirebaseError", "Could not check connection status: ${error.message}")
+    }
+    })
+    }
+     */
+
+
+    /**
+     * ✅ Helper function to check if two timestamps are on the same day
+     */
+    private fun isSameDay(timestamp1: Long, timestamp2: Long): Boolean {
+        val calendar1 = Calendar.getInstance().apply { timeInMillis = timestamp1 }
+        val calendar2 = Calendar.getInstance().apply { timeInMillis = timestamp2 }
+
+        return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) &&
+                calendar1.get(Calendar.DAY_OF_YEAR) == calendar2.get(Calendar.DAY_OF_YEAR)
+    }
+
 
     private fun showRiderDashboard() {
         startActivity((Intent(this, DashboardRiderActivity::class.java)))
@@ -296,11 +411,11 @@ class IndexActivity : AppCompatActivity() {
                 displayName = profile.displayName
                 profileImageUri = profile.photoUrl
             }
-            if (profileImageUri!=null) {
+            if (profileImageUri != null) {
                 Log.d("USER_PROFILE_FROM_PROVIDER", "$profileImageUri")
                 Picasso.with(applicationContext).load(profileImageUri).into(profileView);
             } else {
-                if (user!!.photoUri!=null) {
+                if (user!!.photoUri != null) {
                     profileImageUri = Uri.parse(user!!.photoUri)
                     val filename = "profile_${user!!.uid}"
                     val firebaseStorageReference =
@@ -336,7 +451,7 @@ class IndexActivity : AppCompatActivity() {
         loadingBuilder.setView(loadingBinding.root)
         loadingBuilder.create()
         loadingDialog = loadingBuilder.create()
-        if (loadingDialog.window!=null) {
+        if (loadingDialog.window != null) {
             loadingDialog.window!!.setBackgroundDrawable(ColorDrawable(0))
         }
         loadingDialog.show()

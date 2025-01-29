@@ -36,11 +36,11 @@ class DashboardOrdersFragment(var dashboardPartner: DashboardPartnerActivity) : 
         arrayOf(
             "ALL",
             "PENDING", //AFTER BOOKING
-            "FOR PICK-UP", // AFTER ACCEPT BY LAUNDRY
+            "FOR PICK-UP", // TO RELEASE LAUNDRY BY CUSTOMER TO PICK-UP BY RIDER TO DELIVER TO SHOP
             "TO PICK-UP", // AFTER ACCEPT BY RIDE
             "IN TRANSIT", // AFTER PICK-UP TRANSIT LAUNDRY TO SHOP
             "ON PROCESS", // LAUNDRY ACCEPTED BY SHOP
-            "FOR DELIVERY", // TO RELEASE LAUNDRY BY SHOP
+            "FOR DELIVERY", // TO RELEASE LAUNDRY BY SHOP WILL PICK-UP BY RIDER TO DELIVER TO CUSTOMER
             "TO DELIVER", // AFTER PICK-UP RIDER FROM SHOP
             "COMPLETE", // RECEIVE FROM CUSTOMER
             "CANCEL" // CANCEL BY CUSTOMER

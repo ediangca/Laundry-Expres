@@ -1,15 +1,23 @@
 package com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider
 
+import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.ColorDrawable
+import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentTransaction
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -22,6 +30,7 @@ import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardRid
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardRiderNotificationBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Requirements
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
+import java.util.Locale
 
 class DashboardRiderActivity : AppCompatActivity() {
 
@@ -40,6 +49,8 @@ class DashboardRiderActivity : AppCompatActivity() {
     private lateinit var dashboardNotificationFragment: DashboardRiderNotificationFragment
     private lateinit var dashboardInboxFragment: DashboardRiderInboxFragment
     private lateinit var dashboardAccountFragment: DashboardRiderAccountFragment
+
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private var user: User? = null
     private var requirements: Requirements? = null
@@ -111,6 +122,7 @@ class DashboardRiderActivity : AppCompatActivity() {
                     );
                     mainFrame.addToBackStack(null);
                     mainFrame.commit();
+                    checkLocationPermission()
                 }
             } else {
                 Log.d("USER_DETAILS_NOT_FOUND", "USER NOT FOUND")
@@ -192,8 +204,7 @@ class DashboardRiderActivity : AppCompatActivity() {
 
     fun signOut() {
         Log.d("STATUS RIDER", "${user!!.uid!!} OFFLINE")
-        val database = FirebaseDatabase.getInstance()
-        val riderStatusRef = database.getReference("riders").child(user!!.uid!!)
+        val riderStatusRef = firebaseDatabase.getReference("status").child(user!!.uid!!)
         riderStatusRef.child("status").setValue("offline")
         var loginIntent = Intent(this, LoginActivity::class.java)
         startActivity(Intent(loginIntent))
@@ -214,6 +225,87 @@ class DashboardRiderActivity : AppCompatActivity() {
 
     fun dismissLoadingDialog() {
         loadingDialog.dismiss()
+    }
+
+
+    private fun checkLocationPermission() {
+        // Check if permission is granted
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Request permission if it's not granted
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+        } else {
+            // Permission granted, fetch location
+            getDeviceLocation()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == 1) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, call the location fetching method
+                Log.d("Permissions", "Permission Granted, access location.")
+                getDeviceLocation()
+            } else {
+                // Permission denied
+                Log.e("Permissions", "Permission denied, can't access location.")
+            }
+        }
+    }
+
+    private fun getDeviceLocation() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        // Check if the permissions are granted
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Permission not granted, request for permission
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            return
+        }
+
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener(this, OnSuccessListener { location: Location? ->
+                if (location != null) {
+                    val lat = location.latitude
+                    val lng = location.longitude
+                    Log.d("Device Location", "Lat: $lat, Lng: $lng")
+
+
+                    val riderStatusRef = firebaseDatabase.getReference("riders").child(user!!.uid!!)
+                    riderStatusRef.child("lat").setValue(lat)
+                    riderStatusRef.child("lng").setValue(lng)
+
+                    // Use lat and lng for your locale setting
+                    setLocaleBasedOnLocation(lat, lng)
+                } else {
+                    Log.e("Device Location", "Location not available")
+                }
+            })
+    }
+    private fun setLocaleBasedOnLocation(lat: Double, lng: Double) {
+        val geocoder = Geocoder(this)
+        val addresses = geocoder.getFromLocation(lat, lng, 1)
+
+        if (addresses != null && addresses.isNotEmpty()) {
+            val countryCode = addresses[0].countryCode // Get the country code
+            val locale = getLocaleFromCountryCode(countryCode)
+            Locale.setDefault(locale)
+
+            // Optionally, you can refresh the UI with the new language if needed
+            Log.d("Device Locale", "Locale set to: $locale")
+        }
+    }
+
+    private fun getLocaleFromCountryCode(countryCode: String): Locale {
+        return when (countryCode) {
+            "US" -> Locale("en", "US")
+            "PH" -> Locale("tl", "PH") // Filipino for Philippines
+            "FR" -> Locale("fr", "FR")
+            // Add other cases as needed
+            else -> Locale.getDefault()
+        }
     }
 
 
