@@ -22,6 +22,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartnerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogAgreementBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardOrderDetailsFormBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
@@ -267,6 +268,11 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
             is DashboardPartnerActivity -> {
                 Log.d("CALL_BACK", "DASHBOARD PARTNER ACTIVITY")
                 (activity as? DashboardPartnerActivity)?.showOrder()
+            }
+
+            is DashboardRiderActivity -> {
+                Log.d("CALL_BACK", "DASHBOARD RIDER ACTIVITY")
+                (activity as? DashboardRiderActivity)?.showrRides()
             }
         }
 

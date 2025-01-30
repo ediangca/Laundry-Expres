@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartnerActivity
+import com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ItemOrdersBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
 
@@ -115,6 +116,10 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
                 is DashboardPartnerActivity ->{
                     Log.d("ON_SHOW_DETAIL", "DASHBOARD PARTNER")
                     (activity as DashboardPartnerActivity).showOrderDetails(order, callBack!!)
+                }
+                is DashboardRiderActivity ->{
+                    Log.d("ON_SHOW_DETAIL", "DASHBOARD RIDER")
+                    (activity as DashboardRiderActivity).showOrderDetails(order, callBack!!)
                 }
 
             }

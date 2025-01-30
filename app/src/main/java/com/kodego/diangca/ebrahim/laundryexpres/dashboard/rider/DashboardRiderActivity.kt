@@ -23,12 +23,15 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.kodego.diangca.ebrahim.laundryexpres.LoginActivity
 import com.kodego.diangca.ebrahim.laundryexpres.R
+import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardOrderDetailsFragment
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.ActivityDashboardRiderBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogLoadingBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardRiderAccountBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardRiderInboxBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardRiderNotificationBinding
+import com.kodego.diangca.ebrahim.laundryexpres.model.Order
 import com.kodego.diangca.ebrahim.laundryexpres.model.Requirements
+import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import java.util.Locale
 
@@ -49,6 +52,8 @@ class DashboardRiderActivity : AppCompatActivity() {
     private lateinit var dashboardNotificationFragment: DashboardRiderNotificationFragment
     private lateinit var dashboardInboxFragment: DashboardRiderInboxFragment
     private lateinit var dashboardAccountFragment: DashboardRiderAccountFragment
+
+    private lateinit var dashboardOrderDetailsFragment: DashboardOrderDetailsFragment
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -85,12 +90,12 @@ class DashboardRiderActivity : AppCompatActivity() {
         }
     }
 
-    @JvmName("getShop1")
+    @JvmName("getRequirements1")
     fun setRequirements(requirements: Requirements) {
         this.requirements = requirements
     }
 
-    @JvmName("getShop1")
+    @JvmName("getRequirements1")
     fun getRequirements(): Requirements {
         return requirements!!
     }
@@ -111,6 +116,7 @@ class DashboardRiderActivity : AppCompatActivity() {
             if (dataSnapshot.isSuccessful) {
                 user = dataSnapshot.result.getValue(User::class.java)
                 if (user != null) {
+                    retrieveRequirements()
                     Log.d("USER_DETAILS_FOUND", user.toString())
                     bundle = Bundle()
                     bundle.putParcelable("user", user)
@@ -126,6 +132,19 @@ class DashboardRiderActivity : AppCompatActivity() {
                 }
             } else {
                 Log.d("USER_DETAILS_NOT_FOUND", "USER NOT FOUND")
+            }
+        }
+    }
+
+    private fun retrieveRequirements(){
+        val databaseRef = firebaseDatabase.reference.child("requirements")
+            .child(firebaseAuth.currentUser!!.uid)
+
+        databaseRef.get().addOnCompleteListener { dataSnapshot ->
+            if (dataSnapshot.isSuccessful) {
+                requirements = dataSnapshot.result.getValue(Requirements::class.java)
+            } else {
+                Log.d("REQUIREMENTS_DETAILS_NOT_FOUND", "REQUIREMENTS NOT FOUND")
             }
         }
     }
@@ -225,6 +244,29 @@ class DashboardRiderActivity : AppCompatActivity() {
 
     fun dismissLoadingDialog() {
         loadingDialog.dismiss()
+    }
+
+    fun showOrderDetails(order: Order, callBack: String) {
+
+        order.printLOG()
+        bundle = Bundle()
+        bundle.putString("user", "rider")
+        bundle.putParcelable("order", order)
+        dashboardOrderDetailsFragment = DashboardOrderDetailsFragment(this)
+        dashboardOrderDetailsFragment.setCallBack(callBack)
+        dashboardOrderDetailsFragment.arguments = bundle
+        mainFrame = supportFragmentManager.beginTransaction()
+        Log.d("ON_SHOW_DETAIL", "FRAGMENT ORDER")
+        mainFrame.replace(R.id.fragmentRiderDashboard, dashboardOrderDetailsFragment);
+        mainFrame.addToBackStack(null);
+        mainFrame.commit()
+    }
+
+    fun showrRides() {
+        mainFrame = supportFragmentManager.beginTransaction()
+        mainFrame.replace(R.id.fragmentRiderDashboard, dashboardRidesFragment);
+        mainFrame.addToBackStack(null);
+        mainFrame.commit();
     }
 
 

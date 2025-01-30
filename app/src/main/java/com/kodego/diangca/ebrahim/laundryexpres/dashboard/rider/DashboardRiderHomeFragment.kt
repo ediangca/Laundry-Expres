@@ -106,6 +106,15 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
 
     private fun initComponent() {
 //        monitorLaundryRequests()
+//        user = dashboardRider.getUser()
+//        val bundle = this.arguments
+//        if (bundle != null) {
+//            user = bundle.getParcelable<User>("user")!!
+//            Log.d("ON_RESUME_FETCH_USER", user.toString())
+//        }
+//        if (user != null) {
+//            setUserDetails(user!!)
+//        }
     }
 
     fun checkPendingDeliveries(riderId: String, callback: (Boolean) -> Unit) {

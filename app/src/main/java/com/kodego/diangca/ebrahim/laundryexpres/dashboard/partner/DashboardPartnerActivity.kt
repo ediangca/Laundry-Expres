@@ -204,6 +204,7 @@ class DashboardPartnerActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun retrieveRates(){
         val databaseRef = firebaseDatabase.reference.child("rates")
             .child(firebaseAuth.currentUser!!.uid)
