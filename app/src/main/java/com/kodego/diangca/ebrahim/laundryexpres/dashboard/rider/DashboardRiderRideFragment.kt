@@ -83,7 +83,7 @@ class DashboardRiderRideFragment(var dashboardRider: DashboardRiderActivity) : F
         with(binding.spinnerOrderStatus)
         {
             adapter = statusAdapter
-            setSelection(0, false)
+            setSelection(0, true)
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>,
@@ -117,7 +117,6 @@ class DashboardRiderRideFragment(var dashboardRider: DashboardRiderActivity) : F
         }
 
         orderAdapter = OrderAdapter(dashboardRider, ordersList)
-//        orderAdapter.setDashboardPartner(dashboardPartner)
         orderAdapter.setCallBack("Order")
         binding.orderList.layoutManager = LinearLayoutManager(dashboardRider)
         binding.orderList.adapter = orderAdapter
@@ -199,13 +198,11 @@ class DashboardRiderRideFragment(var dashboardRider: DashboardRiderActivity) : F
             // Sort the orders by descending pickUpDatetime
             ordersList.sortByDescending { parseDatetime(it.pickUpDatetime) }
             binding.promptView.visibility = View.GONE
+            orderAdapter.notifyDataSetChanged()
             dashboardRider.dismissLoadingDialog()
             return // Exit early as there's no need to continue if ordersList is not empty
         }
 
-        // Show prompt if there are no orders
-        binding.promptView.visibility = View.VISIBLE
-        orderAdapter.notifyDataSetChanged()
         dashboardRider.dismissLoadingDialog()
     }
 

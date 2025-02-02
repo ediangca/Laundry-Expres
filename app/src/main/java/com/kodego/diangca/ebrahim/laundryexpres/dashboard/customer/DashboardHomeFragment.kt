@@ -16,12 +16,15 @@ import android.widget.DatePicker
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
+import com.kodego.diangca.ebrahim.laundryexpres.adater.OrderAdapter
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogSchedulePickerBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardHomeBinding
+import com.kodego.diangca.ebrahim.laundryexpres.model.Order
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import com.squareup.picasso.Picasso
 import java.io.File
@@ -46,8 +49,29 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
     private var selectedService: String? = null
 
+    private var status =
+        arrayOf(
+            "ALL",
+            "PENDING", //AFTER BOOKING
+            "FOR PICK-UP", // AFTER ACCEPT BY LAUNDRY
+            "TO PICK-UP", // AFTER ACCEPT BY RIDE
+            "IN TRANSIT", // AFTER PICK-UP TRANSIT LAUNDRY TO SHOP
+            "ON PROCESS", // LAUNDRY ACCEPTED BY SHOP
+            "FOR DELIVERY", // TO RELEASE LAUNDRY BY SHOP
+            "TO DELIVER", // AFTER PICK-UP RIDER FROM SHOP
+            "COMPLETE", // RECEIVE FROM CUSTOMER
+            "CANCEL" // CANCEL BY CUSTOMER
+        )
+    private var uid: String? = null
+
     private lateinit var schedulePickerBuilder: AlertDialog.Builder
     private lateinit var schedulePickerDialogInterface: Dialog
+
+    val formatter = SimpleDateFormat("M/d/yyyy hh:mm a", Locale.ENGLISH)
+    val currentDate = System.currentTimeMillis()
+
+    private var ordersList: ArrayList<Order> = ArrayList()
+    private var orderAdapter = OrderAdapter(dashboardCustomer, ordersList)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,15 +110,15 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
     private fun initComponent() {
 
-        user = dashboardCustomer.getUser()
-        val bundle = this.arguments
-        if (bundle != null) {
-            user = bundle.getParcelable<User>("user")!!
-            Log.d("ON_RESUME_FETCH_USER", user.toString())
-        }
-        if (user != null) {
-            setUserDetails(user!!)
-        }
+//        user = dashboardCustomer.getUser()
+//        val bundle = this.arguments
+//        if (bundle != null) {
+//            user = bundle.getParcelable<User>("user")!!
+//            Log.d("ON_RESUME_FETCH_USER", user.toString())
+//        }
+//        if (user != null) {
+//            setUserDetails(user!!)
+//        }
 
         binding.btnLaundryShop.setOnClickListener {
             btnLaundryShopOnClickListener()
@@ -122,6 +146,8 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     private fun setUserDetails(user: User) {
         dashboardCustomer.showLoadingDialog()
         firebaseAuth.currentUser?.let {
+            uid = firebaseAuth.currentUser!!.uid
+
             for (profile in it.providerData) {
                 displayName = profile.displayName
                 profileImageUri = profile.photoUrl
@@ -176,9 +202,161 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                     userDisplayName.text = "Hi ${user.firstname} ${user.lastname}, Good Day!"
                 }
             }
+
+            orderAdapter = OrderAdapter(dashboardCustomer, ordersList)
+//        orderAdapter.setDashboardCustomer(dashboardCustomer)
+            orderAdapter.setCallBack("Order")
+            binding.orderList.layoutManager = LinearLayoutManager(dashboardCustomer)
+            binding.orderList.adapter = orderAdapter
+
+
+            showOrders("ALL")
+
             dashboardCustomer.dismissLoadingDialog()
         }
 
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun showOrders(status: String) {
+        ordersList.clear()
+//        dashboardCustomer.showLoadingDialog()
+        Log.d("SHOW ORDER STATUS", status)
+
+        // Fetch orders for the user
+        firebaseDatabaseReference.child("orders/$uid")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (!dataSnapshot.exists()) {
+                        dashboardCustomer.dismissLoadingDialog()
+                        updateUI()
+                        return
+                    }
+
+                    // Loop through orders
+                    val ordersToAdd = mutableListOf<Order>()
+                    val children = dataSnapshot.children.toList()
+                    children.forEachIndexed { index, postSnapshot ->
+                        val order = postSnapshot.getValue(Order::class.java)
+
+
+                        if (order != null) {
+
+                            val pickupDatetime = order!!.pickUpDatetime ?: ""
+
+                            val localDatePickup: Date? = formatter.parse(pickupDatetime)
+                            val pickupTimestamp = localDatePickup?.time
+
+                            updateExpiredRequest(order.orderNo, order.status, pickupTimestamp)
+
+//                            checkShopRates(order)
+                            when (status) {
+                                // If "All" is selected, disregard status and add all orders for this shop
+                                "ALL" -> {
+                                    ordersToAdd.add(order)
+                                }
+                                // Otherwise, filter based on status
+                                else -> {
+                                    if (order.status.equals(status, true)) {
+                                        ordersToAdd.add(order)
+                                    }
+                                }
+                            }
+                        }
+
+                        // Check if it's the last item
+                        if (index == children.lastIndex) {
+                            ordersList.addAll(ordersToAdd)
+                            orderAdapter.notifyDataSetChanged()
+                            sortAndNotify(status)
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.w("addValueEventListener", "loadPost:onCancelled", error.toException())
+                    dashboardCustomer.dismissLoadingDialog()
+                    binding.promptView.visibility = View.VISIBLE
+                    Toast.makeText(dashboardCustomer, error.message, Toast.LENGTH_SHORT).show()
+                }
+            })
+    }
+
+    private fun updateExpiredRequest(
+        orderNo: String?,
+        status: String?,
+        pickupTimestamp: Long?
+    ) {
+
+        val databaseReference = FirebaseDatabase.getInstance().getReference("orders/$uid")
+
+        // Update the status when pickup is expired (currentDate is greater than pickup request)
+        if (orderNo != null && status in setOf("PENDING", "FOR PICK-UP", "TO PICK-UP")) {
+            if(isExpired(pickupTimestamp!!) ){
+                databaseReference.child(orderNo).child("status").setValue("EXPIRED")
+            }else{
+                databaseReference.child(orderNo).child("status").setValue(status)
+            }
+        }
+
+
+    }
+    private fun isExpired(pickUpDate: Long): Boolean {
+        val currentDate = Calendar.getInstance()
+        val pickUpCalendar = Calendar.getInstance().apply { timeInMillis = pickUpDate }
+
+        // Check if pickUpDate is BEFORE today's date
+        return pickUpCalendar.get(Calendar.YEAR) < currentDate.get(Calendar.YEAR) ||
+                pickUpCalendar.get(Calendar.DAY_OF_YEAR) < currentDate.get(Calendar.DAY_OF_YEAR)
+    }
+
+    // Update UI on empty ordersList
+    private fun updateUI() {
+        if (ordersList.isEmpty()) {
+            binding.promptView.visibility = View.VISIBLE
+        } else {
+            binding.promptView.visibility = View.GONE
+            orderAdapter.notifyDataSetChanged()
+        }
+    }
+
+
+    // Sort and notify adapter
+    @SuppressLint("SetTextI18n")
+    private fun sortAndNotify(status: String) {
+        with(binding) {
+            when (status) {
+                "ALL" -> promptView.text = "No Customer yet!"
+                else -> promptView.text = "No $status Customer(s)"
+            }
+            if (ordersList.isEmpty()) {
+                promptView.visibility = View.VISIBLE
+            } else {
+                // Sort ordersList by descending pickUpDatetime
+                val sortedOrders =
+                    ordersList.sortedByDescending { parseDatetime(it.pickUpDatetime) }
+                        .take(5)
+
+                // Update the adapter's dataset instead of modifying ordersList directly
+                orderAdapter.updateList(ArrayList(sortedOrders))
+
+
+                promptView.visibility = View.GONE
+                orderAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    // Helper to parse datetime string
+    private fun parseDatetime(datetime: String?): Long? {
+        return try {
+            datetime?.let {
+                SimpleDateFormat("MM/dd/yyyy hh:mm a", Locale.getDefault()).parse(it)?.time
+            }
+        } catch (e: Exception) {
+            Log.e("DATETIME_PARSE", "Error parsing date: $datetime", e)
+            null
+        }
     }
 
     private fun btnLaundryShopOnClickListener() {

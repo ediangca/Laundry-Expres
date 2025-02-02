@@ -76,7 +76,6 @@
 
     </ScrollView>
 
-
     <TextView
         android:id="@+id/promptView"
         android:layout_width="match_parent"

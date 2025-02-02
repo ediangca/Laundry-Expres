@@ -35,7 +35,6 @@ class DashboardOrdersFragment(var dashboardCustomer: DashboardCustomerActivity) 
         .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-
     private var status =
         arrayOf(
             "ALL",

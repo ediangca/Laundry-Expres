@@ -86,7 +86,7 @@ class DashboardOrdersFragment(var dashboardPartner: DashboardPartnerActivity) : 
         with(binding.spinnerOrderStatus)
         {
             adapter = statusAdapter
-            setSelection(0, false)
+            setSelection(0, true)
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>,
@@ -120,10 +120,10 @@ class DashboardOrdersFragment(var dashboardPartner: DashboardPartnerActivity) : 
         }
 
         orderAdapter = OrderAdapter(dashboardPartner, ordersList)
-//        orderAdapter.setDashboardPartner(dashboardPartner)
         orderAdapter.setCallBack("Order")
         binding.orderList.layoutManager = LinearLayoutManager(dashboardPartner)
         binding.orderList.adapter = orderAdapter
+
 
         showOrders("ALL")
 
@@ -138,6 +138,61 @@ class DashboardOrdersFragment(var dashboardPartner: DashboardPartnerActivity) : 
 
         showOrders(selectedItem);
     }
+
+    /**
+    @SuppressLint("NotifyDataSetChanged")
+    private fun showOrders(status: String) {
+        // Clear the list and show the progress bar
+        ordersList.clear()
+        dashboardPartner.showLoadingDialog()
+        Log.d("SHOW ORDER STATUS", status)
+
+        // Firebase Database Reference to 'orders'
+        val databaseReference = FirebaseDatabase.getInstance().reference.child("orders")
+
+        databaseReference.get().addOnSuccessListener { snapshot ->
+            if (snapshot.exists()) {
+                val ordersToAdd = mutableListOf<Order>()
+
+                snapshot.children.forEach { userSnapshot ->
+                    userSnapshot.children.forEach { orderSnapshot ->
+                        val shopID = orderSnapshot.child("shopID").getValue(String::class.java)
+                        val orderStatus = orderSnapshot.child("status").getValue(String::class.java)
+                        val orderData = orderSnapshot.getValue(Order::class.java)
+
+                        if (orderData != null && shopID == shop?.uid) {
+                            when (status) {
+                                // If "All" is selected, disregard status and add all orders for this shop
+                                "ALL" -> {
+                                    ordersToAdd.add(orderData)
+                                }
+                                // Otherwise, filter based on status
+                                else -> {
+                                    if (orderStatus.equals(status, true)) {
+                                        ordersToAdd.add(orderData)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Add the filtered orders and update UI
+                ordersList.addAll(ordersToAdd)
+                orderAdapter.notifyDataSetChanged()
+                sortAndNotify(status)
+            } else {
+                sortAndNotify(status)
+            }
+        }.addOnFailureListener { exception ->
+            // Handle database errors
+            sortAndNotify(status)
+            Toast.makeText(dashboardPartner, "Error: ${exception.message}", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+*/
+
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showOrders(status: String) {
@@ -191,24 +246,33 @@ class DashboardOrdersFragment(var dashboardPartner: DashboardPartnerActivity) : 
         }
     }
 
-    @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
-    private fun sortAndNotify(status: String) {
-        // Update prompt text based on the status
-        binding.promptView.text = if (ordersList.isEmpty()) {
-            if (status == "all") "No Order's yet!" else "No $status Order's"
-        } else {
-            // Sort the orders by descending pickUpDatetime
-            ordersList.sortByDescending { parseDatetime(it.pickUpDatetime) }
-            binding.promptView.visibility = View.GONE
-            dashboardPartner.dismissLoadingDialog()
-            return // Exit early as there's no need to continue if ordersList is not empty
-        }
 
-        // Show prompt if there are no orders
-        binding.promptView.visibility = View.VISIBLE
-        orderAdapter.notifyDataSetChanged()
+    // Sort and notify adapter
+    @SuppressLint("SetTextI18n")
+    private fun sortAndNotify(status: String) {
+        with(binding) {
+            when (status) {
+                "ALL" -> promptView.text = "No Booking yet!"
+                else -> promptView.text = "No $status Booking(s)"
+            }
+
+            if (ordersList.isEmpty()) {
+                promptView.visibility = View.VISIBLE
+            } else {
+                // Sort and take only the top 5 items
+                val sortedOrders = ordersList.sortedByDescending { parseDatetime(it.pickUpDatetime) }
+
+
+                // Update the adapter's dataset instead of modifying ordersList directly
+                orderAdapter.updateList(ArrayList(sortedOrders))
+
+                promptView.visibility = View.GONE
+                dashboardPartner.dismissLoadingDialog()
+            }
+        }
         dashboardPartner.dismissLoadingDialog()
     }
+
 
     // Helper to parse datetime string
     private fun parseDatetime(datetime: String?): Long? {

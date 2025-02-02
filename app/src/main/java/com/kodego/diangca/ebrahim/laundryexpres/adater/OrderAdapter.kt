@@ -54,6 +54,11 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
         this.callBack = callBack
     }
 
+    fun updateList(newOrders: ArrayList<Order>) {
+        orderList.clear()
+        orderList.addAll(newOrders)
+        notifyDataSetChanged() // Ensure UI updates
+    }
     inner class OrderViewHolder(
         private val itemBinding: ItemOrdersBinding,
     ) :
@@ -70,14 +75,26 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
                 statusLabel.text = "BOOK ${order.status}"
 //                "ALL", "FOR PICK-UP", "RECEIVED", "FOR DELIVERY", "COMPLETE", "CANCEL"
                 when(order.status){
-                    "FOR PICK-UP" ->{
-                        statusLabel.setTextColor(activity.getColor(R.color.color_blue_1))
+                    "PENDING" ->{
+                        statusLabel.setTextColor(activity.getColor(R.color.color_orange_3))
                     }
-                    "RECEIVED" ->{
+                    "FOR PICK-UP" ->{
+                        statusLabel.setTextColor(activity.getColor(R.color.color_orange_2))
+                    }
+                    "TO PICK-UP" ->{
+                        statusLabel.setTextColor(activity.getColor(R.color.color_orange_1))
+                    }
+                    "IN TRANSIT" ->{
+                        statusLabel.setTextColor(activity.getColor(R.color.color_blue_3))
+                    }
+                    "ON PROCESS" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.color_blue_2))
                     }
                     "FOR DELIVERY" ->{
-                        statusLabel.setTextColor(activity.getColor(R.color.color_blue_3))
+                        statusLabel.setTextColor(activity.getColor(R.color.color_blue_6))
+                    }
+                    "TO DELIVER" ->{
+                        statusLabel.setTextColor(activity.getColor(R.color.color_blue_5))
                     }
                     "COMPLETE" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.success))
@@ -86,7 +103,8 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
                         statusLabel.setTextColor(activity.getColor(R.color.danger))
                     }
                     else ->{
-                        Toast.makeText(activity.applicationContext, "No Status stated", Toast.LENGTH_SHORT).show()
+                        statusLabel.setTextColor(activity.getColor(R.color.danger))
+//                        Toast.makeText(activity.applicationContext, "No Status stated", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

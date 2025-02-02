@@ -32,7 +32,7 @@
             android:value="AIzaSyAzofW3ZdxI6l6Jz7C16Z_iHHLH_KMmIWY" /> <!-- REGISTRATION -->
 
         <service
-            android:name=".MyFirebaseMessagingService"
+            android:name=".classes.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

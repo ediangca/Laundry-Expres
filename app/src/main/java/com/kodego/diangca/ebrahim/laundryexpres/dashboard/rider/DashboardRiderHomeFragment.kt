@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,7 +18,9 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -28,8 +31,10 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
 import com.google.firebase.storage.FirebaseStorage
+import com.kodego.diangca.ebrahim.laundryexpres.adater.OrderAdapter
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardRiderHomeBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.CustomerRequest
+import com.kodego.diangca.ebrahim.laundryexpres.model.Order
 import com.kodego.diangca.ebrahim.laundryexpres.model.RiderStatus
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import com.kodego.diangca.ebrahim.laundryexpres.model.declinedRequest
@@ -43,6 +48,13 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import java.util.UUID
 
 
@@ -52,10 +64,13 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
     private val binding get() = _binding!!
 
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private var firebaseDatabaseReference: DatabaseReference = FirebaseDatabase.getInstance()
+        .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/")
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
     private var user: User? = null
 
+    private var uid: String? = null
     private var displayName: String? = null
     private var profileImageUri: Uri? = null
 
@@ -64,11 +79,20 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
 
     lateinit var status: String
 
+    private var NoOfPickUp: Int = 0
+    private var TotalPickUp: Int = 0
+    private var NoOfDelivery: Int = 0
+    private var TotalDelivery: Int = 0
     private var lat: Double = 0.0
     private var lng: Double = 0.0
 
-
     private lateinit var dialog: Dialog
+
+    val formatter = SimpleDateFormat("M/d/yyyy hh:mm a", Locale.ENGLISH)
+    val currentDate = System.currentTimeMillis()
+
+    private var ordersList: ArrayList<Order> = ArrayList()
+    private var orderAdapter = OrderAdapter(dashboardRider, ordersList)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,6 +142,8 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
     }
 
     fun checkPendingDeliveries(riderId: String, callback: (Boolean) -> Unit) {
+        NoOfPickUp = 0; TotalPickUp = 0; NoOfDelivery = 0; TotalDelivery = 0
+
         val databaseReference = FirebaseDatabase.getInstance().getReference("orders")
         var hasPending = false // Track if there are pending requests
 
@@ -134,9 +160,47 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                         status =
                             transactionSnapshot.child("status").getValue(String::class.java) ?: ""
 
+                        val pickupDatetime =
+                            transactionSnapshot.child("pickUpDatetime").getValue(String::class.java)
+                                ?: ""
+                        val deliveryDatetime =
+                            transactionSnapshot.child("deliveryDatetime")
+                                .getValue(String::class.java) ?: ""
+
+                        val localDatePickup: Date? = formatter.parse(pickupDatetime)
+                        val pickupTimestamp = localDatePickup?.time
+
+                        val localDateDelivery: Date? = formatter.parse(deliveryDatetime)
+                        val deliveryTimestamp = localDateDelivery?.time
+
+                        val currentPickup = isSameDay(
+                            transactionId,
+                            pickupTimestamp!!,
+                            currentDate
+                        )
+                        val currentDelivery = isSameDay(
+                            transactionId,
+                            deliveryTimestamp!!,
+                            currentDate
+                        )
+
 
                         if (assignedRiderId == riderId && (status == "TO PICK-UP" || status == "TO DELIVER")) {
-                            hasPending = true // A match was found
+                            hasPending = true
+
+
+                            when (status) {
+                                "TO PICK-UP" -> {
+                                    TotalPickUp++
+                                    if (currentPickup) NoOfPickUp++
+                                }
+
+                                else -> {
+                                    TotalDelivery++
+                                    if (currentDelivery) NoOfDelivery++
+                                }
+                            }
+
                             val customerRef = FirebaseDatabase.getInstance()
                                 .getReference("users").child(customerId!!)
 
@@ -229,7 +293,28 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         })
     }
 
+
+    /**
+     * ✅ Helper function to check if two timestamps are on the same day
+     */
+    private fun isSameDay(transactionId: String?, timestamp1: Long, timestamp2: Long): Boolean {
+        val calendar1 = Calendar.getInstance().apply { timeInMillis = timestamp1 }
+        val calendar2 = Calendar.getInstance().apply { timeInMillis = timestamp2 }
+
+        Log.d(
+            "Monitor Request Current to Pickup",
+            "Transaction ID : $transactionId\n" +
+                    "Year Pickup Timestamp : ${calendar1.get(Calendar.YEAR)}\n" +
+                    "Year Current Timestamp : ${calendar2.get(Calendar.YEAR)}\n" +
+                    "DAY_OF_YEAR Pickup Timestamp : ${calendar1.get(Calendar.DAY_OF_YEAR)}\n" +
+                    "DAY_OF_YEAR Current Timestamp : ${calendar2.get(Calendar.DAY_OF_YEAR)}\n"
+        )
+        return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) &&
+                calendar1.get(Calendar.DAY_OF_YEAR) == calendar2.get(Calendar.DAY_OF_YEAR)
+    }
+
     // Call this before monitoring laundry requests
+    @SuppressLint("SetTextI18n")
     fun startMonitoringRequests(riderId: String) {
         Log.d("Monitor Request", "⚠️ Monitoring Pending...")
         checkPendingDeliveries(riderId) { hasPendingDelivery ->
@@ -240,6 +325,11 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                 Log.d("Monitor Request", "Monitoring Request...")
                 monitorLaundryRequests(riderId)
             }
+
+            binding.cencusPickUp.text = NoOfPickUp.toString()
+            binding.cencusDelivery.text = NoOfDelivery.toString()
+            binding.totalPickup.text = "$TotalPickUp Total Pickup"
+            binding.totalDelivery.text = "$TotalDelivery Total Pickup"
         }
     }
 
@@ -247,6 +337,8 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
     private fun setUserDetails(user: User) {
         dashboardRider.showLoadingDialog()
         firebaseAuth.currentUser?.let {
+
+            uid = firebaseAuth.currentUser!!.uid
             for (profile in it.providerData) {
                 displayName = profile.displayName
                 profileImageUri = profile.photoUrl
@@ -311,12 +403,116 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                     }
                 }
             }
+
             dashboardRider.dismissLoadingDialog()
 
-            startMonitoringRequests(user.uid!!)
+            orderAdapter = OrderAdapter(dashboardRider, ordersList)
+            orderAdapter.setCallBack("Order")
+            binding.orderList.layoutManager = LinearLayoutManager(dashboardRider)
+            binding.orderList.adapter = orderAdapter
+            showOrders("ALL")
+
+
         }
 
     }
+
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun showOrders(status: String) {
+        // Clear the list and show the progress bar
+        ordersList.clear()
+        Log.d("SHOW ORDER STATUS", status)
+
+        // Firebase Database Reference to 'orders'
+        val databaseReference = FirebaseDatabase.getInstance().reference.child("orders")
+
+        databaseReference.get().addOnSuccessListener { snapshot ->
+            if (snapshot.exists()) {
+                val ordersToAdd = mutableListOf<Order>()
+
+                snapshot.children.forEach { userSnapshot ->
+                    userSnapshot.children.forEach { orderSnapshot ->
+                        val riderID = orderSnapshot.child("rid").getValue(String::class.java)
+                        val orderStatus = orderSnapshot.child("status").getValue(String::class.java)
+                        val orderData = orderSnapshot.getValue(Order::class.java)
+
+                        if (orderData != null && riderID == uid) {
+
+//                            Toast.makeText(dashboardRider, "RIDER ID $riderID \n UID: $uid", Toast.LENGTH_SHORT)
+//                                .show()
+                            ordersToAdd.add(orderData)
+
+                        }
+                    }
+                }
+
+                // Add the filtered orders and update UI
+                ordersList.addAll(ordersToAdd)
+                orderAdapter.notifyDataSetChanged()
+                sortAndNotify(status)
+            } else {
+                sortAndNotify(status)
+            }
+        }.addOnFailureListener { exception ->
+            // Handle database errors
+            sortAndNotify(status)
+            Toast.makeText(dashboardRider, "Error: ${exception.message}", Toast.LENGTH_SHORT)
+                .show()
+        }
+
+        startMonitoringRequests(user?.uid!!)
+    }
+
+    // Update UI on empty ordersList
+    private fun updateUI() {
+        if (ordersList.isEmpty()) {
+            binding.promptView.visibility = View.VISIBLE
+        } else {
+            binding.promptView.visibility = View.GONE
+            orderAdapter.notifyDataSetChanged()
+        }
+    }
+
+    // Sort and notify adapter
+    @SuppressLint("SetTextI18n")
+    private fun sortAndNotify(status: String) {
+        with(binding) {
+            when (status) {
+                "ALL" -> promptView.text = "No Customer yet!"
+                else -> promptView.text = "No $status Customer(s)"
+            }
+            if (ordersList.isEmpty()) {
+                promptView.visibility = View.VISIBLE
+            } else {
+                // Sort ordersList by descending pickUpDatetime
+                val sortedOrders =
+                    ordersList.sortedByDescending { parseDatetime(it.pickUpDatetime) }
+                        .take(5)
+
+                // Update the adapter's dataset instead of modifying ordersList directly
+                orderAdapter.updateList(ArrayList(sortedOrders))
+
+
+                promptView.visibility = View.GONE
+                orderAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+
+    // Helper to parse datetime string
+    private fun parseDatetime(datetime: String?): Long? {
+        return try {
+            datetime?.let {
+                SimpleDateFormat("MM/dd/yyyy hh:mm a", Locale.getDefault()).parse(it)?.time
+            }
+        } catch (e: Exception) {
+            Log.e("DATETIME_PARSE", "Error parsing date: $datetime", e)
+            null
+        }
+    }
+
 
     private fun saveMessagingTokenToDatabase(token: String) {
         val riderId = FirebaseAuth.getInstance().currentUser?.uid
@@ -491,10 +687,14 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
      */
 
     private fun monitorLaundryRequests(riderId: String) {
+
+        val currentTimestamp = System.currentTimeMillis()
+
         val firebaseDatabaseReference = FirebaseDatabase.getInstance()
             .getReference("orders")
 
         firebaseDatabaseReference.addValueEventListener(object : ValueEventListener {
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onDataChange(snapshot: DataSnapshot) {
                 val customerRequests = mutableListOf<CustomerRequest>()
                 var processedRequestsCount = 0
@@ -503,6 +703,8 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                 if (snapshot.exists()) {
                     for (userSnapshot in snapshot.children) {
                         for (transactionSnapshot in userSnapshot.children) {
+
+
                             val transactionId = transactionSnapshot.key
                             val status = transactionSnapshot.child("status").value as? String
                             val customerId = transactionSnapshot.child("uid").value as? String
@@ -717,7 +919,11 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
 
         builder.setNegativeButton("Decline") { dialog, _ ->
             // Array of predefined reasons
-            val reasons = arrayOf("Customer is too far", "Waiting for pending to deliver laundry", "Other (Specify)")
+            val reasons = arrayOf(
+                "Customer is too far",
+                "Waiting for pending to deliver laundry",
+                "Other (Specify)"
+            )
             var selectedReason = reasons[0] // Default selection
             var customReason: String? = null
 
@@ -759,7 +965,11 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         dialog.show()
     }
 
-    private fun saveDeclinedRequest(riderId: String, customerRequest: CustomerRequest, reason: String) {
+    private fun saveDeclinedRequest(
+        riderId: String,
+        customerRequest: CustomerRequest,
+        reason: String
+    ) {
 
         val declineRef = FirebaseDatabase.getInstance().getReference("declined_request/$riderId")
             .child(customerRequest.transactionId)
@@ -771,7 +981,8 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         getRiderLocation { riderLocation ->
             val (riderLat, riderLng) = riderLocation
 
-            val declinedRequest = declinedRequest(riderId,
+            val declinedRequest = declinedRequest(
+                riderId,
                 customerRequest.transactionId,
                 customerRequest.customerId,
                 customerRequest.customerName,
@@ -802,15 +1013,18 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
 
             declineRef.setValue(declinedRequest)
                 .addOnSuccessListener {
-                    Log.d("Declined Request", "Successfully stored declined request with reason: $reason")
-                    Toast.makeText(context, "Request declined successfully", Toast.LENGTH_SHORT).show()
+                    Log.d(
+                        "Declined Request",
+                        "Successfully stored declined request with reason: $reason"
+                    )
+                    Toast.makeText(context, "Request declined successfully", Toast.LENGTH_SHORT)
+                        .show()
                 }
                 .addOnFailureListener { e ->
                     Log.e("Firebase Error", "Failed to store declined request: ${e.message}")
                 }
         }
     }
-
 
 
     private fun showPendingRequestDialog(
@@ -921,41 +1135,13 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         // Get a reference to the Firebase Database
         val databaseReference = FirebaseDatabase.getInstance().getReference("orders/$customerId")
 
+
         // Update the status and add rider on Transaction of the transaction
         databaseReference.child(transactionId).child("status").setValue(newStatus)
         databaseReference.child(transactionId).child("rid").setValue(riderId)
 
-//            .addOnSuccessListener {
-//                val riderStatusRef = firebaseDatabase.getReference("riders").child(riderId)
-//
-//
-//                riderStatusRef.child("transactionId").setValue(transactionId)
-//
-//                riderStatusRef.child("activeRequest").get()
-//                    .addOnSuccessListener { activeRequestsSnapshot ->
-//
-//                        var activeRequest = activeRequestsSnapshot.getValue(Int::class.java) ?: 0
-//
-//                        if (!activeRequestsSnapshot.exists()) {
-//                            activeRequest = 1
-//                        } else {
-//                            activeRequest++
-//                        }
-//
-//                        riderStatusRef.child("activeRequest").setValue(activeRequest)
-//                        Log.d(
-//                            "Monitor Request Status",
-//                            "$transactionId Status updated to: $newStatus"
-//                        )
-//                    }
-//                Log.d("Monitor Request Status", "$transactionId Status updated to: $newStatus")
-//            }
-//            .addOnFailureListener { exception ->
-//                Log.e(
-//                    "Monitor Request Status",
-//                    "$transactionId Error updating status: ${exception.message}"
-//                )
-//            }
+//        val pickupTimestamp = System.currentTimeMillis()
+//        databaseReference.child(transactionId).child("pickupTimestamp").setValue(pickupTimestamp)
     }
 
 
