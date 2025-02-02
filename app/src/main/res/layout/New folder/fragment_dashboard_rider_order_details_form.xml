@@ -1,0 +1,1060 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    tools:context=".dashboard.customer.DashboardOrderDetailsFragment">
+
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/color_light_3"
+        android:padding="20dp"
+        android:text="ORDER DETAILS"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textColor="@color/color_blue_1"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialogTitle"
+        app:layout_constraintVertical_bias="0.0">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/orderNoLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_white_2"
+                android:fontFamily="sans-serif-black"
+                android:padding="5sp"
+                android:text="ORDER NO"
+                android:textAlignment="center"
+                android:textColor="@color/color_blue_1"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                app:dividerColor="@color/color_blue_1" />
+
+            <TextView
+                android:id="@+id/orderStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_white_2"
+                android:padding="5sp"
+                android:text="SERVICE(S)"
+                android:textAlignment="center"
+                android:textColor="@color/color_blue_1"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/pickUpDatetimeLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_white_2"
+                android:text="PICK DATETIME"
+                android:textAlignment="center"
+                android:textColor="@color/color_blue_1"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/deliveryDatetimeLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_white_2"
+                android:padding="5dp"
+                android:text="DELIVERY DATETIME"
+                android:textAlignment="center"
+                android:textColor="@color/color_blue_1"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/menuButLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:orientation="horizontal"
+                android:weightSum="12"
+                android:background="@color/color_white_2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/orderAddress">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnServiceRegular"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="3"
+                    android:background="@drawable/button_white"
+                    android:drawableTop="@drawable/vector_laundry"
+                    android:drawableTint="@color/color_blue_1"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="REGULAR"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnServicePets"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="3"
+                    android:background="@drawable/button_white"
+                    android:drawableTop="@drawable/vector_pets"
+                    android:drawableTint="@color/color_blue_1"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="PET ITEMS"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnServiceDryClean"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="3"
+                    android:background="@drawable/button_white"
+                    android:drawableTop="@drawable/vector_dry_clean"
+                    android:drawableTint="@color/color_blue_1"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="Dry"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnServiceSneakers"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="3"
+                    android:background="@drawable/button_white"
+                    android:drawableTop="@drawable/vector_sneaker"
+                    android:drawableTint="@color/color_blue_1"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="SNEAKERS"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+            <!--Regular-->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linear2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_white_2"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:visibility="gone">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/rounded_rectangle"
+                    android:backgroundTint="@color/color_blue_1"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:padding="10dp"
+                    android:text="Regular Wash"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold|italic" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/regularLayout1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/regularLabel1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="White Clothes (Max Kg)"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/load1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/regularLoadRate1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="PHP/LOAD"
+                        android:textColor="@color/color_white_3"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/load1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/regularLabel1" />
+
+                    <TextView
+                        android:id="@+id/load1"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:text="0"
+                        android:textAlignment="center"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="28dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:layout_editor_absoluteX="292dp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/regularLayout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/regularLabel2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="Color Clothes (Max Kg)"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/load2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/regularLoadRate2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="PHP/LOAD"
+                        android:textColor="@color/color_white_3"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/load2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/regularLabel2" />
+
+                    <TextView
+                        android:id="@+id/load2"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:text="0"
+                        android:textAlignment="center"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="28dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:layout_editor_absoluteX="292dp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/regularLayout3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/regularLabel3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="Comforter (Per Piece)"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/load3"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/regularLoadRate3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="PHP/LOAD"
+                        android:textColor="@color/color_white_3"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/load3"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/regularLabel3" />
+
+                    <TextView
+                        android:id="@+id/load3"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:text="0"
+                        android:textAlignment="center"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="28dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:layout_editor_absoluteX="292dp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/regularLayout4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/regularLabel4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="Blankets/ Bedsheets/ Curtains/ Towels(Max Kg)"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/load4"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/regularLoadRate4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="PHP/LOAD"
+                        android:textColor="@color/color_white_3"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/load4"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/regularLabel4" />
+
+                    <TextView
+                        android:id="@+id/load4"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:text="0"
+                        android:textAlignment="center"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="28dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:layout_editor_absoluteX="292dp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <!--Pets-->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linear3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_white_2"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/rounded_rectangle"
+                    android:backgroundTint="@color/color_blue_1"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:padding="10dp"
+                    android:text="Pets Item"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold|italic" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/petsLayout1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/petsLabel1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="White Clothes (Max Kg)"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/load1p"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/petsLoadRate1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="PHP/LOAD"
+                        android:textColor="@color/color_white_3"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/load1p"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/petsLabel1" />
+
+                    <TextView
+                        android:id="@+id/load1p"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:text="0"
+                        android:textAlignment="center"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="28dp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/petsLayout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/petsLabel2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="Color Clothes (Max Kg)"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/load2p"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/petsLoadRate2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="PHP/LOAD"
+                        android:textColor="@color/color_white_3"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/load2p"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/petsLabel2" />
+
+                    <TextView
+                        android:id="@+id/load2p"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:text="0"
+                        android:textAlignment="center"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="28dp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:layout_editor_absoluteX="292dp" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <!--Dry-->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linear4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_white_2"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/rounded_rectangle"
+                    android:backgroundTint="@color/color_blue_1"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:padding="10dp"
+                    android:text="Dry Item"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold|italic" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/dryLayout1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/dryLabel1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="White Clothes (Max Kg)"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/load1d"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/dryLoadRate1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="PHP/LOAD"
+                        android:textColor="@color/color_white_3"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/load1d"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/dryLabel1" />
+
+                    <TextView
+                        android:id="@+id/load1d"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:text="0"
+                        android:textAlignment="center"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="28dp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/dryLayout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/dryLabel2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="Color Clothes (Max Kg)"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/load2d"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/dryLoadRate2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="PHP/LOAD"
+                        android:textColor="@color/color_white_3"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/load2d"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/dryLabel2" />
+
+                    <TextView
+                        android:id="@+id/load2d"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:text="0"
+                        android:textAlignment="center"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="28dp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <!--Sneakers-->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linear5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_white_2"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/rounded_rectangle"
+                    android:backgroundTint="@color/color_blue_1"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:padding="10dp"
+                    android:text="Sneakers"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:textStyle="bold|italic" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/sneakersLayout1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/sneakersLabel1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="Ordinary High Cut and Boots \n(Per Pair)"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/load1s"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/sneakersLoadRate1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="PHP/LOAD"
+                        android:textColor="@color/color_white_3"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/load1s"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/sneakersLabel1" />
+
+                    <TextView
+                        android:id="@+id/load1s"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:text="0"
+                        android:textAlignment="center"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="28dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/sneakersLayout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:id="@+id/sneakersLabel2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="Above Ankle to Knee High Cut \nand Boots (Per Pair)"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/load2s"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/sneakersLoadRate2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:text="PHP/LOAD"
+                        android:textColor="@color/color_white_3"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@id/load2s"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/sneakersLabel2" />
+
+                    <TextView
+                        android:id="@+id/load2s"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:text="0"
+                        android:textAlignment="center"
+                        android:textColor="@color/color_blue_1"
+                        android:textSize="28dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+            <!--Notes-->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linear6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_white_2"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/notesInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:backgroundTint="@color/white"
+                    android:padding="10sp"
+                    android:enabled="false"
+                    android:gravity="top"
+                    android:hint="Notes"
+                    android:inputType="textMultiLine"
+                    android:lines="4"
+                    android:textColor="@color/color_white_3" />
+
+
+                <ImageView
+                    android:id="@+id/dividerOrderSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/divider_dash" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+            <!--Order Summary-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/linear7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_white_2"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/titleCheckout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:padding="5dp"
+                    android:text="Total Order"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/totalLaundry"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:padding="5dp"
+                    android:text="Total Laundry Price"
+                    android:textColor="@color/color_white_3"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/totalLaundryAmount"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/titleCheckout" />
+
+                <TextView
+                    android:id="@+id/totalLaundryAmount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:padding="5dp"
+                    android:text="PHP 0.00"
+                    android:textAlignment="center"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/titleCheckout" />
+
+                <TextView
+                    android:id="@+id/pickUpFeeLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:padding="5dp"
+                    android:text="Pick Up Fee"
+                    android:textColor="@color/color_white_3"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/pickUpFeeAmount"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/totalLaundry" />
+
+                <TextView
+                    android:id="@+id/pickUpFeeAmount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:padding="5dp"
+                    android:text="PHP 0.00"
+                    android:textAlignment="center"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/totalLaundryAmount" />
+
+                <TextView
+                    android:id="@+id/deliveryFeeLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:padding="5dp"
+                    android:text="Delivery Fee"
+                    android:textColor="@color/color_white_3"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/deliveryFeeAmount"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/pickUpFeeLabel" />
+
+                <TextView
+                    android:id="@+id/deliveryFeeAmount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:padding="5dp"
+                    android:text="PHP 0.00"
+                    android:textAlignment="center"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/pickUpFeeAmount" />
+
+                <ImageView
+                    android:id="@+id/dividerTotalOrder"
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/divider_dash"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/deliveryFeeAmount" />
+
+                <TextView
+                    android:id="@+id/totalTransaction"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:text="Total Order"
+                    android:textColor="@color/color_white_3"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/dividerTotalOrder" />
+
+                <TextView
+                    android:id="@+id/cod"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:text="Pay in Cash upon Delivery"
+                    android:textColor="@color/color_white_3"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/totalTransaction" />
+
+                <TextView
+                    android:id="@+id/totalOrderAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:padding="5dp"
+                    android:text="PHP 0.00"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/cod" />
+
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/totalOrderAmount"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginTop="10dp"
+                    app:dividerThickness="2sp"
+                    app:dividerColor="@color/color_blue_1"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!--User Agreement-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/linear8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/box_style"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/titleAgreement"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:padding="5dp"
+                    android:text="User Agreement"
+                    android:textColor="@color/color_blue_1"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/btnAgreement"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_primary"
+                    android:text="Terms and Condition"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/checkAgreement"
+                    app:layout_constraintTop_toBottomOf="@id/titleAgreement" />
+
+                <CheckBox
+                    android:id="@+id/checkAgreement"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:enabled="false"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/titleAgreement" />
+
+                <Button
+                    android:id="@+id/btnAcknowledgement"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5sp"
+                    android:background="@drawable/button_primary"
+                    android:text="Acknowledgement"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/checkAgreement"
+                    app:layout_constraintTop_toBottomOf="@id/btnAgreement" />
+
+                <CheckBox
+                    android:id="@+id/checkAcknowledgement"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5sp"
+                    android:enabled="false"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/checkAgreement" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="@color/color_white_2"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/button_danger"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="CANCEL ORDER"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/button_primary"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="HOME"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
