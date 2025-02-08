@@ -154,7 +154,7 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                         val transactionId = customerSnapshot.key
 
                         val assignedRiderId =
-                            transactionSnapshot.child("rid").getValue(String::class.java)
+                            transactionSnapshot.child("riderId").getValue(String::class.java)
                         val customerId =
                             transactionSnapshot.child("uid").getValue(String::class.java)
                         status =
@@ -183,23 +183,27 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                             deliveryTimestamp!!,
                             currentDate
                         )
+                        if (assignedRiderId == riderId) {
+                            if (status != "PENDING" && status != "FOR PICK-UP") {
+                                TotalPickUp++
+                            }
+                            if (status != "PENDING" && status != "FOR PICK-UP" && status != "TO PICK-UP" && status != "IN TRANSIT" && status != "ON PROCESS") {
+                                TotalDelivery++
 
+                            }
 
-                        if (assignedRiderId == riderId && (status == "TO PICK-UP" || status == "TO DELIVER")) {
+                            if (currentPickup && status != "PENDING" && status != "FOR PICK-UP") {
+                                NoOfPickUp++
+                            }
+                            if (currentDelivery && status != "PENDING" && status != "FOR PICK-UP" && status != "TO PICK-UP" && status != "IN TRANSIT" && status != "ON PROCESS") {
+                                NoOfDelivery++
+                            }
+
+                        }
+
+                        if (assignedRiderId == riderId && (status == "FOR PICK-UP" || status == "IN TRANSIT" || status == "FOR DELIVERY")) {
                             hasPending = true
 
-
-                            when (status) {
-                                "TO PICK-UP" -> {
-                                    TotalPickUp++
-                                    if (currentPickup) NoOfPickUp++
-                                }
-
-                                else -> {
-                                    TotalDelivery++
-                                    if (currentDelivery) NoOfDelivery++
-                                }
-                            }
 
                             val customerRef = FirebaseDatabase.getInstance()
                                 .getReference("users").child(customerId!!)
@@ -328,8 +332,8 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
 
             binding.cencusPickUp.text = NoOfPickUp.toString()
             binding.cencusDelivery.text = NoOfDelivery.toString()
-            binding.totalPickup.text = "$TotalPickUp Total Pickup"
-            binding.totalDelivery.text = "$TotalDelivery Total Pickup"
+            binding.totalPickup.text = "$TotalPickUp Total Picked up"
+            binding.totalDelivery.text = "$TotalDelivery Total Delivered"
         }
     }
 
@@ -433,7 +437,7 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
 
                 snapshot.children.forEach { userSnapshot ->
                     userSnapshot.children.forEach { orderSnapshot ->
-                        val riderID = orderSnapshot.child("rid").getValue(String::class.java)
+                        val riderID = orderSnapshot.child("riderId").getValue(String::class.java)
                         val orderStatus = orderSnapshot.child("status").getValue(String::class.java)
                         val orderData = orderSnapshot.getValue(Order::class.java)
 
@@ -479,8 +483,8 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
     private fun sortAndNotify(status: String) {
         with(binding) {
             when (status) {
-                "ALL" -> promptView.text = "No Customer yet!"
-                else -> promptView.text = "No $status Customer(s)"
+                "ALL" -> promptView.text = "No Booking yet!"
+                else -> promptView.text = "No $status Booking"
             }
             if (ordersList.isEmpty()) {
                 promptView.visibility = View.VISIBLE
@@ -710,7 +714,7 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                             val customerId = transactionSnapshot.child("uid").value as? String
                                 ?: "Unknown Customer"
                             val assignedRiderId =
-                                transactionSnapshot.child("rid").getValue(String::class.java)
+                                transactionSnapshot.child("riderId").getValue(String::class.java)
 
                             // ✅ Filter transactions where:
                             // - Status is "FOR PICK-UP"
@@ -863,7 +867,7 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
 
 
     private fun chooseOneRequest(requests: List<CustomerRequest>): CustomerRequest {
-        val shortestDistance = requests.minByOrNull { it.distance }?.distance ?: Double.MAX_VALUE
+        val shortestDistance = requests.minByOrNull { it.distance!! }?.distance ?: Double.MAX_VALUE
         val nearestRequests = requests.filter { it.distance == shortestDistance }
 
         return when {
@@ -987,9 +991,9 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                 customerRequest.customerId,
                 customerRequest.customerName,
                 customerRequest.pickupLocation,
-                customerRequest.distance,
-                customerRequest.customerLat,
-                customerRequest.customerLng,
+                customerRequest.distance!!,
+                customerRequest.customerLat!!,
+                customerRequest.customerLng!!,
                 riderLat,
                 riderLng,
                 reason,  // 🟢 Include the decline reason
@@ -1034,7 +1038,7 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
 
         val builder = AlertDialog.Builder(dashboardRider)
         builder.setCancelable(false)
-        builder.setTitle("Pending Laundry Pickup Request")
+        builder.setTitle("Pending $status Laundry Request")
         builder.setMessage(
             "Transaction ID: ${customerRequest.transactionId}\nCustomer ID: ${customerRequest.customerId}\n" +
                     "Customer name: ${customerRequest.customerName}\n" +
@@ -1138,7 +1142,7 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
 
         // Update the status and add rider on Transaction of the transaction
         databaseReference.child(transactionId).child("status").setValue(newStatus)
-        databaseReference.child(transactionId).child("rid").setValue(riderId)
+        databaseReference.child(transactionId).child("riderId").setValue(riderId)
 
 //        val pickupTimestamp = System.currentTimeMillis()
 //        databaseReference.child(transactionId).child("pickupTimestamp").setValue(pickupTimestamp)
@@ -1330,8 +1334,8 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                 calculateDistance(
                     rider.lat,
                     rider.lng,
-                    request.customerLat,
-                    request.customerLng
+                    request.customerLat!!,
+                    request.customerLng!!
                 ) == request.distance
             }
 

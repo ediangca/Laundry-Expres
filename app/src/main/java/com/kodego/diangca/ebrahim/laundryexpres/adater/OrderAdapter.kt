@@ -18,11 +18,13 @@ import com.kodego.diangca.ebrahim.laundryexpres.model.Order
 class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
     RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
 
+    private  var hideSchedule: Boolean = false
 
     private var dashboardCustomer: DashboardCustomerActivity? = null
     private var dashboardPartner: DashboardPartnerActivity? = null
 
     private var callBack: String? = null
+
 
 //    @JvmName("setDashboardCustomer1")
 //    fun setDashboardCustomer(dashboardCustomer: DashboardCustomerActivity){
@@ -43,7 +45,7 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
     ): OrderAdapter.OrderViewHolder {
         val itemBinding =
             ItemOrdersBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return OrderViewHolder(itemBinding)
+        return OrderViewHolder(itemBinding, hideSchedule)
     }
 
     override fun onBindViewHolder(holder: OrderAdapter.OrderViewHolder, position: Int) {
@@ -54,13 +56,17 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
         this.callBack = callBack
     }
 
+    fun hideSchedule(hide: Boolean){
+        this.hideSchedule = hide
+    }
+
     fun updateList(newOrders: ArrayList<Order>) {
         orderList.clear()
         orderList.addAll(newOrders)
         notifyDataSetChanged() // Ensure UI updates
     }
     inner class OrderViewHolder(
-        private val itemBinding: ItemOrdersBinding,
+        private val itemBinding: ItemOrdersBinding, private val hideSchedule: Boolean
     ) :
         RecyclerView.ViewHolder(itemBinding.root), View.OnClickListener {
 
@@ -72,6 +78,10 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
                 orderNo.text = order.orderNo
                 pickUpDatetimeLabel.text = order.pickUpDatetime
                 deliveryDatetimeLabel.text = order.deliveryDatetime
+
+                pickUpDatetimeLabel.visibility = if(hideSchedule) View.GONE else View.VISIBLE
+                deliveryDatetimeLabel.visibility = if(hideSchedule) View.GONE else View.VISIBLE
+
                 statusLabel.text = "BOOK ${order.status}"
 //                "ALL", "FOR PICK-UP", "RECEIVED", "FOR DELIVERY", "COMPLETE", "CANCEL"
                 when(order.status){
@@ -85,7 +95,7 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
                         statusLabel.setTextColor(activity.getColor(R.color.color_orange_1))
                     }
                     "IN TRANSIT" ->{
-                        statusLabel.setTextColor(activity.getColor(R.color.color_blue_3))
+                        statusLabel.setTextColor(activity.getColor(R.color.color_blue_5))
                     }
                     "ON PROCESS" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.color_blue_2))

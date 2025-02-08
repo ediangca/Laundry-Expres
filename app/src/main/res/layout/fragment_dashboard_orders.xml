@@ -83,7 +83,7 @@
         android:drawableTop="@mipmap/ic_launcher_foreground"
         android:fontFamily="sans-serif"
         android:padding="20dp"
-        android:text="@string/retrieve_orders_prompt"
+        android:text="@string/retrieve_book_prompt"
         android:textAlignment="center"
         android:textAllCaps="true"
         android:textColor="@color/color_light_3"

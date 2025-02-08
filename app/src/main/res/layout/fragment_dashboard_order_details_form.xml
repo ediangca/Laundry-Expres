@@ -1040,7 +1040,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/color_white_2"
                 android:gravity="center"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:padding="10dp">
 
                 <androidx.appcompat.widget.AppCompatButton
@@ -1064,6 +1064,42 @@
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp"
                     android:text="ACCEPT"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnPickedUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/button_success"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="PICKED UP"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnReceived"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/button_success"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="RECEIVED"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnDeliver"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/button_success"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="FOR DELIVER"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
 

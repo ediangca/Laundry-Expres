@@ -14,8 +14,11 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.kodego.diangca.ebrahim.laundryexpres.adater.OrderAdapter
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardRiderOrdersBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
@@ -152,7 +155,7 @@ class DashboardRiderRideFragment(var dashboardRider: DashboardRiderActivity) : F
 
                 snapshot.children.forEach { userSnapshot ->
                     userSnapshot.children.forEach { orderSnapshot ->
-                        val riderID = orderSnapshot.child("rid").getValue(String::class.java)
+                        val riderID = orderSnapshot.child("riderId").getValue(String::class.java)
                         val orderStatus = orderSnapshot.child("status").getValue(String::class.java)
                         val orderData = orderSnapshot.getValue(Order::class.java)
 
@@ -189,11 +192,24 @@ class DashboardRiderRideFragment(var dashboardRider: DashboardRiderActivity) : F
     }
 
 
+
+
+    // Update UI on empty ordersList
+    private fun updateUI() {
+        if (ordersList.isEmpty()) {
+            binding.promptView.visibility = View.VISIBLE
+        } else {
+            binding.promptView.visibility = View.GONE
+            orderAdapter.notifyDataSetChanged()
+        }
+    }
+
+
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     private fun sortAndNotify(status: String) {
         // Update prompt text based on the status
         binding.promptView.text = if (ordersList.isEmpty()) {
-            if (status == "all") "No Ride yet!" else "No $status Ride"
+            if (status == "ALL") "No Booking yet!" else "No $status Booking"
         } else {
             // Sort the orders by descending pickUpDatetime
             ordersList.sortByDescending { parseDatetime(it.pickUpDatetime) }

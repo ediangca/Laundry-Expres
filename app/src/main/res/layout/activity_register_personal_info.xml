@@ -74,6 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
+
             app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -82,6 +83,8 @@
                 android:layout_height="match_parent"
                 android:background="@color/white"
                 android:hint="*Username/Email"
+                android:textColor="@color/color_blue_1"
+                android:text="asdasdasa"
                 android:inputType="textEmailAddress"
                 android:editable="false"
                 android:textSize="12sp" />

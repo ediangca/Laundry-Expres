@@ -5,7 +5,7 @@ data class CustomerRequest(
     val customerId: String,
     val customerName: String,
     val pickupLocation: String,
-    val distance: Double,
-    val customerLat: Double,
-    val customerLng: Double
+    val distance: Double?,
+    val customerLat: Double?,
+    val customerLng: Double?
 )

@@ -8,7 +8,7 @@
     <item
         android:id="@+id/navRiderOrder"
         android:icon="@drawable/vector_order"
-        android:title="Orders" />
+        android:title="Books" />
     <item
         android:id="@+id/navRiderUpdates"
         android:icon="@drawable/vector_updates"

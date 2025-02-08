@@ -109,7 +109,6 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     }
 
     private fun initComponent() {
-
 //        user = dashboardCustomer.getUser()
 //        val bundle = this.arguments
 //        if (bundle != null) {
@@ -145,6 +144,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     @SuppressLint("SetTextI18n")
     private fun setUserDetails(user: User) {
         dashboardCustomer.showLoadingDialog()
+
         firebaseAuth.currentUser?.let {
             uid = firebaseAuth.currentUser!!.uid
 
@@ -219,7 +219,6 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showOrders(status: String) {
-        ordersList.clear()
 //        dashboardCustomer.showLoadingDialog()
         Log.d("SHOW ORDER STATUS", status)
 
@@ -227,6 +226,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         firebaseDatabaseReference.child("orders/$uid")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    ordersList.clear()
                     if (!dataSnapshot.exists()) {
                         dashboardCustomer.dismissLoadingDialog()
                         updateUI()
@@ -266,6 +266,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
                         // Check if it's the last item
                         if (index == children.lastIndex) {
+                            orderAdapter.hideSchedule(true)
                             ordersList.addAll(ordersToAdd)
                             orderAdapter.notifyDataSetChanged()
                             sortAndNotify(status)
@@ -326,8 +327,8 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     private fun sortAndNotify(status: String) {
         with(binding) {
             when (status) {
-                "ALL" -> promptView.text = "No Customer yet!"
-                else -> promptView.text = "No $status Customer(s)"
+                "ALL" -> promptView.text = "No Booking yet!"
+                else -> promptView.text = "No $status Booking"
             }
             if (ordersList.isEmpty()) {
                 promptView.visibility = View.VISIBLE

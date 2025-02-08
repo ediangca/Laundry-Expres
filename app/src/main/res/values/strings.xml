@@ -85,6 +85,7 @@
     </string>
     <string name="indication">Indicator</string>
     <string name="retrieve_shop_prompt">We don\'t have Available Laundry Shop partner in your area.</string>
+    <string name="retrieve_book_prompt">SORRY! NO BOOK YET!</string>
     <string name="retrieve_orders_prompt">SORRY! NO ORDERS YET!</string>
     <string name="retrieve_rides_prompt">SORRY! NO RIDES YET!</string>
     <string name="retrieve_notifcation_prompt">SORRY! NO UPDATES YET!</string>

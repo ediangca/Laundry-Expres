@@ -6,8 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
     android:background="@drawable/box_style"
-    android:backgroundTint="@color/color_light_2"
-    android:padding="5dp">
+    android:backgroundTint="@color/color_light_3">
 
     <TextView
         android:id="@+id/orderNo"
@@ -29,6 +28,7 @@
         android:id="@+id/pickUpDatetimeLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="5sp"
         android:drawableStart="@drawable/ic_pickup"
         android:drawablePadding="5sp"
@@ -45,6 +45,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="5sp"
+        android:layout_marginEnd="10dp"
         android:drawableStart="@drawable/ic_delivery"
         android:drawablePadding="5sp"
         android:text="Delivery Datetime"

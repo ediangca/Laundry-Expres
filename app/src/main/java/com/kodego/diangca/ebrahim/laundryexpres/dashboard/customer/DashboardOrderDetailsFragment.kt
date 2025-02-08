@@ -94,6 +94,8 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
     private var deliveryDatetime: String? = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
 
 
+    private lateinit var dialog: Dialog
+
     private var callBack: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -145,7 +147,19 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
             }
 
             btnAccept.setOnClickListener {
-                btnbtnAcceptOnClickListener()
+                btnAcceptOnClickListener()
+            }
+            btnAccept.setOnClickListener {
+                btnAcceptOnClickListener()
+            }
+            btnPickedUp.setOnClickListener {
+                btnPickedupOnClickListener()
+            }
+            btnReceived.setOnClickListener {
+                btnReceivedOnClickListener()
+            }
+            btnDeliver.setOnClickListener {
+                btnDeliverOnClickListener()
             }
 
 
@@ -178,6 +192,17 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
 
     }
 
+    private fun btnPickedupOnClickListener() {
+        changeOrderStatus("IN TRANSIT")
+    }
+
+    private fun btnReceivedOnClickListener() {
+        changeOrderStatus("ON PROCESS")
+    }
+    private fun btnDeliverOnClickListener() {
+        changeOrderStatus("FOR DELIVERY")
+    }
+
     private fun updateOrderActions() {
 //        if (user.equals("partner", true) && !order!!.status.equals("PENDING", true)) {
 //            binding.btnAccept.visibility = View.GONE
@@ -201,6 +226,32 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
             else -> View.VISIBLE
         }
 
+        binding.btnPickedUp.visibility = when {
+            user.equals("customer", true) && order!!.status.equals(
+                "TO PICK-UP",
+                true
+            ) -> View.VISIBLE
+
+            else -> View.GONE
+        }
+
+        binding.btnReceived.visibility = when {
+            user.equals("partner", true) && order!!.status.equals(
+                "IN TRANSIT",
+                true
+            ) -> View.VISIBLE
+
+            else -> View.GONE
+        }
+        binding.btnDeliver.visibility = when {
+            user.equals("partner", true) && order!!.status.equals(
+                "ON PROCESS",
+                true
+            ) -> View.VISIBLE
+
+            else -> View.GONE
+        }
+
         binding.btnCancel.visibility =
             if (user.equals("customer", true) && order!!.status.equals("PENDING", true)) {
                 View.VISIBLE
@@ -210,7 +261,7 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
 
     }
 
-    private fun btnbtnAcceptOnClickListener() {
+    private fun btnAcceptOnClickListener() {
         if (user.equals("partner", true)) {
 
             changeOrderStatus("FOR PICK-UP")
@@ -221,32 +272,31 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
         }
     }
 
-    private fun changeOrderStatus(status: String) {
+    private fun changeOrderStatus(newStatus: String) {
 
-        val databaseRef = firebaseDatabase.reference.child("order")
-            .child(order!!.uid.toString())
+        Log.d("UPDATE ORDER STATUS", newStatus)
 
-        order!!.status = status
+        val confirmBuilder = AlertDialog.Builder(activityDashboard)
+        confirmBuilder.setTitle("CONFIRM")
+        confirmBuilder.setMessage("Are you sure?")
+        confirmBuilder.setPositiveButton("Yes") { _, _ ->
 
-        val loadingBuilder = AlertDialog.Builder(activityDashboard)
-        loadingBuilder.setTitle("CONFIRM")
-        loadingBuilder.setMessage("Do you really accept booking?")
-        loadingBuilder.setPositiveButton("Yes") { _, _ ->
+            val databaseReference =firebaseDatabase.reference.child("orders/${order!!.uid}")
 
-            databaseRef.setValue(order).addOnCompleteListener(activityDashboard) { task ->
-                if (task.isSuccessful) {
-                    Log.d("UPDATE ORDER STATUS SUCCESS", "")
-                    Toast.makeText(
-                        context,
-                        "Order Accepted",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    Log.d("UPDATE ORDER STATUS FAILURE", "${task.exception}")
+            databaseReference.child(order!!.orderNo!!).child("status").setValue(newStatus)
+            Toast.makeText(
+                context,
+                "Successfully Picked Up!",
+                Toast.LENGTH_SHORT
+            ).show()
 
-                }
-            }
+            btnHomeOnClickListener()
+
         }
+        confirmBuilder.setNegativeButton("Cancel", null)
+
+        dialog = confirmBuilder.create()
+        dialog.show()
     }
 
     private fun btnHomeOnClickListener() {

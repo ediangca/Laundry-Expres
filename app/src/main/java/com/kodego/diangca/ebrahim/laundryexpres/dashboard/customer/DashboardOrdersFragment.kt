@@ -212,8 +212,8 @@ class DashboardOrdersFragment(var dashboardCustomer: DashboardCustomerActivity) 
     private fun sortAndNotify(status: String) {
         with(binding) {
             when (status) {
-                "ALL" -> promptView.text = "No Order's yet!"
-                else -> promptView.text = "No $status Order's"
+                "ALL" -> promptView.text = "No Booking yet!"
+                else -> promptView.text = "No $status Booking"
             }
             if (ordersList.isEmpty()) {
                 promptView.visibility = View.VISIBLE
