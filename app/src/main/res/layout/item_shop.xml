@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
-    android:background="@drawable/laundry_banner"
-    android:backgroundTint="@color/overlay"
-    android:backgroundTintMode="screen"
+    android:background="@drawable/box_style"
+    android:backgroundTint="@color/color_white_2"
     android:padding="10dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -25,11 +24,12 @@
         android:id="@+id/shopName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@drawable/rounded_rectangle"
+        android:backgroundTint="@color/color_white_2"
         android:fontFamily="sans-serif-black"
         android:paddingStart="10dp"
         android:text="SHOP NAME"
-        android:background="@drawable/rounded_rectangle"
-        android:backgroundTint="@color/color_white_2"
+        android:textAllCaps="true"
         android:textColor="@color/color_blue_1"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -41,9 +41,9 @@
         android:id="@+id/shopEmail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="10dp"
         android:fontFamily="sans-serif"
         android:inputType="textMultiLine"
+        android:paddingStart="10dp"
         android:text="shop@gmail.com"
         android:textColor="@color/color_blue_1"
         android:textStyle="bold"
@@ -55,9 +55,9 @@
         android:id="@+id/shopMobileNo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="10dp"
         android:fontFamily="sans-serif"
         android:inputType="textMultiLine"
+        android:paddingStart="10dp"
         android:text="09978251816"
         android:textColor="@color/color_blue_1"
         android:textStyle="bold"
@@ -69,11 +69,11 @@
         android:id="@+id/shopAddress"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="10dp"
         android:fontFamily="sans-serif"
         android:inputType="textMultiLine"
         android:lines="2"
         android:maxLines="2"
+        android:paddingStart="10dp"
         android:text="SHOP Address"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/divider"
@@ -81,14 +81,16 @@
         app:layout_constraintStart_toEndOf="@id/shopPic"
         app:layout_constraintTop_toBottomOf="@id/shopMobileNo" />
 
+
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_margin="10dp"
+        android:layout_marginTop="8dp"
         app:dividerColor="@color/color_blue_1"
-        app:layout_constraintTop_toBottomOf="@id/shopAddress" />
-
+        app:layout_constraintTop_toBottomOf="@id/shopAddress"
+        tools:layout_editor_absoluteX="90dp" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="80dp"
@@ -111,14 +113,42 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSelect"
-        android:layout_width="150dp"
-        android:layout_height="40dp"
-        android:layout_margin="10dp"
+        android:layout_width="100dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/button_primary"
         android:text="SELECT"
         android:textColor="@color/color_light_3"
-        android:textSize="16sp"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="5dp"
+        android:background="@drawable/button_primary"
+        android:text="Reviews"
+        android:textColor="@color/color_light_3"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ratingBar"
+        app:layout_constraintTop_toBottomOf="@id/divider" />
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_marginTop="5dp"
+        android:numStars="5"
+        android:progressDrawable="@drawable/icon_star"
+        android:progressTint="@color/color_blue_1"
+        android:rating="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider" />
 
 

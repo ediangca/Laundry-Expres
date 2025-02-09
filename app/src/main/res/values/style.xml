@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomRatingBar" parent="@android:style/Widget.Material.RatingBar">
+<!--        <item name="android:progressDrawable">@drawable/icon_wmachine2</item>-->
+
+        <item name="android:progressTint">@color/warning</item> <!-- Adjust size -->
+        <item name="android:minHeight">28dp</item> <!-- Adjust size -->
+        <item name="android:maxHeight">28dp</item> <!-- Adjust size -->
+    </style>
+</resources>

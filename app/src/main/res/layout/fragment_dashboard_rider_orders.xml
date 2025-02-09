@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:background="@drawable/button_secondary"
-        android:text="Rides"
+        android:text="Bookings"
         android:textColor="@color/color_blue_1"
         android:textSize="20sp"
         android:textStyle="bold"

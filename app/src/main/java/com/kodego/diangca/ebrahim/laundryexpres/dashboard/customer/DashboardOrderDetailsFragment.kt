@@ -149,9 +149,6 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
             btnAccept.setOnClickListener {
                 btnAcceptOnClickListener()
             }
-            btnAccept.setOnClickListener {
-                btnAcceptOnClickListener()
-            }
             btnPickedUp.setOnClickListener {
                 btnPickedupOnClickListener()
             }
@@ -193,12 +190,13 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
     }
 
     private fun btnPickedupOnClickListener() {
-        changeOrderStatus("IN TRANSIT")
+        changeOrderStatus(if (user == "customer") "IN TRANSIT" else "TO DELIVER" )
     }
 
     private fun btnReceivedOnClickListener() {
-        changeOrderStatus("ON PROCESS")
+        changeOrderStatus(if (user == "partner") "ON PROCESS" else "COMPLETE")
     }
+
     private fun btnDeliverOnClickListener() {
         changeOrderStatus("FOR DELIVERY")
     }
@@ -231,6 +229,10 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
                 "TO PICK-UP",
                 true
             ) -> View.VISIBLE
+            user.equals("partner", true) && order!!.status.equals(
+                "FOR DELIVERY",
+                true
+            ) -> View.VISIBLE
 
             else -> View.GONE
         }
@@ -238,6 +240,11 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
         binding.btnReceived.visibility = when {
             user.equals("partner", true) && order!!.status.equals(
                 "IN TRANSIT",
+                true
+            ) -> View.VISIBLE
+
+            user.equals("customer", true) && order!!.status.equals(
+                "TO DELIVER",
                 true
             ) -> View.VISIBLE
 
@@ -281,7 +288,7 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
         confirmBuilder.setMessage("Are you sure?")
         confirmBuilder.setPositiveButton("Yes") { _, _ ->
 
-            val databaseReference =firebaseDatabase.reference.child("orders/${order!!.uid}")
+            val databaseReference = firebaseDatabase.reference.child("orders/${order!!.uid}")
 
             databaseReference.child(order!!.orderNo!!).child("status").setValue(newStatus)
             Toast.makeText(

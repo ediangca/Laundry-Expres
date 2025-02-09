@@ -82,35 +82,44 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
                 pickUpDatetimeLabel.visibility = if(hideSchedule) View.GONE else View.VISIBLE
                 deliveryDatetimeLabel.visibility = if(hideSchedule) View.GONE else View.VISIBLE
 
-                statusLabel.text = "BOOK ${order.status}"
+                statusLabel.text = if(order.status == "COMPLETE") "LAUNDRY ${order.status}" else "BOOK ${order.status}"
 //                "ALL", "FOR PICK-UP", "RECEIVED", "FOR DELIVERY", "COMPLETE", "CANCEL"
                 when(order.status){
                     "PENDING" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.color_orange_3))
+                        statusLabel.text = "BOOK ${order.status}"
                     }
                     "FOR PICK-UP" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.color_orange_2))
+                        statusLabel.text = "LAUNDRY IS WAITING ${order.status} BY RIDER"
                     }
                     "TO PICK-UP" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.color_orange_1))
+                        statusLabel.text = "RIDER IS GOING ${order.status}"
                     }
                     "IN TRANSIT" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.color_blue_5))
+                        statusLabel.text = "LAUNDRY ${order.status} TO LAUNDRY SHOP"
                     }
                     "ON PROCESS" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.color_blue_2))
+                        statusLabel.text = "LAUNDRY IS ${order.status}"
                     }
                     "FOR DELIVERY" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.color_blue_6))
+                        statusLabel.text = "LAUNDRY IS ${order.status}"
                     }
                     "TO DELIVER" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.color_blue_5))
+                        statusLabel.text = "RIDER IS GOING ${order.status} LAUNDRY"
                     }
                     "COMPLETE" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.success))
+                        statusLabel.text = "LAUNDRY SUCCESSFULLY ${order.status}"
                     }
                     "CANCEL" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.danger))
+                        statusLabel.text = "BOOK ${order.status}"
                     }
                     else ->{
                         statusLabel.setTextColor(activity.getColor(R.color.danger))

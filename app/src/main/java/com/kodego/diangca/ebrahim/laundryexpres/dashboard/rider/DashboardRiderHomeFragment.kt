@@ -151,10 +151,19 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (customerSnapshot in snapshot.children) {
                     for (transactionSnapshot in customerSnapshot.children) {
+
+                        val orderData = transactionSnapshot.getValue(Order::class.java)
+                        Log.d(
+                            "Monitor Request Transaction",
+                            "Transaction : $orderData"
+                        )
+
                         val transactionId = customerSnapshot.key
 
                         val assignedRiderId =
                             transactionSnapshot.child("riderId").getValue(String::class.java)
+                        val shopId =
+                            transactionSnapshot.child("shopID").getValue(String::class.java)
                         val customerId =
                             transactionSnapshot.child("uid").getValue(String::class.java)
                         status =
@@ -183,11 +192,22 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                             deliveryTimestamp!!,
                             currentDate
                         )
-                        if (assignedRiderId == riderId) {
+
+                        if (assignedRiderId == riderId ) {
+
                             if (status != "PENDING" && status != "FOR PICK-UP") {
                                 TotalPickUp++
                             }
-                            if (status != "PENDING" && status != "FOR PICK-UP" && status != "TO PICK-UP" && status != "IN TRANSIT" && status != "ON PROCESS") {
+                            if (status != "PENDING" && status != "FOR PICK-UP" && status != "TO PICK-UP" && status != "IN TRANSIT" && status != "ON PROCESS" && status != "FOR DELIVERY") {
+                                TotalPickUp++
+                            }
+                            if (status != "PENDING" && status != "FOR PICK-UP" && status != "TO PICK-UP" && status != "IN TRANSIT") {
+                                TotalDelivery++
+                            }
+                            if (status != "PENDING" && status != "FOR PICK-UP" && status != "TO PICK-UP" && status != "IN TRANSIT" && status != "ON PROCESS" && status != "FOR DELIVERY" && status != "TO DELIVER") {
+                                TotalDelivery++
+                            }
+                            if (status == "COMPLETE") {
                                 TotalDelivery++
 
                             }
@@ -195,88 +215,50 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                             if (currentPickup && status != "PENDING" && status != "FOR PICK-UP") {
                                 NoOfPickUp++
                             }
-                            if (currentDelivery && status != "PENDING" && status != "FOR PICK-UP" && status != "TO PICK-UP" && status != "IN TRANSIT" && status != "ON PROCESS") {
+                            if (currentPickup && status != "PENDING" && status != "FOR PICK-UP" && status != "TO PICK-UP" && status != "IN TRANSIT" && status != "ON PROCESS" && status != "FOR DELIVERY") {
+                                NoOfPickUp++
+                            }
+                            if (currentDelivery && status != "PENDING" && status != "FOR PICK-UP" && status != "TO PICK-UP" && status != "IN TRANSIT") {
+                                NoOfDelivery++
+                            }
+                            if (currentDelivery && status != "PENDING" && status != "FOR PICK-UP" && status != "TO PICK-UP" && status != "IN TRANSIT" && status != "ON PROCESS" && status != "FOR DELIVERY" && status != "TO DELIVER") {
                                 NoOfDelivery++
                             }
 
-                        }
 
-                        if (assignedRiderId == riderId && (status == "FOR PICK-UP" || status == "IN TRANSIT" || status == "FOR DELIVERY")) {
-                            hasPending = true
-
-
-                            val customerRef = FirebaseDatabase.getInstance()
-                                .getReference("users").child(customerId!!)
-
-                            customerRef.addListenerForSingleValueEvent(object :
-                                ValueEventListener {
-                                override fun onDataChange(snapshot: DataSnapshot) {
-                                    var pickupLocation = "Unknown Location"
-                                    if (snapshot.key == customerId) {
-                                        pickupLocation =
-                                            snapshot.child("address").value as? String
-                                                ?: "Unknown Location"
-                                        val firstName =
-                                            snapshot.child("firstname").value as? String ?: ""
-                                        val lastName =
-                                            snapshot.child("lastname").value as? String ?: ""
-
-                                        getLatLngFromAddress(pickupLocation) { customerLocation ->
-                                            customerLocation?.let { (customerLat, customerLng) ->
-                                                getRiderLocation { riderLocation ->
-                                                    val (riderLat, riderLng) = riderLocation
-                                                    val distance = calculateDistance(
-                                                        customerLat,
-                                                        customerLng,
-                                                        riderLat,
-                                                        riderLng
-                                                    )
-
-                                                    customerRequest = CustomerRequest(
-                                                        transactionId ?: "Unknown Transaction",
-                                                        customerId,
-                                                        "$firstName $lastName",
-                                                        pickupLocation,
-                                                        distance,
-                                                        customerLat,
-                                                        customerLng
-                                                    )
-
-                                                    Log.d(
-                                                        "Monitor Request Pending $status",
-                                                        "You have a pending $status: $customerRequest"
-                                                    )
-                                                    showPendingRequestDialog(customerRequest)
-
-//                                                    Toast.makeText(
-//                                                        context,
-//                                                        "You have a pending $status: ${transactionSnapshot.key}",
-//                                                        Toast.LENGTH_LONG
-//                                                    ).show()
-
-                                                }
-                                            }
-                                        }
-                                    }
+                            when (status) {
+                                "FOR PICK-UP" -> {
+                                    hasPending = true
+                                    forPickUp(transactionId!!, customerId!!)
                                 }
 
-                                override fun onCancelled(error: DatabaseError) {
-                                    Log.e(
-                                        "Firebase",
-                                        "Error fetching customer data: ${error.message}"
+                                "IN TRANSIT" -> {
+                                    Log.d(
+                                        "Monitor Request IN-TRANSIT",
+                                        "You have a pending IN-TRANSIT TO : $shopId"
                                     )
-                                    Toast.makeText(
-                                        context,
-                                        "Error fetching customer data: ${error.message}",
-                                        Toast.LENGTH_LONG
-                                    ).show()
+                                    hasPending = true
+                                    forTransit(transactionId!!, shopId!!)
+
                                 }
 
-                            });
+                                "FOR DELIVERY" -> {
+                                    hasPending = true
+                                    forPickUp(transactionId!!, customerId!!)
+                                }
 
-                            callback(true) // Assume no pending delivery in case of an error
+                                "COMPLETE" -> {
+                                    hasPending = false
+                                }
+
+                            }
+
+
+                            callback(hasPending) // Assume no pending delivery in case of an error
                             return
                         }
+
+
                     }
                 }
                 // ✅ If we reached this point without finding any match, call callback(false)
@@ -297,6 +279,140 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         })
     }
 
+
+    private fun forPickUp(transactionId: String, customerId: String) {
+
+        val customerRef = FirebaseDatabase.getInstance()
+            .getReference("users").child(customerId!!)
+
+        customerRef.addListenerForSingleValueEvent(object :
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var pickupLocation = "Unknown Location"
+                if (snapshot.key == customerId) {
+                    pickupLocation =
+                        snapshot.child("address").value as? String
+                            ?: "Unknown Location"
+                    val firstName =
+                        snapshot.child("firstname").value as? String ?: ""
+                    val lastName =
+                        snapshot.child("lastname").value as? String ?: ""
+
+                    getLatLngFromAddress(pickupLocation) { customerLocation ->
+                        customerLocation?.let { (customerLat, customerLng) ->
+                            getRiderLocation { riderLocation ->
+                                val (riderLat, riderLng) = riderLocation
+                                val distance = calculateDistance(
+                                    customerLat,
+                                    customerLng,
+                                    riderLat,
+                                    riderLng
+                                )
+
+                                customerRequest = CustomerRequest(
+                                    transactionId ?: "Unknown Transaction",
+                                    customerId,
+                                    "$firstName $lastName",
+                                    pickupLocation,
+                                    distance,
+                                    customerLat,
+                                    customerLng
+                                )
+
+                                Log.d(
+                                    "Monitor Request Pending $status",
+                                    "You have a pending $status: $customerRequest"
+                                )
+                                showPendingRequestDialog(status, customerRequest)
+
+                            }
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e(
+                    "Firebase",
+                    "Error fetching customer data: ${error.message}"
+                )
+                Toast.makeText(
+                    context,
+                    "Error fetching customer data: ${error.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+        });
+    }
+
+    private fun forTransit(transactionId: String, shopId: String) {
+
+        Log.d(
+            "Monitor Request IN-TRANSIT",
+            "You have a pending IN-TRANSIT TO : $shopId"
+        )
+        val customerRef = FirebaseDatabase.getInstance()
+            .getReference("shop").child(shopId!!)
+
+        customerRef.addListenerForSingleValueEvent(object :
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var pickupLocation = "Unknown Location"
+                if (snapshot.key == shopId) {
+                    pickupLocation =
+                        snapshot.child("businessAddress").value as? String
+                            ?: "Unknown Location"
+                    val shopName =
+                        snapshot.child("businessName").value as? String ?: ""
+
+                    getLatLngFromAddress(pickupLocation) { customerLocation ->
+                        customerLocation?.let { (customerLat, customerLng) ->
+                            getRiderLocation { riderLocation ->
+                                val (riderLat, riderLng) = riderLocation
+                                val distance = calculateDistance(
+                                    customerLat,
+                                    customerLng,
+                                    riderLat,
+                                    riderLng
+                                )
+
+                                customerRequest = CustomerRequest(
+                                    transactionId ?: "Unknown Transaction",
+                                    shopId,
+                                    shopName,
+                                    pickupLocation,
+                                    distance,
+                                    customerLat,
+                                    customerLng
+                                )
+
+                                Log.d(
+                                    "Monitor Request Pending $status",
+                                    "You have a pending $status: $customerRequest"
+                                )
+                                showPendingRequestDialog(status, customerRequest)
+
+                            }
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e(
+                    "Firebase",
+                    "Error fetching customer data: ${error.message}"
+                )
+                Toast.makeText(
+                    context,
+                    "Error fetching customer data: ${error.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+        });
+    }
 
     /**
      * ✅ Helper function to check if two timestamps are on the same day
@@ -690,6 +806,7 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
     }
      */
 
+//    MONTIOR LAUNDRY REQUEST
     private fun monitorLaundryRequests(riderId: String) {
 
         val currentTimestamp = System.currentTimeMillis()
@@ -999,21 +1116,6 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                 reason,  // 🟢 Include the decline reason
                 System.currentTimeMillis()
             )
-            // Data to store
-//            val declinedRequest = mapOf(
-//                "riderId" to riderId,
-//                "transactionId" to customerRequest.transactionId,
-//                "customerId" to customerRequest.customerId,
-//                "customerName" to customerRequest.customerName,
-//                "pickupLocation" to customerRequest.pickupLocation,
-//                "distance" to customerRequest.distance,
-//                "customerLat" to customerRequest.customerLat,
-//                "customerLng" to customerRequest.customerLng,
-//                "riderLat" to riderLat,
-//                "riderLng" to riderLng,
-//                "declineReason" to reason,  // 🟢 Include the decline reason
-//                "timestamp" to System.currentTimeMillis()
-//            )
 
             declineRef.setValue(declinedRequest)
                 .addOnSuccessListener {
@@ -1032,16 +1134,18 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
 
 
     private fun showPendingRequestDialog(
+        status: String,
         customerRequest: CustomerRequest
     ) {
 
+        val customer = if (status == "TO PICK-UP") "Customer" else "Shop"
 
         val builder = AlertDialog.Builder(dashboardRider)
         builder.setCancelable(false)
-        builder.setTitle("Pending $status Laundry Request")
+        builder.setTitle("Pending $status Laundry")
         builder.setMessage(
-            "Transaction ID: ${customerRequest.transactionId}\nCustomer ID: ${customerRequest.customerId}\n" +
-                    "Customer name: ${customerRequest.customerName}\n" +
+            "Transaction ID: ${customerRequest.transactionId}\n$customer ID: ${customerRequest.customerId}\n" +
+                    "$customer name: ${customerRequest.customerName}\n" +
                     "Pickup Location: ${customerRequest.pickupLocation}\n" +
                     "Distance: ${customerRequest.distance} km\n\n"
         )
