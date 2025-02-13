@@ -12,6 +12,7 @@ data class Order(
     var orderNo: String? = null,
     val uid: String? = null,
     val shopID: String? = null,
+    val riderId: String? = null,
     val regular: Boolean? = null,
     val pets: Boolean? = null,
     val dry: Boolean? = null,
@@ -56,6 +57,7 @@ data class Order(
 
 
     constructor(parcel: Parcel) : this(
+        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -111,6 +113,7 @@ data class Order(
         parcel.writeString(orderNo)
         parcel.writeString(uid)
         parcel.writeString(shopID)
+        parcel.writeString(riderId)
         parcel.writeValue(regular)
         parcel.writeValue(pets)
         parcel.writeValue(dry)
@@ -158,7 +161,7 @@ data class Order(
     }
 
     override fun toString(): String {
-        return "Order(orderNo=$orderNo, uid=$uid, shopID=$shopID, regular=$regular, pets=$pets, dry=$dry, sneaker=$sneaker, ratesUnit=$ratesUnit, regularWhiteMaxKg=$regularWhiteMaxKg, regularWhiteLoad=$regularWhiteLoad, regularWhiteRate=$regularWhiteRate, regularColorMaxKg=$regularColorMaxKg, regularColorLoad=$regularColorLoad, regularColorRate=$regularColorRate, regularComforterMaxKg=$regularComforterMaxKg, regularComforterRate=$regularComforterRate, regularOthersMaxKg=$regularOthersMaxKg, regularOthersLoad=$regularOthersLoad, regularOthersRate=$regularOthersRate, petsWhiteMaxKg=$petsWhiteMaxKg, petsWhiteLoad=$petsWhiteLoad, petsWhiteRate=$petsWhiteRate, petsColorMaxKg=$petsColorMaxKg, petsColorLoad=$petsColorLoad, petsColorRate=$petsColorRate, dryWhiteMaxKg=$dryWhiteMaxKg, dryWhiteLoad=$dryWhiteLoad, dryWhiteRate=$dryWhiteRate, dryColorMaxKg=$dryColorMaxKg, dryColorLoad=$dryColorLoad, dryColorRate=$dryColorRate, sneakerOrdinaryMaxKg=$sneakerOrdinaryMaxKg, sneakerOrdinaryRate=$sneakerOrdinaryRate, sneakerBootsMaxKg=$sneakerBootsMaxKg, sneakerBootsRate=$sneakerBootsRate, totalLaundryPrice=$totalLaundryPrice, pickUpFee=$pickUpFee, deliveryFee=$deliveryFee, totalOrder=$totalOrder, status=$status, notes=$notes, pickUpDatetime=$pickUpDatetime, deliveryDatetime=$deliveryDatetime)"
+        return "Order(orderNo=$orderNo, uid=$uid, shopID=$shopID, riderId=$riderId, regular=$regular, pets=$pets, dry=$dry, sneaker=$sneaker, ratesUnit=$ratesUnit, regularWhiteMaxKg=$regularWhiteMaxKg, regularWhiteLoad=$regularWhiteLoad, regularWhiteRate=$regularWhiteRate, regularColorMaxKg=$regularColorMaxKg, regularColorLoad=$regularColorLoad, regularColorRate=$regularColorRate, regularComforterMaxKg=$regularComforterMaxKg, regularComforterRate=$regularComforterRate, regularOthersMaxKg=$regularOthersMaxKg, regularOthersLoad=$regularOthersLoad, regularOthersRate=$regularOthersRate, petsWhiteMaxKg=$petsWhiteMaxKg, petsWhiteLoad=$petsWhiteLoad, petsWhiteRate=$petsWhiteRate, petsColorMaxKg=$petsColorMaxKg, petsColorLoad=$petsColorLoad, petsColorRate=$petsColorRate, dryWhiteMaxKg=$dryWhiteMaxKg, dryWhiteLoad=$dryWhiteLoad, dryWhiteRate=$dryWhiteRate, dryColorMaxKg=$dryColorMaxKg, dryColorLoad=$dryColorLoad, dryColorRate=$dryColorRate, sneakerOrdinaryMaxKg=$sneakerOrdinaryMaxKg, sneakerOrdinaryRate=$sneakerOrdinaryRate, sneakerBootsMaxKg=$sneakerBootsMaxKg, sneakerBootsRate=$sneakerBootsRate, totalLaundryPrice=$totalLaundryPrice, pickUpFee=$pickUpFee, deliveryFee=$deliveryFee, totalOrder=$totalOrder, status=$status, notes=$notes, pickUpDatetime=$pickUpDatetime, deliveryDatetime=$deliveryDatetime)"
     }
 
     companion object CREATOR : Parcelable.Creator<Order> {

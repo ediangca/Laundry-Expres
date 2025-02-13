@@ -24,6 +24,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.adater.OrderAdapter
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogSchedulePickerBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardHomeBinding
+import com.kodego.diangca.ebrahim.laundryexpres.model.Notification
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import com.squareup.picasso.Picasso
@@ -217,6 +218,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
     }
 
+
     @SuppressLint("NotifyDataSetChanged")
     private fun showOrders(status: String) {
 //        dashboardCustomer.showLoadingDialog()
@@ -283,6 +285,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             })
     }
 
+
     private fun updateExpiredRequest(
         orderNo: String?,
         status: String?,
@@ -293,15 +296,16 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
         // Update the status when pickup is expired (currentDate is greater than pickup request)
         if (orderNo != null && status in setOf("PENDING", "FOR PICK-UP", "TO PICK-UP")) {
-            if(isExpired(pickupTimestamp!!) ){
+            if (isExpired(pickupTimestamp!!)) {
                 databaseReference.child(orderNo).child("status").setValue("EXPIRED")
-            }else{
+            } else {
                 databaseReference.child(orderNo).child("status").setValue(status)
             }
         }
 
 
     }
+
     private fun isExpired(pickUpDate: Long): Boolean {
         val currentDate = Calendar.getInstance()
         val pickUpCalendar = Calendar.getInstance().apply { timeInMillis = pickUpDate }
@@ -321,6 +325,48 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
         }
     }
 
+
+    private fun monitorNotification() {
+        val currentUserId = firebaseAuth.currentUser?.uid ?: return
+        Log.d("Monitor Notifications", firebaseAuth.currentUser!!.uid!!)
+        val notificationRef = firebaseDatabaseReference.child("notification")
+
+        notificationRef.addValueEventListener(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val unreadNotifications =
+                    mutableListOf<Notification>() // Store matched notifications
+
+                for (childSnapshot in snapshot.children) {
+                    val notification = childSnapshot.getValue(Notification::class.java)
+
+                    Log.d("Monitor Notifications", notification.toString())
+                    if (notification != null &&
+                        notification.customerID == currentUserId &&
+                        notification.cunread
+                    ) { // Matches shopID and unread
+
+                        unreadNotifications.add(notification)
+                    }
+                }
+
+                Log.d("Monitor Notifications", "Unread Notifications Count: ${unreadNotifications.size}")
+                // Log the count of unread notifications
+                if (unreadNotifications.size > 0) {
+                    binding.notificationBadge.visibility = View.VISIBLE
+                    binding.notificationBadge.text = unreadNotifications.size.toString()
+                }else{
+                    binding.notificationBadge.visibility = View.GONE
+                }
+
+                // Handle the unread notifications array (e.g., update UI, trigger alert, etc.)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseError", "Error fetching notifications: ${error.message}")
+            }
+        })
+    }
 
     // Sort and notify adapter
     @SuppressLint("SetTextI18n")
@@ -346,6 +392,7 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
                 orderAdapter.notifyDataSetChanged()
             }
         }
+        monitorNotification()
     }
 
     // Helper to parse datetime string

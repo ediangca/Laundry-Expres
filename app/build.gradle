@@ -61,11 +61,14 @@ dependencies {
 
     // Firebase (BOM simplifies versioning)
     implementation platform('com.google.firebase:firebase-bom:32.3.0')
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.7.1'
+    implementation 'com.google.firebase:firebase-firestore-ktx:25.1.2'
     implementation 'com.google.firebase:firebase-storage-ktx'
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation 'com.google.firebase:firebase-messaging:24.1.0' // Firebase Cloud Messaging
+    implementation 'com.android.volley:volley:1.2.1' // Volley for network requests
+
+
 
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'

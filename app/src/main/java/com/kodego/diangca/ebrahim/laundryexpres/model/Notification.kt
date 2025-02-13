@@ -11,9 +11,9 @@ data class Notification(
     val shopID: String? = null,
     val riderID: String? = null,
     val status: String? = null, //status of Booking
-    val isCUnread: Boolean = false,
-    val isSUnread: Boolean = false,
-    val isRUnread: Boolean = false,
+    val cunread: Boolean = false,
+    val sunread: Boolean = false,
+    val runread: Boolean = false,
     val note: String? = null,
     val notificationTimestamp: String? = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
         ): Parcelable {
@@ -37,9 +37,9 @@ data class Notification(
         parcel.writeString(shopID)
         parcel.writeString(riderID)
         parcel.writeString(status)
-        parcel.writeByte(if (isCUnread) 1 else 0)
-        parcel.writeByte(if (isSUnread) 1 else 0)
-        parcel.writeByte(if (isRUnread) 1 else 0)
+        parcel.writeByte(if (cunread) 1 else 0)
+        parcel.writeByte(if (sunread) 1 else 0)
+        parcel.writeByte(if (runread) 1 else 0)
         parcel.writeString(note)
         parcel.writeString(notificationTimestamp)
     }

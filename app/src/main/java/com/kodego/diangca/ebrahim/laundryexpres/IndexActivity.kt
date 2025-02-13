@@ -22,12 +22,15 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -35,6 +38,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.customer.DashboardCustomerActivity
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartnerActivity
@@ -191,6 +195,8 @@ class IndexActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
+        askNotificationPermission()
         if (user != null) {
             if (user!!.type.equals("Rider", true)) {
                 setupRiderPresence(user!!.uid!!)
@@ -199,10 +205,53 @@ class IndexActivity : AppCompatActivity() {
     }
 
 
+    private fun askNotificationPermission() {
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+            ) {
+            } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+            } else {
+                // Directly ask for the permission
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    // Declare the launcher at the top of your Activity/Fragment:
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("Monitor Message", "Fetching FCM registration token failed", task.exception)
+                    return@OnCompleteListener
+                }
+
+//                // Get new FCM registration token
+                val token = task.result
+//
+//                // Log and toast
+//                val msg = getString(R.string.msg_token_fmt, token)
+//                Log.d("Monitor Message", msg)
+                Log.d("Monitor Message", "Fetching FCM registration token $token", task.exception)
+
+                Toast.makeText(baseContext, token, Toast.LENGTH_SHORT).show()
+            })
+        } else {
+            // TODO: Inform user that that your app will not show notifications.
+        }
+    }
+
+
     private fun showMain() {
         showLoadingDialog()
         Handler(Looper.getMainLooper()).postDelayed({
             dismissLoadingDialog()
+            askNotificationPermission()
+
             mainFragment = MainFragment(this)
             mainFrame = supportFragmentManager.beginTransaction()
             mainFrame.replace(R.id.mainFrame, mainFragment)

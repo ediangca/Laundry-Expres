@@ -1,5 +1,6 @@
 package com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.net.Uri
 import android.os.Build
@@ -23,6 +24,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.adater.OrderAdapter
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardPartnerHomeBinding
 import com.kodego.diangca.ebrahim.laundryexpres.model.CustomerRequest
+import com.kodego.diangca.ebrahim.laundryexpres.model.Notification
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import java.text.SimpleDateFormat
@@ -73,9 +75,11 @@ class DashboardHomeFragment(var dashboardPartner: DashboardPartnerActivity) : Fr
         super.onDestroyView()
         _binding = null
     }
+
     override fun onResume() {
         super.onResume()
     }
+
     private fun initComponent() {
 
         orderAdapter = OrderAdapter(dashboardPartner, ordersList)
@@ -83,6 +87,7 @@ class DashboardHomeFragment(var dashboardPartner: DashboardPartnerActivity) : Fr
         binding.orderList.layoutManager = LinearLayoutManager(dashboardPartner)
         binding.orderList.adapter = orderAdapter
         showOrders("ALL")
+
     }
 
 
@@ -155,7 +160,51 @@ class DashboardHomeFragment(var dashboardPartner: DashboardPartnerActivity) : Fr
                 orderAdapter.notifyDataSetChanged()
             }
         }
+        monitorNotification()
     }
+
+    private fun monitorNotification() {
+        val currentUserId = firebaseAuth.currentUser?.uid ?: return
+        val notificationRef = firebaseDatabaseReference.child("notification")
+
+        notificationRef.addValueEventListener(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val unreadNotifications =
+                    mutableListOf<Notification>() // Store matched notifications
+
+                for (childSnapshot in snapshot.children) {
+                    val notification = childSnapshot.getValue(Notification::class.java)
+
+                    Log.d("Monitor Notifications", notification.toString())
+
+                    if (notification != null &&
+                        notification.shopID == dashboardPartner.getShop()!!.uid &&
+                        notification.sunread
+                    ) { // Matches shopID and unread
+
+                        unreadNotifications.add(notification)
+                    }
+                }
+
+                Log.d("Notifications", "Unread Notifications Count: ${unreadNotifications.size}")
+                // Log the count of unread notifications
+                if (unreadNotifications.size > 0) {
+                    binding.notificationBadge.visibility = View.VISIBLE
+                    binding.notificationBadge.text = unreadNotifications.size.toString()
+                }else{
+                    binding.notificationBadge.visibility = View.GONE
+                }
+
+                // Handle the unread notifications array (e.g., update UI, trigger alert, etc.)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseError", "Error fetching notifications: ${error.message}")
+            }
+        })
+    }
+
     // Helper to parse datetime string
     private fun parseDatetime(datetime: String?): Long? {
         return try {
@@ -167,8 +216,6 @@ class DashboardHomeFragment(var dashboardPartner: DashboardPartnerActivity) : Fr
             null
         }
     }
-
-
 
 
 }

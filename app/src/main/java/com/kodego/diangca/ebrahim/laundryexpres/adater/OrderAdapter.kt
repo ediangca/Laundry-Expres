@@ -82,7 +82,7 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
                 pickUpDatetimeLabel.visibility = if(hideSchedule) View.GONE else View.VISIBLE
                 deliveryDatetimeLabel.visibility = if(hideSchedule) View.GONE else View.VISIBLE
 
-                statusLabel.text = if(order.status == "COMPLETE") "LAUNDRY ${order.status}" else "BOOK ${order.status}"
+//                statusLabel.text = if(order.status == "COMPLETE") "LAUNDRY ${order.status}" else "BOOK ${order.status}"
 //                "ALL", "FOR PICK-UP", "RECEIVED", "FOR DELIVERY", "COMPLETE", "CANCEL"
                 when(order.status){
                     "PENDING" ->{
@@ -95,7 +95,7 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
                     }
                     "TO PICK-UP" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.color_orange_1))
-                        statusLabel.text = "RIDER IS GOING ${order.status}"
+                        statusLabel.text = "LAUNDRY IS WAITING ${order.status}"
                     }
                     "IN TRANSIT" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.color_blue_5))
@@ -115,13 +115,14 @@ class OrderAdapter(var activity: Activity, var orderList: ArrayList<Order>) :
                     }
                     "COMPLETE" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.success))
-                        statusLabel.text = "LAUNDRY SUCCESSFULLY ${order.status}"
+                        statusLabel.text = "LAUNDRY SUCCESSFULLY ${order.status}D"
                     }
                     "CANCEL" ->{
                         statusLabel.setTextColor(activity.getColor(R.color.danger))
                         statusLabel.text = "BOOK ${order.status}"
                     }
                     else ->{
+                        statusLabel.text = "BOOK ${order.status}"
                         statusLabel.setTextColor(activity.getColor(R.color.danger))
 //                        Toast.makeText(activity.applicationContext, "No Status stated", Toast.LENGTH_SHORT).show()
                     }

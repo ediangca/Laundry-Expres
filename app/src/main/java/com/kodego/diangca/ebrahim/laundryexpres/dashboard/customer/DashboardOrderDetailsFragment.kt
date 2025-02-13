@@ -190,7 +190,7 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
     }
 
     private fun btnPickedupOnClickListener() {
-        changeOrderStatus(if (user == "customer") "IN TRANSIT" else "TO DELIVER" )
+        changeOrderStatus(if (user == "customer") "IN TRANSIT" else "TO DELIVER")
     }
 
     private fun btnReceivedOnClickListener() {
@@ -229,6 +229,7 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
                 "TO PICK-UP",
                 true
             ) -> View.VISIBLE
+
             user.equals("partner", true) && order!!.status.equals(
                 "FOR DELIVERY",
                 true
@@ -284,11 +285,13 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
         Log.d("UPDATE ORDER STATUS", newStatus)
 
         val confirmBuilder = AlertDialog.Builder(activityDashboard)
-        confirmBuilder.setTitle("CONFIRM")
+        confirmBuilder.setTitle("CONFIRM LAUNDRY ${newStatus.toUpperCase()}")
         confirmBuilder.setMessage("Are you sure?")
         confirmBuilder.setPositiveButton("Yes") { _, _ ->
 
             val databaseReference = firebaseDatabase.reference.child("orders/${order!!.uid}")
+
+            setNotification()
 
             databaseReference.child(order!!.orderNo!!).child("status").setValue(newStatus)
             Toast.makeText(
@@ -304,6 +307,93 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
 
         dialog = confirmBuilder.create()
         dialog.show()
+    }
+
+    private fun setNotification() {
+
+        firebaseDatabaseReference.child("notification")
+            .orderByChild("orderNo").equalTo(order!!.orderNo) // Search by orderNo
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+
+                        var note: String?;
+
+                        when (order!!.status) {
+                            "PENDING" -> {
+                                note = "BOOK ${order!!.status}"
+                            }
+
+                            "FOR PICK-UP" -> {
+                                note = "LAUNDRY IS WAITING ${order!!.status} BY RIDER"
+                            }
+
+                            "TO PICK-UP" -> {
+                                note = "LAUNDRY IS WAITING ${order!!.status}"
+                            }
+
+                            "IN TRANSIT" -> {
+                                note = "LAUNDRY ${order!!.status} TO LAUNDRY SHOP"
+                            }
+
+                            "ON PROCESS" -> {
+                                note = "LAUNDRY IS ${order!!.status}"
+                            }
+
+                            "FOR DELIVERY" -> {
+                                note = "LAUNDRY IS ${order!!.status}"
+                            }
+
+                            "TO DELIVER" -> {
+                                note = "RIDER IS GOING ${order!!.status} LAUNDRY"
+                            }
+
+                            "COMPLETE" -> {
+                                note = "LAUNDRY SUCCESSFULLY ${order!!.status}D"
+                            }
+
+                            "CANCEL" -> {
+                                note = "BOOK ${order!!.status}"
+                            }
+
+                            else -> {
+                                note = "BOOK ${order!!.status}"
+                            }
+                        }
+
+
+                        // If notification exists, update only the required fields
+                        for (childSnapshot in snapshot.children) {
+                            val updateMap = mapOf(
+                                "riderID" to order!!.riderId,
+                                "isCUnread" to true,
+                                "isSUnread" to true,
+                                "isRUnread" to false, // Rider has seen it
+                                "status" to order!!.status,
+                                "note" to note,
+                                "notificationTimestamp" to SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(
+                                    Date()
+                                )
+                            )
+
+                            firebaseDatabaseReference.child("notification")
+                                .child(childSnapshot.key!!)
+                                .updateChildren(updateMap)
+                                .addOnSuccessListener {
+                                    Log.d("Monitor Notification", "Notification updated successfully.")
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.e("Monitor Notification", "Failed to update notification", e)
+                                }
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(activityDashboard, error.message, Toast.LENGTH_SHORT).show()
+                }
+            })
+
     }
 
     private fun btnHomeOnClickListener() {

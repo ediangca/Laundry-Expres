@@ -21,6 +21,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.kodego.diangca.ebrahim.laundryexpres.R
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogAgreementBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardOrderFormBinding
+import com.kodego.diangca.ebrahim.laundryexpres.model.Notification
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
 import com.kodego.diangca.ebrahim.laundryexpres.model.Rates
 import com.kodego.diangca.ebrahim.laundryexpres.model.Shop
@@ -305,6 +306,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                         orderNo,
                         uid,
                         shopID,
+                        null,
                         regular,
                         pets,
                         dry,
@@ -355,6 +357,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                             if (task.isSuccessful) {
                                 dashboardCustomer.showOrderDetails(order!!, "OrderForm")
                                 dashboardCustomer.dismissLoadingDialog()
+                                setNotification(order!!)
                                 Log.d(
                                     "ORDER_SAVING",
                                     "Order $orderNo has been successfully saved!"
@@ -377,6 +380,65 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                 }
             }
         }
+    }
+
+    private fun setNotification(order: Order) {
+        firebaseDatabaseReference.child("notification")
+            .orderByChild("orderNo").equalTo(order.orderNo) // Search by orderNo
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        // If notification exists, update only the required fields
+                        for (childSnapshot in snapshot.children) {
+                            val updateMap = mapOf(
+                                "riderID" to order.riderId,
+                                "cunread" to true,
+                                "sunread" to true,
+                                "runread" to true, // Rider has seen it
+                                "status" to order.status,
+                                "note" to "${order.orderNo} is waiting $status by ${order.riderId}",
+                                "notificationTimestamp" to SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
+                            )
+
+                            firebaseDatabaseReference.child("notification").child(childSnapshot.key!!)
+                                .updateChildren(updateMap)
+                                .addOnSuccessListener {
+                                    Log.d("Monitor Notification", "Notification updated successfully.")
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.e("Monitor Notification", "Failed to update notification", e)
+                                }
+                        }
+                    } else {
+                        // If no notification exists, create a new one
+                        val newNotification = Notification(
+                            orderNo = order.orderNo,
+                            shopID = order.shopID,
+                            customerID = order.uid,
+                            status = order.status,
+                            cunread = true,
+                            sunread = true,
+                            runread = true,
+                            note = "${order.orderNo} is $status to accept by Laundry",
+                            notificationTimestamp = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
+                        )
+
+                        firebaseDatabaseReference.child("notification").child(order.orderNo!!)
+                            .setValue(newNotification)
+                            .addOnSuccessListener {
+                                Log.d("Monitor Notification", "New notification created successfully.")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("Monitor Notification", "Failed to create notification", e)
+                            }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(dashboardCustomer, error.message, Toast.LENGTH_SHORT).show()
+                }
+            })
+
     }
 
     private fun setOrderNo() {

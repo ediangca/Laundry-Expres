@@ -44,18 +44,19 @@ import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import org.json.JSONException
-import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.UUID
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import com.kodego.diangca.ebrahim.laundryexpres.model.Notification
+import com.android.volley.Response as VolleyResponse
+import org.json.JSONException
+import org.json.JSONObject
 
 
 class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : Fragment() {
@@ -93,6 +94,7 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
 
     private var ordersList: ArrayList<Order> = ArrayList()
     private var orderAdapter = OrderAdapter(dashboardRider, ordersList)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -193,7 +195,7 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                             currentDate
                         )
 
-                        if (assignedRiderId == riderId ) {
+                        if (assignedRiderId == riderId) {
 
                             if (status != "PENDING" && status != "FOR PICK-UP") {
                                 TotalPickUp++
@@ -202,9 +204,6 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                                 TotalPickUp++
                             }
                             if (status != "PENDING" && status != "FOR PICK-UP" && status != "TO PICK-UP" && status != "IN TRANSIT") {
-                                TotalDelivery++
-                            }
-                            if (status != "PENDING" && status != "FOR PICK-UP" && status != "TO PICK-UP" && status != "IN TRANSIT" && status != "ON PROCESS" && status != "FOR DELIVERY" && status != "TO DELIVER") {
                                 TotalDelivery++
                             }
                             if (status == "COMPLETE") {
@@ -514,12 +513,12 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                 FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val token = task.result
-                        Log.d("FCM Token", "Token retrieved: $token")
+                        Log.d("MONITOR FCM Token", "Token retrieved: $token")
 
                         // Save the token to the database
                         saveMessagingTokenToDatabase(token)
                     } else {
-                        Log.e("FCM Token", "Failed to retrieve token", task.exception)
+                        Log.e("MONITOR FCM Token", "Failed to retrieve token", task.exception)
                     }
                 }
             }
@@ -618,8 +617,51 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                 orderAdapter.notifyDataSetChanged()
             }
         }
+        monitorNotification()
     }
 
+
+    private fun monitorNotification() {
+        val currentUserId = firebaseAuth.currentUser?.uid ?: return
+        Log.d("Monitor Notifications", firebaseAuth.currentUser!!.uid!!)
+        val notificationRef = firebaseDatabaseReference.child("notification")
+
+        notificationRef.addValueEventListener(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val unreadNotifications =
+                    mutableListOf<Notification>() // Store matched notifications
+
+                for (childSnapshot in snapshot.children) {
+                    val notification = childSnapshot.getValue(Notification::class.java)
+
+                    Log.d("Monitor Notifications", notification.toString())
+                    if (notification != null &&
+                        notification.riderID == currentUserId &&
+                        notification.runread
+                    ) { // Matches shopID and unread
+
+                        unreadNotifications.add(notification)
+                    }
+                }
+
+                Log.d("Monitor Notifications", "Unread Notifications Count: ${unreadNotifications.size}")
+                // Log the count of unread notifications
+                if (unreadNotifications.size > 0) {
+                    binding.notificationBadge.visibility = View.VISIBLE
+                    binding.notificationBadge.text = unreadNotifications.size.toString()
+                }else{
+                    binding.notificationBadge.visibility = View.GONE
+                }
+
+                // Handle the unread notifications array (e.g., update UI, trigger alert, etc.)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseError", "Error fetching notifications: ${error.message}")
+            }
+        })
+    }
 
     // Helper to parse datetime string
     private fun parseDatetime(datetime: String?): Long? {
@@ -652,160 +694,6 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         }
     }
 
-    /**
-    private fun monitorLaundryRequests() {
-    // Reference to the "orders" node
-    val firebaseDatabaseReference = FirebaseDatabase.getInstance()
-    .getReferenceFromUrl("https://laundry-express-382503-default-rtdb.firebaseio.com/orders")
-
-
-    Log.d("Monitor Laundry Request", "Monitoring...")
-
-    // Add a listener for changes in the "orders"
-    firebaseDatabaseReference.addValueEventListener(object : ValueEventListener {
-    override fun onDataChange(snapshot: DataSnapshot) {
-    val customerRequests = mutableListOf<CustomerRequest>()
-    var processedRequestsCount = 0
-    var totalRequests =
-    0  // Total requests matching the condition (status == "FOR PICK-UP" && customerId != "Unknown Customer")
-
-    if (snapshot.exists()) {
-    // Count total valid customer requests that meet the condition
-    for (userSnapshot in snapshot.children) {
-    for (transactionSnapshot in userSnapshot.children) {
-    val status = transactionSnapshot.child("status").value as? String
-    val customerId = transactionSnapshot.child("uid").value as? String
-    ?: "Unknown Customer"
-
-    // Only count requests that match the given condition
-    if (status == "FOR PICK-UP" && customerId != "Unknown Customer") {
-    totalRequests++  // Increment the total count for valid requests
-    }
-    }
-    }
-
-    // Process the requests now that we know the total count
-    for (userSnapshot in snapshot.children) {
-    for (transactionSnapshot in userSnapshot.children) {
-    val transactionId = transactionSnapshot.key
-    val status = transactionSnapshot.child("status").value as? String
-    val customerId = transactionSnapshot.child("uid").value as? String
-    ?: "Unknown Customer"
-
-    if (status == "FOR PICK-UP" && customerId != "Unknown Customer") {
-    val customerRef = FirebaseDatabase.getInstance()
-    .getReference("users").child(customerId)
-
-    customerRef.addListenerForSingleValueEvent(object :
-    ValueEventListener {
-    override fun onDataChange(snapshot: DataSnapshot) {
-    var pickupLocation = "Unknown Location"
-    if (snapshot.key == customerId) {
-    pickupLocation =
-    snapshot.child("address").value as? String
-    ?: "Unknown Location"
-    val firstName =
-    snapshot.child("firstname").value as? String ?: ""
-    val lastName =
-    snapshot.child("lastname").value as? String ?: ""
-
-    getLatLngFromAddress(pickupLocation) { customerLocation ->
-    customerLocation?.let { (customerLat, customerLng) ->
-    getRiderLocation { riderLocation ->
-    val (riderLat, riderLng) = riderLocation
-    val distance = calculateDistance(
-    customerLat,
-    customerLng,
-    riderLat,
-    riderLng
-    )
-
-    val request = CustomerRequest(
-    transactionId ?: "Unknown Transaction",
-    customerId,
-    "$firstName $lastName",
-    pickupLocation,
-    distance,
-    customerLat,
-    customerLng
-    )
-
-    // Add the request to the list
-    customerRequests.add(request)
-
-    Log.d(
-    "Monitor ListRequestedData",
-    "Transaction ID: $transactionId\n" +
-    "Customer ID: $customerId\n" +
-    "Customer name: $firstName $lastName\n" +
-    "Pickup Location: $pickupLocation\n" +
-    "Monitor Distance from customer to rider: $distance km \n" +
-    "Do you want to accept this request?"
-    )
-    // Increment the processed count
-    processedRequestsCount++
-
-    // Check if all requests are processed
-    if (processedRequestsCount == totalRequests) {
-    Log.d(
-    "Monitor # of Request",
-    "Done loading all requests: ${customerRequests.size}"
-    )
-
-    //                                                             Trigger post-data loading actions here
-    //                                                            fetchOnlineRiders { onlineRiders ->
-    //                                                                val assignments =
-    //                                                                    distributeRequestAmongRiders(
-    //                                                                        onlineRiders,
-    //                                                                        customerRequests
-    //                                                                    )
-    //                                                                Log.d(
-    //                                                                    "Monitor Assignments",
-    //                                                                    "Assignments: ${assignments.size}"
-    //                                                                )
-    //                                                                notifyRider(assignments)
-    //                                                            }
-
-    //Working
-    val nearestRequest =
-    customerRequests.minByOrNull { it.distance }
-    val chosenRequest =
-    chooseOneRequest(customerRequests)
-    Log.d(
-    "Monitor Chosen Request",
-    "$chosenRequest"
-    )
-
-
-    notifyRider(chosenRequest)
-
-    }
-    }
-    }
-    }
-    }
-    }
-
-    override fun onCancelled(error: DatabaseError) {
-    Log.e(
-    "Firebase",
-    "Error fetching customer data: ${error.message}"
-    )
-    }
-    })
-    }
-    }
-    }
-    }
-    }
-
-    override fun onCancelled(error: DatabaseError) {
-    Log.e("Firebase", "Error: ${error.message}")
-    }
-    })
-    }
-     */
-
 //    MONTIOR LAUNDRY REQUEST
     private fun monitorLaundryRequests(riderId: String) {
 
@@ -824,7 +712,6 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                 if (snapshot.exists()) {
                     for (userSnapshot in snapshot.children) {
                         for (transactionSnapshot in userSnapshot.children) {
-
 
                             val transactionId = transactionSnapshot.key
                             val status = transactionSnapshot.child("status").value as? String
@@ -1248,10 +1135,128 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         databaseReference.child(transactionId).child("status").setValue(newStatus)
         databaseReference.child(transactionId).child("riderId").setValue(riderId)
 
+        firebaseDatabaseReference.child("notification")
+            .orderByChild("orderNo").equalTo(transactionId) // Search by orderNo
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        // If notification exists, update only the required fields
+                        for (childSnapshot in snapshot.children) {
+                            val updateMap = mapOf(
+                                "riderID" to riderId,
+                                "isCUnread" to true,
+                                "isSUnread" to true,
+                                "isRUnread" to false, // Rider has seen it
+                                "status" to newStatus,
+                                "note" to "$transactionId is going $newStatus",
+                                "notificationTimestamp" to SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
+                            )
+
+                            firebaseDatabaseReference.child("notification").child(childSnapshot.key!!)
+                                .updateChildren(updateMap)
+                                .addOnSuccessListener {
+                                    Log.d("Monitor Notification", "Notification updated successfully.")
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.e("Monitor Notification", "Failed to update notification", e)
+                                }
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(dashboardRider, error.message, Toast.LENGTH_SHORT).show()
+                }
+            })
+
+
+
+        val notificationData = mapOf(
+            "title" to "Order Update",
+            "body" to "Your order status has been updated to $newStatus."
+        )
+        // Retrieve the customer's FCM token and send notification
+
+
+        sendPushNotification(
+            riderId,
+            customerId,
+            transactionId,
+            newStatus
+        )
+
+
 //        val pickupTimestamp = System.currentTimeMillis()
 //        databaseReference.child(transactionId).child("pickupTimestamp").setValue(pickupTimestamp)
     }
 
+
+    private fun sendPushNotification(
+        riderId: String,
+        customerId: String,
+        transactionId: String,
+        newStatus: String
+    ) {
+
+        val fcmDatabaseRef =
+            FirebaseDatabase.getInstance().getReference("riders/$riderId/messagingToken")
+        fcmDatabaseRef.get().addOnSuccessListener { snapshot ->
+            val token = snapshot.getValue(String::class.java)
+
+            if (token != null) {
+                Log.d("MONITOR FCM", "FCM token $token for rider: $riderId")
+
+                val notificationData = mapOf(
+                    "to" to token,
+                    "notification" to mapOf(
+                        "title" to "Order Update",
+                        "body" to "Your order status has been updated to $newStatus."
+                    ),
+                    "data" to mapOf(
+                        "transactionId" to transactionId
+                    )
+                )
+                sendNotificationToFCM(notificationData)
+            } else {
+                Log.e("MONITOR FCM", "FCM token not found for rider: $riderId")
+            }
+        }.addOnFailureListener {
+            Log.e("MONITOR FCM", "Failed to retrieve FCM token for customer: $customerId")
+        }
+    }
+
+    private fun sendNotificationToFCM(notificationData: Map<String, Any>) {
+        val url = "https://fcm.googleapis.com/fcm/send"
+        val requestBody = JSONObject(notificationData).toString()
+
+        val request = object : StringRequest(
+            Method.POST, url,
+            VolleyResponse.Listener { response ->
+                Log.d("MONITOR FCM", "Notification sent successfully: $response")
+            },
+            VolleyResponse.ErrorListener { error ->
+                error.networkResponse?.let {
+                    val errorMessage = String(it.data, Charsets.UTF_8)
+                    Log.e("MONITOR FCM", "Error sending notification: $errorMessage")
+                } ?: Log.e("MONITOR FCM", "Error sending notification: ${error.message}")
+            }) {
+
+            override fun getHeaders(): MutableMap<String, String> {
+                val headers = HashMap<String, String>()
+                headers["Authorization"] =
+                    "key=IIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCf1FggpGd6vUou"  // 🔴 Replace with your actual FCM Server Key
+                headers["Content-Type"] = "application/json"
+                return headers
+            }
+
+            override fun getBody(): ByteArray {
+                return requestBody.toByteArray(Charsets.UTF_8)
+            }
+        }
+
+        val requestQueue = Volley.newRequestQueue(dashboardRider)
+        requestQueue.add(request)
+    }
 
     fun openGoogleMaps(pickupLocation: String) {
         val gmmIntentUri = Uri.parse("google.navigation:q=$pickupLocation")

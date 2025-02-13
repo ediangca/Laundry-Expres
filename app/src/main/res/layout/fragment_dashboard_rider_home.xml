@@ -68,9 +68,9 @@
 
             <TextView
                 android:id="@+id/pageTitle"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="8"
+                android:layout_weight="10"
                 android:gravity="center_vertical"
                 android:text="Stat Overview"
                 android:textAllCaps="true"
@@ -78,31 +78,36 @@
                 android:textSize="28sp"
                 android:textStyle="bold" />
 
-            <ImageButton
-                android:id="@+id/notifBtn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
-                android:layout_marginHorizontal="5dp"
+            <RelativeLayout
+                android:layout_width="0dp"
                 android:layout_weight="2"
-                android:background="@android:color/transparent"
-                android:scaleType="fitCenter"
-                android:visibility="gone"
-                android:src="@drawable/ic_notification"
-                app:tint="@color/color_light_3" />
+                android:layout_height="wrap_content">
 
-            <ImageButton
-                android:id="@+id/infoBtn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
-                android:layout_marginHorizontal="5dp"
-                android:layout_weight="2"
-                android:background="@android:color/transparent"
-                android:scaleType="fitCenter"
-                android:visibility="gone"
-                android:src="@drawable/ic_info"
-                app:tint="@color/color_light_3" />
+                <!-- Notification Icon -->
+                <ImageView
+                    android:id="@+id/notification_icon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_notification"
+                    android:layout_centerInParent="true" />
+
+                <!-- Badge (Notification Count) -->
+                <TextView
+                    android:id="@+id/notification_badge"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/box_blue_style"
+                    android:backgroundTint="@android:color/holo_red_dark"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:textSize="12sp"
+                    android:text="10"
+                    android:layout_alignEnd="@id/notification_icon"
+                    android:layout_alignTop="@id/notification_icon"
+                    android:padding="2dp"
+                    android:visibility="visible"/>
+            </RelativeLayout>
 
 
         </androidx.appcompat.widget.LinearLayoutCompat>
