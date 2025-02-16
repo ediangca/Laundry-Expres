@@ -74,6 +74,9 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
     private var ordersList: ArrayList<Order> = ArrayList()
     private var orderAdapter = OrderAdapter(dashboardCustomer, ordersList)
 
+    var unreadNotifications =
+        mutableListOf<Notification>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -140,6 +143,16 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
             }
         }
 
+        binding.notificationBadge.setOnClickListener{
+            notificationBadgeOnClickListener()
+        }
+
+    }
+
+    private fun notificationBadgeOnClickListener() {
+        if(unreadNotifications.size > 0){
+
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -328,13 +341,13 @@ class DashboardHomeFragment(var dashboardCustomer: DashboardCustomerActivity) : 
 
     private fun monitorNotification() {
         val currentUserId = firebaseAuth.currentUser?.uid ?: return
-        Log.d("Monitor Notifications", firebaseAuth.currentUser!!.uid!!)
+        Log.d("Monitor Notifications", firebaseAuth.currentUser!!.uid)
         val notificationRef = firebaseDatabaseReference.child("notification")
 
         notificationRef.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(snapshot: DataSnapshot) {
-                val unreadNotifications =
+                unreadNotifications =
                     mutableListOf<Notification>() // Store matched notifications
 
                 for (childSnapshot in snapshot.children) {

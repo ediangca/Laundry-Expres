@@ -605,8 +605,7 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                 promptView.visibility = View.VISIBLE
             } else {
                 // Sort ordersList by descending pickUpDatetime
-                val sortedOrders =
-                    ordersList.sortedByDescending { parseDatetime(it.pickUpDatetime) }
+                val sortedOrders = ordersList.sortedByDescending { parseDatetime(it.pickUpDatetime) }
                         .take(5)
 
                 // Update the adapter's dataset instead of modifying ordersList directly
@@ -1135,6 +1134,7 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
         databaseReference.child(transactionId).child("status").setValue(newStatus)
         databaseReference.child(transactionId).child("riderId").setValue(riderId)
 
+
         firebaseDatabaseReference.child("notification")
             .orderByChild("orderNo").equalTo(transactionId) // Search by orderNo
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -1168,6 +1168,7 @@ class DashboardRiderHomeFragment(var dashboardRider: DashboardRiderActivity) : F
                     Toast.makeText(dashboardRider, error.message, Toast.LENGTH_SHORT).show()
                 }
             })
+
 
 
 

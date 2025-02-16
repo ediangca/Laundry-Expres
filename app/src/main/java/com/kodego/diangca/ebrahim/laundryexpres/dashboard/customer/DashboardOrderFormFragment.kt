@@ -116,7 +116,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
 
         uid = firebaseAuth.currentUser!!.uid
         val bundle = this.arguments
-        if (bundle!=null) {
+        if (bundle != null) {
             shop = bundle.getParcelable<Shop>("shop")!!
             pickUpDatetime = bundle.getString("pickUpDatetime")
             deliveryDatetime = bundle.getString("deliveryDatetime")
@@ -256,7 +256,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
             promptDialog.dismiss()
         }
         promptDialog = promptBuilder.create()
-        if (promptDialog.window!=null) {
+        if (promptDialog.window != null) {
             promptDialog.window!!.setBackgroundDrawableResource(R.color.color_light_3)
         }
         promptDialog.show()
@@ -295,7 +295,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                         promptDialog.dismiss()
                     }
                     promptDialog = promptBuilder.create()
-                    if (promptDialog.window!=null) {
+                    if (promptDialog.window != null) {
                         promptDialog.window!!.setBackgroundDrawableResource(R.color.color_light_3)
                     }
                     promptDialog.show()
@@ -383,6 +383,8 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
     }
 
     private fun setNotification(order: Order) {
+        // If no notification exists, create a new one
+
         firebaseDatabaseReference.child("notification")
             .orderByChild("orderNo").equalTo(order.orderNo) // Search by orderNo
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -397,16 +399,26 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                                 "runread" to true, // Rider has seen it
                                 "status" to order.status,
                                 "note" to "${order.orderNo} is waiting $status by ${order.riderId}",
-                                "notificationTimestamp" to SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
+                                "notificationTimestamp" to SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(
+                                    Date()
+                                )
                             )
 
-                            firebaseDatabaseReference.child("notification").child(childSnapshot.key!!)
+                            firebaseDatabaseReference.child("notification")
+                                .child(childSnapshot.key!!)
                                 .updateChildren(updateMap)
                                 .addOnSuccessListener {
-                                    Log.d("Monitor Notification", "Notification updated successfully.")
+                                    Log.d(
+                                        "Monitor Notification",
+                                        "Notification updated successfully."
+                                    )
                                 }
                                 .addOnFailureListener { e ->
-                                    Log.e("Monitor Notification", "Failed to update notification", e)
+                                    Log.e(
+                                        "Monitor Notification",
+                                        "Failed to update notification",
+                                        e
+                                    )
                                 }
                         }
                     } else {
@@ -420,13 +432,18 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                             sunread = true,
                             runread = true,
                             note = "${order.orderNo} is $status to accept by Laundry",
-                            notificationTimestamp = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
+                            notificationTimestamp = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(
+                                Date()
+                            )
                         )
 
                         firebaseDatabaseReference.child("notification").child(order.orderNo!!)
                             .setValue(newNotification)
                             .addOnSuccessListener {
-                                Log.d("Monitor Notification", "New notification created successfully.")
+                                Log.d(
+                                    "Monitor Notification",
+                                    "New notification created successfully."
+                                )
                             }
                             .addOnFailureListener { e ->
                                 Log.e("Monitor Notification", "Failed to create notification", e)
@@ -439,6 +456,29 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                 }
             })
 
+
+        /**
+        val newNotification = Notification(
+        orderNo = order.orderNo,
+        shopID = order.shopID,
+        customerID = order.uid,
+        status = order.status,
+        cunread = true,
+        sunread = true,
+        runread = true,
+        note = "${order.orderNo} is $status to accept by Laundry",
+        notificationTimestamp = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
+        )
+
+        firebaseDatabaseReference.child("notification").child("${order.orderNo!!}-${SimpleDateFormat("yyyyMMdHHmmss").format(Date())}")
+        .setValue(newNotification)
+        .addOnSuccessListener {
+        Log.d("Monitor Notification", "New notification created successfully.")
+        }
+        .addOnFailureListener { e ->
+        Log.e("Monitor Notification", "Failed to create notification", e)
+        }
+         */
     }
 
     private fun setOrderNo() {
@@ -462,15 +502,16 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                         dataOrder = dataSnapshot.children.toList()
                     }
 
-                    orderNo = if (dataOrder!=null) {
-                        Log.d("DATA_COUNT", "${dataOrder!!.size+1}")
-                        "TRX-$shopPattern-$userPattern-000${dataOrder!!.size+1}"
-                    }else{
+                    orderNo = if (dataOrder != null) {
+                        Log.d("DATA_COUNT", "${dataOrder!!.size + 1}")
+                        "TRX-$shopPattern-$userPattern-000${dataOrder!!.size + 1}"
+                    } else {
                         "TRX-$shopPattern-$userPattern-0001"
                     }
                     Log.d("ORDER_NO", "$orderNo")
 
                 }
+
                 override fun onCancelled(error: DatabaseError) {
                     dashboardCustomer.dismissLoadingDialog()
                     Log.d("CHECK_ORDER_COUNT", error.message)
@@ -502,7 +543,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
         totalOrder = 0.0
 
         binding.apply {
-            if (linear2.visibility==View.VISIBLE) {
+            if (linear2.visibility == View.VISIBLE) {
                 Log.d(regularLabel1.text.toString(), "LOAD -> ${load1.text.toString()}")
                 Log.d(regularLabel2.text.toString(), "LOAD -> ${load2.text.toString()}")
                 Log.d(regularLabel3.text.toString(), "LOAD -> ${load3.text.toString()}")
@@ -524,7 +565,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
 
                 totalLaundryPrice = totalLaundryPrice!! + totalRegular
             }
-            if (linear3.visibility==View.VISIBLE) {
+            if (linear3.visibility == View.VISIBLE) {
                 Log.d(petsLabel1.text.toString(), "LOAD -> ${load1p.text.toString()}")
                 Log.d(petsLabel2.text.toString(), "LOAD -> ${load2p.text.toString()}")
 
@@ -538,7 +579,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
 
                 totalLaundryPrice = totalLaundryPrice!! + totalPets
             }
-            if (linear4.visibility==View.VISIBLE) {
+            if (linear4.visibility == View.VISIBLE) {
                 Log.d(dryLabel1.text.toString(), "LOAD -> ${load1d.text.toString()}")
                 Log.d(dryLabel2.text.toString(), "LOAD -> ${load2d.text.toString()}")
 
@@ -552,7 +593,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
 
                 totalLaundryPrice = totalLaundryPrice!! + totalDry
             }
-            if (linear5.visibility==View.VISIBLE) {
+            if (linear5.visibility == View.VISIBLE) {
                 Log.d(sneakersLabel1.text.toString(), "LOAD -> ${load1s.text.toString()}")
                 Log.d(sneakersLabel2.text.toString(), "LOAD -> ${load2s.text.toString()}")
 
@@ -613,15 +654,18 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
                             btnServiceSneakers.visibility = View.GONE
                         }
                         //Regular
-                        this@DashboardOrderFormFragment.regularWhiteMaxKg = rates!!.regularWhiteMaxKg
+                        this@DashboardOrderFormFragment.regularWhiteMaxKg =
+                            rates!!.regularWhiteMaxKg
                         regularLabel1.text = "White Clothes (${rates!!.regularWhiteMaxKg} Kg Max)"
                         regularLoadRate1.text = "${rates!!.regularWhiteRate} / LOAD"
-                        this@DashboardOrderFormFragment.regularColorMaxKg = rates!!.regularColorMaxKg
+                        this@DashboardOrderFormFragment.regularColorMaxKg =
+                            rates!!.regularColorMaxKg
                         regularLabel2.text = "Color Clothes (${rates!!.regularColorMaxKg} Kg Max)"
                         regularLoadRate2.text = "${rates!!.regularColorRate} / LOAD"
                         regularLabel3.text = "Comforter (Per Piece)"
                         regularLoadRate3.text = "${rates!!.regularComforterRate} / LOAD"
-                        this@DashboardOrderFormFragment.regularOthersMaxKg = rates!!.regularOthersMaxKg
+                        this@DashboardOrderFormFragment.regularOthersMaxKg =
+                            rates!!.regularOthersMaxKg
                         regularLabel4.text =
                             "Blankets/ Bedsheets/ Curtains/ Towels ${rates!!.regularOthersMaxKg} Kg Max)"
                         regularLoadRate4.text = "${rates!!.regularOthersRate} / LOAD"
@@ -698,7 +742,7 @@ class DashboardOrderFormFragment(var dashboardCustomer: DashboardCustomerActivit
 
         val button = view as AppCompatButton
 
-        if (linear.visibility==View.GONE) {
+        if (linear.visibility == View.GONE) {
             linear.visibility = View.VISIBLE
             button.background =
                 ContextCompat.getDrawable(dashboardCustomer, R.drawable.button_secondary)

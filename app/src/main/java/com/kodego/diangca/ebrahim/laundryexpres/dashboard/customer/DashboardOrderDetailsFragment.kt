@@ -25,6 +25,7 @@ import com.kodego.diangca.ebrahim.laundryexpres.dashboard.partner.DashboardPartn
 import com.kodego.diangca.ebrahim.laundryexpres.dashboard.rider.DashboardRiderActivity
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.DialogAgreementBinding
 import com.kodego.diangca.ebrahim.laundryexpres.databinding.FragmentDashboardOrderDetailsFormBinding
+import com.kodego.diangca.ebrahim.laundryexpres.model.Notification
 import com.kodego.diangca.ebrahim.laundryexpres.model.Order
 import com.kodego.diangca.ebrahim.laundryexpres.model.User
 import java.text.DecimalFormat
@@ -363,6 +364,7 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
 
 
                         // If notification exists, update only the required fields
+
                         for (childSnapshot in snapshot.children) {
                             val updateMap = mapOf(
                                 "riderID" to order!!.riderId,
@@ -386,6 +388,33 @@ class DashboardOrderDetailsFragment(var activityDashboard: Activity) : Fragment(
                                     Log.e("Monitor Notification", "Failed to update notification", e)
                                 }
                         }
+
+
+                        // create a new one
+                        /**
+                        val newNotification = Notification(
+                            orderNo = order!!.orderNo,
+                            shopID = order!!.shopID,
+                            customerID = order!!.uid,
+                            riderID = order!!.riderId,
+                            status = order!!.status,
+                            cunread = true,
+                            sunread = true,
+                            runread = true,
+                            note = "${order!!.orderNo} is $status to accept by Laundry",
+                            notificationTimestamp = SimpleDateFormat("yyyy-MM-d HH:mm:ss").format(Date())
+                        )
+
+                        firebaseDatabaseReference.child("notification").child("${order!!.orderNo!!}-${SimpleDateFormat("yyyyMMdHHmmss").format(Date())}")
+                            .setValue(newNotification)
+                            .addOnSuccessListener {
+                                Log.d("Monitor Notification", "New notification created successfully.")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("Monitor Notification", "Failed to create notification", e)
+                            }
+                        */
+
                     }
                 }
 

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:background="@drawable/box_style"
+    android:backgroundTint="@color/color_light_3">
+
+    <TextView
+        android:id="@+id/orderNo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_primary"
+        android:padding="15dp"
+        android:paddingStart="10sp"
+        android:text="Order No."
+        android:textAlignment="textStart"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/statusLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="Status"
+        android:textColor="@color/success"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/orderNo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/btnDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10sp"
+        android:background="@drawable/button_secondary"
+        android:padding="5sp"
+        android:src="@drawable/vector_menu"
+        android:tint="@color/color_blue_1"
+        app:layout_constraintBottom_toBottomOf="@id/orderNo"
+        app:layout_constraintEnd_toEndOf="@id/orderNo"
+        app:layout_constraintTop_toTopOf="@id/orderNo" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

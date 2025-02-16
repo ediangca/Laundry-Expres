@@ -111,8 +111,6 @@ class DashboardHomeFragment(var dashboardPartner: DashboardPartnerActivity) : Fr
 
                         if (orderData != null && shopID == firebaseAuth.currentUser!!.uid) {
 
-//                            Toast.makeText(dashboardPartner, "shopID ID $shopID", Toast.LENGTH_SHORT)
-//                                .show()
                             ordersToAdd.add(orderData)
 
                         }
